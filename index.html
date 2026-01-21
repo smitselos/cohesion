@@ -64,7 +64,7 @@ let index = 0;
 let selectedLevel = null;
 let selectedCount = null;
 
-/* ================= CSV PARSER (σωστός) ================= */
+/* ================= CSV PARSER ================= */
 function parseCSV(text){
     const rows = [];
     let row = [];
@@ -219,7 +219,9 @@ function renderQuestion(){
 
 function check(btn,val){
     const q = questions[index];
-    if(val == q.answer){
+    const correct = Number(String(q.answer).trim());
+
+    if(val === correct){
         btn.classList.add('correct');
     } else {
         btn.classList.add('wrong');
