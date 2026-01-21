@@ -67,6 +67,24 @@ button{
 .choice.correct{background:#16a34a;color:#fff}
 .choice.wrong{background:#dc2626;color:#fff}
 .choice.disabled{pointer-events:none; opacity:0.9}
+
+input[type="text"]{
+    width:100%;
+    padding:10px;
+    font-size:1rem;
+    border-radius:8px;
+    border:2px solid #c7d2fe;
+    margin-top:10px;
+}
+input.correct{
+    border-color:#16a34a;
+    background:#ecfdf5;
+}
+input.wrong{
+    border-color:#dc2626;
+    background:#fee2e2;
+}
+
 .notice{
     background:#fffbeb;
     border:1px solid #facc15;
@@ -74,6 +92,13 @@ button{
     border-radius:10px;
     margin-top:15px;
 }
+.feedback-result{
+    margin-top:10px;
+    font-weight:600;
+}
+.feedback-result.ok{color:#16a34a}
+.feedback-result.bad{color:#dc2626}
+
 .grid{
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
@@ -87,14 +112,6 @@ button{
     text-align:center;
     border-radius:12px 12px 0 0;
     margin-bottom:10px;
-}
-input[type="text"]{
-    width:100%;
-    padding:10px;
-    font-size:1rem;
-    border-radius:8px;
-    border:2px solid #c7d2fe;
-    margin-top:10px;
 }
 </style>
 </head>
@@ -193,14 +210,6 @@ function renderQuestion(){
         <p>${q.text}</p>
     `;
 
-    if(q.question_type==='multiple_choice'){
-        html+=`
-        <button class="choice" onclick="checkMC(this,1)">${q.option1}</button>
-        <button class="choice" onclick="checkMC(this,2)">${q.option2}</button>
-        <button class="choice" onclick="checkMC(this,3)">${q.option3}</button>
-        <button class="choice" onclick="checkMC(this,4)">${q.option4}</button>`;
-    }
-
     if(q.question_type==='fill_gap'){
         html+=`
         <input type="text" id="gapInput" placeholder="Γράψε τη λέξη">
@@ -211,28 +220,27 @@ function renderQuestion(){
     document.getElementById('app').innerHTML=html;
 }
 
-function checkMC(btn,val){
-    if(answered) return; answered=true;
-    const q=questions[index];
-    const correct=Number(String(q.answer).trim());
-    document.querySelectorAll('.choice').forEach(b=>b.classList.add('disabled'));
-    btn.classList.add(val===correct?'correct':'wrong');
-    showFeedback(q);
-}
-
 function checkGap(){
-    if(answered) return; answered=true;
-    const q=questions[index];
-    const user=normalize(document.getElementById('gapInput').value);
-    const correct=normalize(q.answer);
-    showFeedback(q, user===correct);
-}
+    if(answered) return;
+    answered=true;
 
-function showFeedback(q, ok=true){
-    let fb='';
+    const q=questions[index];
+    const input=document.getElementById('gapInput');
+    const user=normalize(input.value);
+    const correct=normalize(q.answer);
+
+    let ok = user === correct;
+
+    input.classList.add(ok?'correct':'wrong');
+
+    let fb=`<div class="feedback-result ${ok?'ok':'bad'}">
+        ${ok?'✓ Σωστό':'✗ Λάθος'}
+    </div>`;
+
     if(q['Παρατηρήσεις']){
         fb+=`<div class="notice"><strong>Παρατήρηση:</strong><br>${q['Παρατηρήσεις']}</div>`;
     }
+
     fb+=`<button class="primary" onclick="next()">Επόμενη άσκηση →</button>`;
     document.getElementById('feedback').innerHTML=fb;
 }
