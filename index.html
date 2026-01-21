@@ -6,257 +6,193 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body {
-  margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  background: linear-gradient(135deg, #eef2ff, #f8fafc);
-  color: #1e293b;
+body{
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background:#f5f7fb;
+    margin:0;
+    padding:20px;
 }
-
-.container {
-  max-width: 900px;
-  margin: auto;
-  padding: 20px;
+.card{
+    max-width:900px;
+    margin:0 auto 20px;
+    background:#fff;
+    border-radius:14px;
+    padding:20px;
+    box-shadow:0 4px 16px rgba(0,0,0,.08);
 }
-
-.card {
-  background: white;
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-  margin-bottom: 20px;
+h1,h2{
+    margin-top:0;
 }
-
-h1, h2 {
-  margin-top: 0;
+button{
+    padding:12px 18px;
+    border-radius:10px;
+    border:none;
+    cursor:pointer;
+    font-size:1rem;
 }
-
-button {
-  border: none;
-  border-radius: 12px;
-  padding: 12px 18px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  margin: 6px;
+.primary{background:#4f46e5;color:#fff}
+.secondary{background:#64748b;color:#fff}
+.choice{
+    background:#eef2ff;
+    border:2px solid #c7d2fe;
+    margin:6px 0;
+    width:100%;
+    text-align:left;
 }
-
-.btn-primary {
-  background: #4f46e5;
-  color: white;
+.choice.correct{background:#16a34a;color:#fff}
+.choice.wrong{background:#dc2626;color:#fff}
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    gap:10px;
 }
-
-.btn-secondary {
-  background: #e0e7ff;
-  color: #1e293b;
+.back{
+    margin-top:20px;
 }
-
-.btn-danger {
-  background: #fee2e2;
-  color: #991b1b;
-}
-
-.word {
-  cursor: pointer;
-  padding: 2px 4px;
-  border-radius: 6px;
-}
-
-.word.correct {
-  background: #bbf7d0;
-}
-
-.word.wrong {
-  background: #fecaca;
-}
-
-.top-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+.hidden{display:none}
 </style>
 </head>
 
 <body>
-<div class="container" id="app">
-  <div class="card">
-    <h1>Συνοχή & Συνεκτικότητα</h1>
-    <p>Φόρτωση δεδομένων…</p>
-  </div>
-</div>
+
+<div id="app"></div>
 
 <script>
-/* =======================
-   ΡΥΘΜΙΣΕΙΣ
-======================= */
+/* ================== ΡΥΘΜΙΣΗ CSV ================== */
+const CSV_URL =
+'https://docs.google.com/spreadsheets/d/e/2PACX-1vSBmZdhLakrSUcbxWqSdNo5O07jxI7YRJ_J890qyb-u0qqoOqe1RMl18UQx0SFbLBo2Ihdm6gOOnelY/pub?output=csv';
 
-const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSBmZdhLakrSUcbxWqSdNo5O07jxI7YRJ_J890qyb-u0qqoOqe1RMl18UQx0SFbLBo2Ihdm6gOOnelY/pub?output=csv';
+/* ================== STATE ================== */
+let allData=[];
+let questions=[];
+let index=0;
+let selectedLevel=null;
+let selectedCount=null;
 
-
-let allData = [];
-let sessionData = [];
-let currentIndex = 0;
-let currentLevel = null;
-let questionLimit = 1;
-
-/* =======================
-   CSV LOADING
-======================= */
-
-async function loadCSV() {
-  const res = await fetch(CSV_URL);
-  const text = await res.text();
-  const lines = text.trim().split('\n');
-  const headers = lines[0].split(',').map(h => h.trim());
-
-  allData = lines.slice(1).map(line => {
-    const values = line.split(',');
-    const obj = {};
-    headers.forEach((h, i) => obj[h] = values[i] || '');
-    return obj;
-  });
-
-  renderHome();
+/* ================== CSV ================== */
+function parseCSV(text){
+    const lines=text.trim().split('\n');
+    const headers=lines.shift().split(',');
+    return lines.map(l=>{
+        const v=l.split(',');
+        let o={};
+        headers.forEach((h,i)=>o[h]=v[i]||'');
+        return o;
+    });
 }
 
-/* =======================
-   HOME
-======================= */
+async function loadData(){
+    const res=await fetch(CSV_URL);
+    const txt=await res.text();
+    allData=parseCSV(txt);
+    renderHome();
+}
 
-function renderHome() {
-  document.getElementById('app').innerHTML = `
+/* ================== HOME ================== */
+function renderHome(){
+    document.getElementById('app').innerHTML=`
     <div class="card">
-      <h2>Επιλογή Επιπέδου</h2>
-      <div>
-        <button class="btn-primary" onclick="start('level1')">Επίπεδο 1</button>
-        <button class="btn-primary" onclick="start('level2')">Επίπεδο 2</button>
-        <button class="btn-primary" onclick="start('level3')">Επίπεδο 3</button>
-        <button class="btn-primary" onclick="start('level4')">Επίπεδο 4</button>
-        <button class="btn-secondary" onclick="start('mixed')">Μικτό Επίπεδο</button>
-      </div>
-
-      <h2>Αριθμός Ασκήσεων</h2>
-      <div>
-        <button class="btn-secondary" onclick="setLimit(1)">1 (Παράδειγμα)</button>
-        <button class="btn-secondary" onclick="setLimit(10)">10 (Εξάσκηση)</button>
-        <button class="btn-secondary" onclick="setLimit('all')">ΟΛΕΣ (Επανάληψη)</button>
-      </div>
+        <h1>Συνοχή & Συνεκτικότητα</h1>
+        <h2>Επιλογή Επιπέδου</h2>
+        <div class="grid">
+            <button class="primary" onclick="selectLevel(1)">Επίπεδο 1</button>
+            <button class="primary" onclick="selectLevel(2)">Επίπεδο 2</button>
+            <button class="primary" onclick="selectLevel(3)">Επίπεδο 3</button>
+            <button class="primary" onclick="selectLevel(4)">Επίπεδο 4</button>
+            <button class="secondary" onclick="selectLevel('mixed')">Μικτό</button>
+        </div>
+        <h2 style="margin-top:20px">Αριθμός Ασκήσεων</h2>
+        <div class="grid">
+            <button class="choice" onclick="selectCount(1)">1 (Παράδειγμα)</button>
+            <button class="choice" onclick="selectCount(10)">10 (Εξάσκηση)</button>
+            <button class="choice" onclick="selectCount('all')">Όλες (Επανάληψη)</button>
+        </div>
     </div>
-  `;
+    `;
 }
 
-function setLimit(val) {
-  questionLimit = val;
+/* ================== SELECTION ================== */
+function selectLevel(l){selectedLevel=l}
+function selectCount(c){
+    if(selectedLevel===null)return alert('Διάλεξε πρώτα επίπεδο');
+    selectedCount=c;
+    startQuiz();
 }
 
-/* =======================
-   START SESSION
-======================= */
+/* ================== QUIZ ================== */
+function startQuiz(){
+    let pool=[...allData];
 
-function start(level) {
-  currentLevel = level;
-  let filtered;
-
-  if (level === 'mixed') {
-    filtered = [...allData];
-  } else {
-    filtered = allData.filter(q => q.level === level);
-  }
-
-  if (questionLimit !== 'all') {
-    filtered = filtered.slice(0, questionLimit);
-  }
-
-  sessionData = filtered;
-  currentIndex = 0;
-  renderQuestion();
-}
-
-/* =======================
-   RENDER QUESTION
-======================= */
-
-function renderQuestion() {
-  if (currentIndex >= sessionData.length) {
-    renderEnd();
-    return;
-  }
-
-  const q = sessionData[currentIndex];
-
-  if (q.question_type === 'pick_words') {
-    renderPickWords(q);
-    return;
-  }
-
-  document.getElementById('app').innerHTML = `
-    <div class="card">
-      <div class="top-actions">
-        <strong>Άσκηση ${currentIndex + 1}</strong>
-        <button class="btn-danger" onclick="renderHome()">Αρχική</button>
-      </div>
-      <p>${q.question}</p>
-      <button class="btn-primary" onclick="next()">Επόμενη</button>
-    </div>
-  `;
-}
-
-/* =======================
-   PICK WORDS
-======================= */
-
-function renderPickWords(q) {
-  const targets = q.targets.split('|').map(t => t.trim());
-  let found = new Set();
-
-  const words = q.text.split(' ').map(w =>
-    `<span class="word" onclick="pick(this, '${w.replace(/[.,]/g,'')}')">${w}</span>`
-  ).join(' ');
-
-  document.getElementById('app').innerHTML = `
-    <div class="card">
-      <div class="top-actions">
-        <strong>Επίπεδο 4</strong>
-        <button class="btn-danger" onclick="renderHome()">Αρχική</button>
-      </div>
-      <p>${q.question}</p>
-      <p>${words}</p>
-    </div>
-  `;
-
-  window.pick = (el, word) => {
-    if (targets.includes(word)) {
-      el.classList.add('correct');
-      found.add(word);
-      if (found.size === targets.length) {
-        setTimeout(next, 600);
-      }
-    } else {
-      el.classList.add('wrong');
+    if(selectedLevel!=='mixed'){
+        pool=pool.filter(q=>q.level==selectedLevel);
     }
-  };
+
+    if(selectedCount!=='all'){
+        pool=pool.slice(0,selectedCount);
+    }
+
+    questions=pool;
+    index=0;
+
+    if(questions.length===0){
+        alert('Δεν βρέθηκαν ασκήσεις');
+        return renderHome();
+    }
+
+    renderQuestion();
 }
 
-/* =======================
-   NEXT / END
-======================= */
+function renderQuestion(){
+    const q=questions[index];
 
-function next() {
-  currentIndex++;
-  renderQuestion();
-}
-
-function renderEnd() {
-  document.getElementById('app').innerHTML = `
+    let html=`
     <div class="card">
-      <h2>Τέλος Ασκήσεων</h2>
-      <button class="btn-primary" onclick="renderHome()">Επιστροφή στην αρχική</button>
+        <h2>Άσκηση ${index+1} / ${questions.length}</h2>
+        <p><strong>${q.question}</strong></p>
+        <p>${q.text}</p>
+    `;
+
+    if(q.question_type==='multiple_choice'){
+        html+=`
+        <button class="choice" onclick="check(this,'1')">${q.option1}</button>
+        <button class="choice" onclick="check(this,'2')">${q.option2}</button>
+        <button class="choice" onclick="check(this,'3')">${q.option3}</button>
+        <button class="choice" onclick="check(this,'4')">${q.option4}</button>
+        `;
+    }
+
+    html+=`
+        <div class="back">
+            <button class="secondary" onclick="renderHome()">Επιστροφή στην αρχή</button>
+        </div>
     </div>
-  `;
+    `;
+
+    document.getElementById('app').innerHTML=html;
 }
 
-loadCSV();
+function check(btn,val){
+    const q=questions[index];
+    if(val==q.answer){
+        btn.classList.add('correct');
+    }else{
+        btn.classList.add('wrong');
+    }
+    setTimeout(next,800);
+}
+
+function next(){
+    index++;
+    if(index<questions.length){
+        renderQuestion();
+    }else{
+        alert('Τέλος ασκήσεων');
+        renderHome();
+    }
+}
+
+loadData();
 </script>
+
 </body>
 </html>
