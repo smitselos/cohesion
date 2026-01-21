@@ -20,9 +20,7 @@ body{
     padding:20px;
     box-shadow:0 4px 16px rgba(0,0,0,.08);
 }
-h1,h2{
-    margin-top:0;
-}
+h1,h2{margin-top:0}
 button{
     padding:12px 18px;
     border-radius:10px;
@@ -46,10 +44,7 @@ button{
     grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
     gap:10px;
 }
-.back{
-    margin-top:20px;
-}
-.hidden{display:none}
+.back{margin-top:20px}
 </style>
 </head>
 
@@ -58,41 +53,45 @@ button{
 <div id="app"></div>
 
 <script>
-/* ================== ΡΥΘΜΙΣΗ CSV ================== */
+/* ================= CSV ================= */
 const CSV_URL =
 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSBmZdhLakrSUcbxWqSdNo5O07jxI7YRJ_J890qyb-u0qqoOqe1RMl18UQx0SFbLBo2Ihdm6gOOnelY/pub?output=csv';
 
-/* ================== STATE ================== */
-let allData=[];
-let questions=[];
-let index=0;
-let selectedLevel=null;
-let selectedCount=null;
+/* ================= STATE ================= */
+let allData = [];
+let questions = [];
+let index = 0;
+let selectedLevel = null;
+let selectedCount = null;
 
-/* ================== CSV ================== */
+/* ================= CSV PARSE ================= */
 function parseCSV(text){
-    const lines=text.trim().split('\n');
-    const headers=lines.shift().split(',');
-    return lines.map(l=>{
-        const v=l.split(',');
-        let o={};
-        headers.forEach((h,i)=>o[h]=v[i]||'');
-        return o;
+    const lines = text.trim().split('\n');
+    const headers = lines.shift().split(',');
+    return lines.map(line=>{
+        const values = line.split(',');
+        let obj = {};
+        headers.forEach((h,i)=>obj[h]=values[i]||'');
+        return obj;
     });
 }
 
 async function loadData(){
-    const res=await fetch(CSV_URL);
-    const txt=await res.text();
-    allData=parseCSV(txt);
+    const res = await fetch(CSV_URL);
+    const txt = await res.text();
+    allData = parseCSV(txt);
     renderHome();
 }
 
-/* ================== HOME ================== */
+/* ================= HOME ================= */
 function renderHome(){
-    document.getElementById('app').innerHTML=`
+    selectedLevel = null;
+    selectedCount = null;
+
+    document.getElementById('app').innerHTML = `
     <div class="card">
         <h1>Συνοχή & Συνεκτικότητα</h1>
+
         <h2>Επιλογή Επιπέδου</h2>
         <div class="grid">
             <button class="primary" onclick="selectLevel(1)">Επίπεδο 1</button>
@@ -101,6 +100,7 @@ function renderHome(){
             <button class="primary" onclick="selectLevel(4)">Επίπεδο 4</button>
             <button class="secondary" onclick="selectLevel('mixed')">Μικτό</button>
         </div>
+
         <h2 style="margin-top:20px">Αριθμός Ασκήσεων</h2>
         <div class="grid">
             <button class="choice" onclick="selectCount(1)">1 (Παράδειγμα)</button>
@@ -111,31 +111,43 @@ function renderHome(){
     `;
 }
 
-/* ================== SELECTION ================== */
-function selectLevel(l){selectedLevel=l}
-function selectCount(c){
-    if(selectedLevel===null)return alert('Διάλεξε πρώτα επίπεδο');
-    selectedCount=c;
+/* ================= SELECTION ================= */
+function selectLevel(level){
+    selectedLevel = level;
+}
+
+function selectCount(count){
+    if(selectedLevel === null){
+        alert('Διάλεξε πρώτα επίπεδο');
+        return;
+    }
+    selectedCount = count;
     startQuiz();
 }
 
-/* ================== QUIZ ================== */
+/* ================= QUIZ ================= */
 function startQuiz(){
-    let pool=[...allData];
+    let pool = [...allData];
 
-    if(selectedLevel!=='mixed'){
-        pool=pool.filter(q=>q.level==selectedLevel);
+    if(selectedLevel !== 'mixed'){
+        const map = {
+            1:'multiple_choice',
+            2:'fill_gap',
+            3:'matching',
+            4:'pick_words'
+        };
+        pool = pool.filter(q => q.question_type === map[selectedLevel]);
     }
 
-    if(selectedCount!=='all'){
-        pool=pool.slice(0,selectedCount);
+    if(selectedCount !== 'all'){
+        pool = pool.slice(0, selectedCount);
     }
 
-    questions=pool;
-    index=0;
+    questions = pool;
+    index = 0;
 
-    if(questions.length===0){
-        alert('Δεν βρέθηκαν ασκήσεις');
+    if(questions.length === 0){
+        alert('Δεν βρέθηκαν ασκήσεις για αυτή την επιλογή');
         return renderHome();
     }
 
@@ -143,39 +155,41 @@ function startQuiz(){
 }
 
 function renderQuestion(){
-    const q=questions[index];
+    const q = questions[index];
 
-    let html=`
+    let html = `
     <div class="card">
         <h2>Άσκηση ${index+1} / ${questions.length}</h2>
         <p><strong>${q.question}</strong></p>
         <p>${q.text}</p>
     `;
 
-    if(q.question_type==='multiple_choice'){
-        html+=`
+    if(q.question_type === 'multiple_choice'){
+        html += `
         <button class="choice" onclick="check(this,'1')">${q.option1}</button>
         <button class="choice" onclick="check(this,'2')">${q.option2}</button>
         <button class="choice" onclick="check(this,'3')">${q.option3}</button>
         <button class="choice" onclick="check(this,'4')">${q.option4}</button>
         `;
+    } else {
+        html += `<p><em>(Ο τύπος άσκησης θα υλοποιηθεί στο επόμενο βήμα)</em></p>`;
     }
 
-    html+=`
+    html += `
         <div class="back">
             <button class="secondary" onclick="renderHome()">Επιστροφή στην αρχή</button>
         </div>
     </div>
     `;
 
-    document.getElementById('app').innerHTML=html;
+    document.getElementById('app').innerHTML = html;
 }
 
 function check(btn,val){
-    const q=questions[index];
-    if(val==q.answer){
+    const q = questions[index];
+    if(val == q.answer){
         btn.classList.add('correct');
-    }else{
+    } else {
         btn.classList.add('wrong');
     }
     setTimeout(next,800);
@@ -183,9 +197,9 @@ function check(btn,val){
 
 function next(){
     index++;
-    if(index<questions.length){
+    if(index < questions.length){
         renderQuestion();
-    }else{
+    } else {
         alert('Τέλος ασκήσεων');
         renderHome();
     }
