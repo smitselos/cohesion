@@ -56,7 +56,6 @@ button{
     font-size:1rem;
 }
 .primary{background:#4f46e5;color:#fff}
-.secondary{background:#64748b;color:#fff}
 .choice{
     background:var(--blue-soft);
     border:2px solid #c7d2fe;
@@ -104,6 +103,7 @@ input.wrong{
     grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
     gap:10px;
 }
+
 .footer{
     background:var(--blue);
     color:rgba(255,255,255,.7);
@@ -210,6 +210,14 @@ function renderQuestion(){
         <p>${q.text}</p>
     `;
 
+    if(q.question_type==='multiple_choice'){
+        html+=`
+        <button class="choice" onclick="checkMC(this,1)">${q.option1}</button>
+        <button class="choice" onclick="checkMC(this,2)">${q.option2}</button>
+        <button class="choice" onclick="checkMC(this,3)">${q.option3}</button>
+        <button class="choice" onclick="checkMC(this,4)">${q.option4}</button>`;
+    }
+
     if(q.question_type==='fill_gap'){
         html+=`
         <input type="text" id="gapInput" placeholder="Γράψε τη λέξη">
@@ -220,27 +228,33 @@ function renderQuestion(){
     document.getElementById('app').innerHTML=html;
 }
 
+function checkMC(btn,val){
+    if(answered) return;
+    answered=true;
+    const q=questions[index];
+    const correct=Number(q.answer);
+    document.querySelectorAll('.choice').forEach(b=>b.classList.add('disabled'));
+    btn.classList.add(val===correct?'correct':'wrong');
+    showFeedback(q);
+}
+
 function checkGap(){
     if(answered) return;
     answered=true;
-
     const q=questions[index];
     const input=document.getElementById('gapInput');
-    const user=normalize(input.value);
-    const correct=normalize(q.answer);
-
-    let ok = user === correct;
-
+    const ok = normalize(input.value)===normalize(q.answer);
     input.classList.add(ok?'correct':'wrong');
+    showFeedback(q,ok);
+}
 
+function showFeedback(q,ok=true){
     let fb=`<div class="feedback-result ${ok?'ok':'bad'}">
         ${ok?'✓ Σωστό':'✗ Λάθος'}
     </div>`;
-
     if(q['Παρατηρήσεις']){
         fb+=`<div class="notice"><strong>Παρατήρηση:</strong><br>${q['Παρατηρήσεις']}</div>`;
     }
-
     fb+=`<button class="primary" onclick="next()">Επόμενη άσκηση →</button>`;
     document.getElementById('feedback').innerHTML=fb;
 }
