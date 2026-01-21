@@ -6,10 +6,40 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
+:root{
+    --blue:#1e3a8a;
+    --blue-soft:#eef2ff;
+}
 body{
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     background:#f5f7fb;
     margin:0;
+}
+
+/* HEADER */
+.header{
+    background:var(--blue);
+    color:white;
+    padding:14px 20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+.header h1{
+    font-size:1.2rem;
+    margin:0;
+    font-weight:600;
+}
+.home-btn{
+    background:transparent;
+    border:none;
+    color:white;
+    font-size:1.4rem;
+    cursor:pointer;
+}
+
+/* MAIN */
+.main{
     padding:20px;
 }
 .card{
@@ -20,7 +50,8 @@ body{
     padding:20px;
     box-shadow:0 4px 16px rgba(0,0,0,.08);
 }
-h1,h2{margin-top:0}
+h2{margin-top:0}
+
 button{
     padding:12px 18px;
     border-radius:10px;
@@ -31,7 +62,7 @@ button{
 .primary{background:#4f46e5;color:#fff}
 .secondary{background:#64748b;color:#fff}
 .choice{
-    background:#eef2ff;
+    background:var(--blue-soft);
     border:2px solid #c7d2fe;
     margin:6px 0;
     width:100%;
@@ -40,6 +71,7 @@ button{
 .choice.correct{background:#16a34a;color:#fff}
 .choice.wrong{background:#dc2626;color:#fff}
 .choice.disabled{pointer-events:none; opacity:0.9}
+
 .grid{
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
@@ -53,12 +85,30 @@ button{
     margin-top:15px;
 }
 .back{margin-top:20px}
+
+/* FOOTER */
+.footer{
+    background:var(--blue);
+    color:rgba(255,255,255,.7);
+    font-size:0.75rem;
+    padding:10px 20px;
+    text-align:center;
+}
 </style>
 </head>
 
 <body>
 
-<div id="app"></div>
+<div class="header">
+    <h1>Συνοχή & Συνεκτικότητα</h1>
+    <button class="home-btn" onclick="renderHome()" title="Αρχική">⌂</button>
+</div>
+
+<div class="main" id="app"></div>
+
+<div class="footer">
+    📋 Νεοελληνική Γλώσσα &amp; Λογοτεχνία – Α &amp; Σ Μητσέλος 2026
+</div>
 
 <script>
 /* ================= CSV URL ================= */
@@ -66,72 +116,41 @@ const CSV_URL =
 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSBmZdhLakrSUcbxWqSdNo5O07jxI7YRJ_J890qyb-u0qqoOqe1RMl18UQx0SFbLBo2Ihdm6gOOnelY/pub?output=csv';
 
 /* ================= STATE ================= */
-let allData = [];
-let questions = [];
-let index = 0;
-let selectedLevel = null;
-let selectedCount = null;
-let answered = false;
+let allData=[],questions=[],index=0;
+let selectedLevel=null,selectedCount=null,answered=false;
 
 /* ================= CSV PARSER ================= */
 function parseCSV(text){
-    const rows = [];
-    let row = [];
-    let current = '';
-    let inQuotes = false;
-
+    const rows=[];let row=[],cur='',q=false;
     for(let i=0;i<text.length;i++){
-        const char = text[i];
-        const next = text[i+1];
-
-        if(char === '"' && inQuotes && next === '"'){
-            current += '"';
-            i++;
-        } else if(char === '"'){
-            inQuotes = !inQuotes;
-        } else if(char === ',' && !inQuotes){
-            row.push(current);
-            current = '';
-        } else if((char === '\n' || char === '\r') && !inQuotes){
-            if(current || row.length){
-                row.push(current);
-                rows.push(row);
-                row = [];
-                current = '';
-            }
-        } else {
-            current += char;
-        }
+        const c=text[i],n=text[i+1];
+        if(c=='"'&&q&&n=='"'){cur+='"';i++}
+        else if(c=='"'){q=!q}
+        else if(c==','&&!q){row.push(cur);cur=''}
+        else if((c=='\n'||c=='\r')&&!q){
+            if(cur||row.length){row.push(cur);rows.push(row)}
+            row=[];cur=''
+        } else cur+=c;
     }
-    if(current || row.length){
-        row.push(current);
-        rows.push(row);
-    }
-
-    const headers = rows.shift();
+    if(cur||row.length){row.push(cur);rows.push(row)}
+    const h=rows.shift();
     return rows.map(r=>{
-        let obj = {};
-        headers.forEach((h,i)=>obj[h]=r[i]||'');
-        return obj;
+        let o={};h.forEach((x,i)=>o[x]=r[i]||'');return o;
     });
 }
 
 /* ================= LOAD ================= */
 async function loadData(){
-    const res = await fetch(CSV_URL);
-    const txt = await res.text();
-    allData = parseCSV(txt);
+    const r=await fetch(CSV_URL);
+    allData=parseCSV(await r.text());
     renderHome();
 }
 
 /* ================= HOME ================= */
 function renderHome(){
-    selectedLevel = null;
-    selectedCount = null;
-    document.getElementById('app').innerHTML = `
+    selectedLevel=null;selectedCount=null;
+    document.getElementById('app').innerHTML=`
     <div class="card">
-        <h1>Συνοχή & Συνεκτικότητα</h1>
-
         <h2>Επιλογή Επιπέδου</h2>
         <div class="grid">
             <button class="primary" onclick="selectLevel(1)">Επίπεδο 1</button>
@@ -150,74 +169,60 @@ function renderHome(){
     </div>`;
 }
 
-function selectLevel(level){ selectedLevel = level; }
-
-function selectCount(count){
-    if(selectedLevel === null){ alert('Διάλεξε πρώτα επίπεδο'); return; }
-    selectedCount = count;
-    startQuiz();
+function selectLevel(l){selectedLevel=l}
+function selectCount(c){
+    if(selectedLevel===null){alert('Διάλεξε πρώτα επίπεδο');return}
+    selectedCount=c;startQuiz();
 }
 
 /* ================= QUIZ ================= */
 function startQuiz(){
-    let pool = [...allData];
-    if(selectedLevel !== 'mixed'){
-        const map = {1:'multiple_choice',2:'fill_gap',3:'matching',4:'pick_words'};
-        pool = pool.filter(q => q.question_type === map[selectedLevel]);
+    let pool=[...allData];
+    if(selectedLevel!=='mixed'){
+        const m={1:'multiple_choice',2:'fill_gap',3:'matching',4:'pick_words'};
+        pool=pool.filter(q=>q.question_type===m[selectedLevel]);
     }
-    if(selectedCount !== 'all'){ pool = pool.slice(0, selectedCount); }
-    questions = pool;
-    index = 0;
-    renderQuestion();
+    if(selectedCount!=='all') pool=pool.slice(0,selectedCount);
+    questions=pool;index=0;renderQuestion();
 }
 
 function renderQuestion(){
-    answered = false;
-    const q = questions[index];
-
-    let html = `
+    answered=false;
+    const q=questions[index];
+    document.getElementById('app').innerHTML=`
     <div class="card">
         <h2>Άσκηση ${index+1} / ${questions.length}</h2>
         <p><strong>${q.question}</strong></p>
         <p>${q.text}</p>
-        <div id="choices">
+        <div>
             <button class="choice" onclick="check(this,1)">${q.option1}</button>
             <button class="choice" onclick="check(this,2)">${q.option2}</button>
             <button class="choice" onclick="check(this,3)">${q.option3}</button>
             <button class="choice" onclick="check(this,4)">${q.option4}</button>
         </div>
         <div id="feedback"></div>
-        <div class="back">
-            <button class="secondary" onclick="renderHome()">Επιστροφή στην αρχή</button>
-        </div>
     </div>`;
-    document.getElementById('app').innerHTML = html;
 }
 
 function check(btn,val){
-    if(answered) return;
-    answered = true;
-
-    const q = questions[index];
-    const correct = Number(String(q.answer).trim());
-
+    if(answered) return; answered=true;
+    const q=questions[index];
+    const correct=Number(String(q.answer).trim());
     document.querySelectorAll('.choice').forEach(b=>b.classList.add('disabled'));
+    btn.classList.add(val===correct?'correct':'wrong');
 
-    if(val === correct){ btn.classList.add('correct'); }
-    else{ btn.classList.add('wrong'); }
-
-    let feedback = '';
+    let fb='';
     if(q['Παρατηρήσεις']){
-        feedback += `<div class="notice"><strong>Παρατήρηση:</strong><br>${q['Παρατηρήσεις']}</div>`;
+        fb+=`<div class="notice"><strong>Παρατήρηση:</strong><br>${q['Παρατηρήσεις']}</div>`;
     }
-    feedback += `<button class="primary back" onclick="next()">Επόμενη άσκηση →</button>`;
-    document.getElementById('feedback').innerHTML = feedback;
+    fb+=`<button class="primary back" onclick="next()">Επόμενη άσκηση →</button>`;
+    document.getElementById('feedback').innerHTML=fb;
 }
 
 function next(){
     index++;
-    if(index < questions.length){ renderQuestion(); }
-    else{ alert('Τέλος ασκήσεων'); renderHome(); }
+    if(index<questions.length) renderQuestion();
+    else{alert('Τέλος ασκήσεων');renderHome();}
 }
 
 loadData();
