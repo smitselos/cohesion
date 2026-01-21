@@ -9,7 +9,11 @@
 :root{
     --blue:#1e3a8a;
     --blue-soft:#eef2ff;
+    --green:#16a34a;
+    --red:#dc2626;
 }
+
+/* ===== ΒΑΣΗ ===== */
 body{
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     background:#f5f7fb;
@@ -19,38 +23,58 @@ body{
     max-width:900px;
     margin:0 auto;
 }
+
+/* ===== HEADER ===== */
 .header{
     background:var(--blue);
     color:white;
-    padding:14px 20px;
+    padding:16px 22px;
     display:flex;
     justify-content:space-between;
     align-items:center;
-    border-radius:0 0 12px 12px;
+    border-radius:0 0 14px 14px;
 }
 .header h1{
-    font-size:1.2rem;
+    font-size:1.25rem;
     margin:0;
+    font-weight:600;
 }
 .home-btn{
-    background:transparent;
+    background:rgba(255,255,255,0.15);
     border:none;
     color:white;
-    font-size:1.4rem;
+    font-size:1.8rem;          /* ΜΕΓΑΛΥΤΕΡΟ */
+    padding:6px 14px;
+    border-radius:10px;
     cursor:pointer;
 }
-.main{ padding:20px 0; }
+.home-btn:hover{
+    background:rgba(255,255,255,0.25);
+}
+
+/* ===== ΚΥΡΙΟ ===== */
+.main{ padding:22px 0; }
+
 .card{
     background:#fff;
-    border-radius:14px;
-    padding:20px;
+    border-radius:16px;
+    padding:22px;
     box-shadow:0 4px 16px rgba(0,0,0,.08);
-    margin-bottom:20px;
+    margin-bottom:22px;
 }
+
 h2{margin-top:0}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    gap:12px;
+}
+
+/* ===== ΚΟΥΜΠΙΑ ===== */
 button{
-    padding:12px 18px;
-    border-radius:10px;
+    padding:14px 18px;
+    border-radius:12px;
     border:none;
     cursor:pointer;
     font-size:1rem;
@@ -59,58 +83,91 @@ button{
 .choice{
     background:var(--blue-soft);
     border:2px solid #c7d2fe;
-    margin:6px 0;
     width:100%;
     text-align:left;
+    position:relative;
 }
-.choice.correct{background:#16a34a;color:#fff}
-.choice.wrong{background:#dc2626;color:#fff}
-.choice.disabled{pointer-events:none; opacity:0.9}
 
+/* πολλαπλής επιλογής – καταστάσεις */
+.choice.correct{
+    background:var(--green);
+    color:white;
+}
+.choice.wrong{
+    background:var(--red);
+    color:white;
+}
+.choice.disabled{
+    pointer-events:none;
+    opacity:0.95;
+}
+
+/* εικονίδια ✓ / ✗ */
+.choice.correct::after,
+.choice.wrong::after{
+    position:absolute;
+    top:8px;
+    right:10px;
+    font-size:1.2rem;
+    font-weight:700;
+}
+.choice.correct::after{content:"✓";}
+.choice.wrong::after{content:"✗";}
+
+/* ===== FILL GAP ===== */
 input[type="text"]{
     width:100%;
-    padding:10px;
+    padding:12px;
     font-size:1rem;
-    border-radius:8px;
+    border-radius:10px;
     border:2px solid #c7d2fe;
     margin-top:10px;
 }
 input.correct{
-    border-color:#16a34a;
+    border-color:var(--green);
     background:#ecfdf5;
 }
 input.wrong{
-    border-color:#dc2626;
+    border-color:var(--red);
     background:#fee2e2;
 }
 
+/* ===== ΠΑΡΑΤΗΡΗΣΕΙΣ / ΣΩΣΤΗ ΑΠΑΝΤΗΣΗ ===== */
 .notice{
     background:#fffbeb;
     border:1px solid #facc15;
     padding:12px;
     border-radius:10px;
-    margin-top:15px;
+    margin-top:14px;
 }
-.feedback-result{
-    margin-top:10px;
-    font-weight:600;
-}
-.feedback-result.ok{color:#16a34a}
-.feedback-result.bad{color:#dc2626}
-
-.grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-    gap:10px;
+.correct-answer-box{
+    background:#ecfdf5;
+    border:1px solid var(--green);
+    padding:10px;
+    border-radius:10px;
+    margin-top:12px;
+    font-size:0.95rem;
 }
 
+/* ===== ΕΠΟΜΕΝΗ ΕΡΩΤΗΣΗ ===== */
+.next-btn{
+    background:var(--red);
+    color:white;
+    width:100%;
+    margin-top:26px;      /* ΑΠΟΣΤΑΣΗ */
+    padding:16px;
+    font-size:1.05rem;
+    border-radius:14px;
+}
+
+/* ===== FOOTER ===== */
 .footer{
     background:var(--blue);
     color:rgba(255,255,255,.7);
     font-size:0.75rem;
     padding:10px 20px;
     text-align:center;
-    border-radius:12px 12px 0 0;
+    border-radius:14px 14px 0 0;
     margin-bottom:10px;
 }
 </style>
@@ -122,7 +179,7 @@ input.wrong{
 
 <div class="header">
     <h1>Συνοχή & Συνεκτικότητα</h1>
-    <button class="home-btn" onclick="renderHome()">⌂</button>
+    <button class="home-btn" onclick="renderHome()" title="Αρχική">⌂</button>
 </div>
 
 <div class="main" id="app"></div>
@@ -140,7 +197,7 @@ const CSV_URL =
 let allData=[],questions=[],index=0;
 let selectedLevel=null,selectedCount=null,answered=false;
 
-/* CSV PARSER */
+/* ===== CSV PARSER ===== */
 function parseCSV(t){
     const r=[];let row=[],c='',q=false;
     for(let i=0;i<t.length;i++){
@@ -158,12 +215,18 @@ function parseCSV(t){
     return r.map(x=>{let o={};h.forEach((k,i)=>o[k]=x[i]||'');return o});
 }
 
+function normalize(s){
+    return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim();
+}
+
+/* ===== LOAD ===== */
 async function loadData(){
     const res=await fetch(CSV_URL);
     allData=parseCSV(await res.text());
     renderHome();
 }
 
+/* ===== HOME ===== */
 function renderHome(){
     selectedLevel=null;selectedCount=null;
     document.getElementById('app').innerHTML=`
@@ -173,7 +236,8 @@ function renderHome(){
             <button class="primary" onclick="selectLevel(1)">Επίπεδο 1</button>
             <button class="primary" onclick="selectLevel(2)">Επίπεδο 2</button>
         </div>
-        <h2 style="margin-top:20px">Αριθμός Ασκήσεων</h2>
+
+        <h2 style="margin-top:22px">Αριθμός Ασκήσεων</h2>
         <div class="grid">
             <button class="choice" onclick="selectCount(1)">1</button>
             <button class="choice" onclick="selectCount(10)">10</button>
@@ -185,19 +249,18 @@ function renderHome(){
 function selectLevel(l){selectedLevel=l}
 function selectCount(c){
     if(selectedLevel===null){alert('Διάλεξε πρώτα επίπεδο');return}
-    selectedCount=c;startQuiz();
+    selectedCount=c;
+    startQuiz();
 }
 
+/* ===== QUIZ ===== */
 function startQuiz(){
-    let pool=[...allData];
     const map={1:'multiple_choice',2:'fill_gap'};
-    pool=pool.filter(q=>q.question_type===map[selectedLevel]);
+    let pool=allData.filter(q=>q.question_type===map[selectedLevel]);
     if(selectedCount!=='all') pool=pool.slice(0,selectedCount);
-    questions=pool;index=0;renderQuestion();
-}
-
-function normalize(s){
-    return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim();
+    questions=pool;
+    index=0;
+    renderQuestion();
 }
 
 function renderQuestion(){
@@ -228,41 +291,65 @@ function renderQuestion(){
     document.getElementById('app').innerHTML=html;
 }
 
+/* ===== ΕΛΕΓΧΟΙ ===== */
 function checkMC(btn,val){
     if(answered) return;
     answered=true;
+
     const q=questions[index];
     const correct=Number(q.answer);
-    document.querySelectorAll('.choice').forEach(b=>b.classList.add('disabled'));
-    btn.classList.add(val===correct?'correct':'wrong');
+
+    const buttons=document.querySelectorAll('.choice');
+    buttons.forEach(b=>b.classList.add('disabled'));
+
+    if(val===correct){
+        btn.classList.add('correct');
+    }else{
+        btn.classList.add('wrong');
+        buttons[correct-1].classList.add('correct');
+    }
+
     showFeedback(q);
 }
 
 function checkGap(){
     if(answered) return;
     answered=true;
+
     const q=questions[index];
     const input=document.getElementById('gapInput');
     const ok = normalize(input.value)===normalize(q.answer);
+
     input.classList.add(ok?'correct':'wrong');
-    showFeedback(q,ok);
+
+    showFeedback(q, ok);
 }
 
 function showFeedback(q,ok=true){
-    let fb=`<div class="feedback-result ${ok?'ok':'bad'}">
-        ${ok?'✓ Σωστό':'✗ Λάθος'}
-    </div>`;
-    if(q['Παρατηρήσεις']){
-        fb+=`<div class="notice"><strong>Παρατήρηση:</strong><br>${q['Παρατηρήσεις']}</div>`;
+    let fb='';
+
+    if(!ok && q.question_type==='fill_gap'){
+        fb+=`
+        <div class="correct-answer-box">
+            <strong>Σωστή απάντηση:</strong> ${q.answer}
+        </div>`;
     }
-    fb+=`<button class="primary" onclick="next()">Επόμενη άσκηση →</button>`;
+
+    if(q['Παρατηρήσεις']){
+        fb+=`
+        <div class="notice">
+            <strong>Παρατήρηση:</strong><br>${q['Παρατηρήσεις']}
+        </div>`;
+    }
+
+    fb+=`<button class="next-btn" onclick="next()">Επόμενη ερώτηση →</button>`;
     document.getElementById('feedback').innerHTML=fb;
 }
 
 function next(){
     index++;
     if(index<questions.length) renderQuestion();
-    else{alert('Τέλος ασκήσεων');renderHome();}
+    else renderHome();
 }
 
 loadData();
