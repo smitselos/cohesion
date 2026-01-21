@@ -39,10 +39,18 @@ button{
 }
 .choice.correct{background:#16a34a;color:#fff}
 .choice.wrong{background:#dc2626;color:#fff}
+.choice.disabled{pointer-events:none; opacity:0.9}
 .grid{
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
     gap:10px;
+}
+.notice{
+    background:#fffbeb;
+    border:1px solid #facc15;
+    padding:12px;
+    border-radius:10px;
+    margin-top:15px;
 }
 .back{margin-top:20px}
 </style>
@@ -63,6 +71,7 @@ let questions = [];
 let index = 0;
 let selectedLevel = null;
 let selectedCount = null;
+let answered = false;
 
 /* ================= CSV PARSER ================= */
 function parseCSV(text){
@@ -119,7 +128,6 @@ async function loadData(){
 function renderHome(){
     selectedLevel = null;
     selectedCount = null;
-
     document.getElementById('app').innerHTML = `
     <div class="card">
         <h1>Συνοχή & Συνεκτικότητα</h1>
@@ -139,20 +147,13 @@ function renderHome(){
             <button class="choice" onclick="selectCount(10)">10 (Εξάσκηση)</button>
             <button class="choice" onclick="selectCount('all')">Όλες (Επανάληψη)</button>
         </div>
-    </div>
-    `;
+    </div>`;
 }
 
-/* ================= SELECTION ================= */
-function selectLevel(level){
-    selectedLevel = level;
-}
+function selectLevel(level){ selectedLevel = level; }
 
 function selectCount(count){
-    if(selectedLevel === null){
-        alert('Διάλεξε πρώτα επίπεδο');
-        return;
-    }
+    if(selectedLevel === null){ alert('Διάλεξε πρώτα επίπεδο'); return; }
     selectedCount = count;
     startQuiz();
 }
@@ -160,33 +161,18 @@ function selectCount(count){
 /* ================= QUIZ ================= */
 function startQuiz(){
     let pool = [...allData];
-
     if(selectedLevel !== 'mixed'){
-        const map = {
-            1:'multiple_choice',
-            2:'fill_gap',
-            3:'matching',
-            4:'pick_words'
-        };
+        const map = {1:'multiple_choice',2:'fill_gap',3:'matching',4:'pick_words'};
         pool = pool.filter(q => q.question_type === map[selectedLevel]);
     }
-
-    if(selectedCount !== 'all'){
-        pool = pool.slice(0, selectedCount);
-    }
-
+    if(selectedCount !== 'all'){ pool = pool.slice(0, selectedCount); }
     questions = pool;
     index = 0;
-
-    if(questions.length === 0){
-        alert('Δεν βρέθηκαν ασκήσεις');
-        return renderHome();
-    }
-
     renderQuestion();
 }
 
 function renderQuestion(){
+    answered = false;
     const q = questions[index];
 
     let html = `
@@ -194,49 +180,44 @@ function renderQuestion(){
         <h2>Άσκηση ${index+1} / ${questions.length}</h2>
         <p><strong>${q.question}</strong></p>
         <p>${q.text}</p>
-    `;
-
-    if(q.question_type === 'multiple_choice'){
-        html += `
-        <button class="choice" onclick="check(this,1)">${q.option1}</button>
-        <button class="choice" onclick="check(this,2)">${q.option2}</button>
-        <button class="choice" onclick="check(this,3)">${q.option3}</button>
-        <button class="choice" onclick="check(this,4)">${q.option4}</button>
-        `;
-    } else {
-        html += `<p><em>(Ο τύπος άσκησης θα υλοποιηθεί στο επόμενο στάδιο)</em></p>`;
-    }
-
-    html += `
+        <div id="choices">
+            <button class="choice" onclick="check(this,1)">${q.option1}</button>
+            <button class="choice" onclick="check(this,2)">${q.option2}</button>
+            <button class="choice" onclick="check(this,3)">${q.option3}</button>
+            <button class="choice" onclick="check(this,4)">${q.option4}</button>
+        </div>
+        <div id="feedback"></div>
         <div class="back">
             <button class="secondary" onclick="renderHome()">Επιστροφή στην αρχή</button>
         </div>
-    </div>
-    `;
-
+    </div>`;
     document.getElementById('app').innerHTML = html;
 }
 
 function check(btn,val){
+    if(answered) return;
+    answered = true;
+
     const q = questions[index];
     const correct = Number(String(q.answer).trim());
 
-    if(val === correct){
-        btn.classList.add('correct');
-    } else {
-        btn.classList.add('wrong');
+    document.querySelectorAll('.choice').forEach(b=>b.classList.add('disabled'));
+
+    if(val === correct){ btn.classList.add('correct'); }
+    else{ btn.classList.add('wrong'); }
+
+    let feedback = '';
+    if(q['Παρατηρήσεις']){
+        feedback += `<div class="notice"><strong>Παρατήρηση:</strong><br>${q['Παρατηρήσεις']}</div>`;
     }
-    setTimeout(next,900);
+    feedback += `<button class="primary back" onclick="next()">Επόμενη άσκηση →</button>`;
+    document.getElementById('feedback').innerHTML = feedback;
 }
 
 function next(){
     index++;
-    if(index < questions.length){
-        renderQuestion();
-    } else {
-        alert('Τέλος ασκήσεων');
-        renderHome();
-    }
+    if(index < questions.length){ renderQuestion(); }
+    else{ alert('Τέλος ασκήσεων'); renderHome(); }
 }
 
 loadData();
