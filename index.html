@@ -10,21 +10,15 @@
     --blue:#1e3a8a;
     --blue-soft:#eef2ff;
 }
-
-/* ΒΑΣΗ */
 body{
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     background:#f5f7fb;
     margin:0;
 }
-
-/* ΚΟΙΝΟ ΠΛΑΙΣΙΟ */
 .app-wrapper{
     max-width:900px;
     margin:0 auto;
 }
-
-/* HEADER */
 .header{
     background:var(--blue);
     color:white;
@@ -37,7 +31,6 @@ body{
 .header h1{
     font-size:1.2rem;
     margin:0;
-    font-weight:600;
 }
 .home-btn{
     background:transparent;
@@ -46,11 +39,7 @@ body{
     font-size:1.4rem;
     cursor:pointer;
 }
-
-/* MAIN */
-.main{
-    padding:20px 0;
-}
+.main{ padding:20px 0; }
 .card{
     background:#fff;
     border-radius:14px;
@@ -59,7 +48,6 @@ body{
     margin-bottom:20px;
 }
 h2{margin-top:0}
-
 button{
     padding:12px 18px;
     border-radius:10px;
@@ -69,7 +57,6 @@ button{
 }
 .primary{background:#4f46e5;color:#fff}
 .secondary{background:#64748b;color:#fff}
-
 .choice{
     background:var(--blue-soft);
     border:2px solid #c7d2fe;
@@ -80,13 +67,6 @@ button{
 .choice.correct{background:#16a34a;color:#fff}
 .choice.wrong{background:#dc2626;color:#fff}
 .choice.disabled{pointer-events:none; opacity:0.9}
-
-.grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-    gap:10px;
-}
-
 .notice{
     background:#fffbeb;
     border:1px solid #facc15;
@@ -94,10 +74,11 @@ button{
     border-radius:10px;
     margin-top:15px;
 }
-
-.back{margin-top:20px}
-
-/* FOOTER */
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    gap:10px;
+}
 .footer{
     background:var(--blue);
     color:rgba(255,255,255,.7);
@@ -107,6 +88,14 @@ button{
     border-radius:12px 12px 0 0;
     margin-bottom:10px;
 }
+input[type="text"]{
+    width:100%;
+    padding:10px;
+    font-size:1rem;
+    border-radius:8px;
+    border:2px solid #c7d2fe;
+    margin-top:10px;
+}
 </style>
 </head>
 
@@ -114,56 +103,50 @@ button{
 
 <div class="app-wrapper">
 
-    <div class="header">
-        <h1>Συνοχή & Συνεκτικότητα</h1>
-        <button class="home-btn" onclick="renderHome()" title="Αρχική">⌂</button>
-    </div>
+<div class="header">
+    <h1>Συνοχή & Συνεκτικότητα</h1>
+    <button class="home-btn" onclick="renderHome()">⌂</button>
+</div>
 
-    <div class="main" id="app"></div>
+<div class="main" id="app"></div>
 
-    <div class="footer">
-        📋 Νεοελληνική Γλώσσα &amp; Λογοτεχνία – Α &amp; Σ Μητσέλος 2026
-    </div>
+<div class="footer">
+📋 Νεοελληνική Γλώσσα &amp; Λογοτεχνία – Α &amp; Σ Μητσέλος 2026
+</div>
 
 </div>
 
 <script>
-/* ================= CSV URL ================= */
 const CSV_URL =
 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSBmZdhLakrSUcbxWqSdNo5O07jxI7YRJ_J890qyb-u0qqoOqe1RMl18UQx0SFbLBo2Ihdm6gOOnelY/pub?output=csv';
 
-/* ================= STATE ================= */
 let allData=[],questions=[],index=0;
 let selectedLevel=null,selectedCount=null,answered=false;
 
-/* ================= CSV PARSER ================= */
-function parseCSV(text){
-    const rows=[];let row=[],cur='',q=false;
-    for(let i=0;i<text.length;i++){
-        const c=text[i],n=text[i+1];
-        if(c=='"'&&q&&n=='"'){cur+='"';i++}
-        else if(c=='"'){q=!q}
-        else if(c==','&&!q){row.push(cur);cur=''}
-        else if((c=='\n'||c=='\r')&&!q){
-            if(cur||row.length){row.push(cur);rows.push(row)}
-            row=[];cur=''
-        } else cur+=c;
+/* CSV PARSER */
+function parseCSV(t){
+    const r=[];let row=[],c='',q=false;
+    for(let i=0;i<t.length;i++){
+        const ch=t[i],n=t[i+1];
+        if(ch=='"'&&q&&n=='"'){c+='"';i++}
+        else if(ch=='"'){q=!q}
+        else if(ch==','&&!q){row.push(c);c=''}
+        else if((ch=='\n'||ch=='\r')&&!q){
+            if(c||row.length){row.push(c);r.push(row)}
+            row=[];c=''
+        } else c+=ch;
     }
-    if(cur||row.length){row.push(cur);rows.push(row)}
-    const h=rows.shift();
-    return rows.map(r=>{
-        let o={};h.forEach((x,i)=>o[x]=r[i]||'');return o;
-    });
+    if(c||row.length){row.push(c);r.push(row)}
+    const h=r.shift();
+    return r.map(x=>{let o={};h.forEach((k,i)=>o[k]=x[i]||'');return o});
 }
 
-/* ================= LOAD ================= */
 async function loadData(){
-    const r=await fetch(CSV_URL);
-    allData=parseCSV(await r.text());
+    const res=await fetch(CSV_URL);
+    allData=parseCSV(await res.text());
     renderHome();
 }
 
-/* ================= HOME ================= */
 function renderHome(){
     selectedLevel=null;selectedCount=null;
     document.getElementById('app').innerHTML=`
@@ -172,16 +155,12 @@ function renderHome(){
         <div class="grid">
             <button class="primary" onclick="selectLevel(1)">Επίπεδο 1</button>
             <button class="primary" onclick="selectLevel(2)">Επίπεδο 2</button>
-            <button class="primary" onclick="selectLevel(3)">Επίπεδο 3</button>
-            <button class="primary" onclick="selectLevel(4)">Επίπεδο 4</button>
-            <button class="secondary" onclick="selectLevel('mixed')">Μικτό</button>
         </div>
-
         <h2 style="margin-top:20px">Αριθμός Ασκήσεων</h2>
         <div class="grid">
-            <button class="choice" onclick="selectCount(1)">1 (Παράδειγμα)</button>
-            <button class="choice" onclick="selectCount(10)">10 (Εξάσκηση)</button>
-            <button class="choice" onclick="selectCount('all')">Όλες (Επανάληψη)</button>
+            <button class="choice" onclick="selectCount(1)">1</button>
+            <button class="choice" onclick="selectCount(10)">10</button>
+            <button class="choice" onclick="selectCount('all')">Όλες</button>
         </div>
     </div>`;
 }
@@ -192,47 +171,69 @@ function selectCount(c){
     selectedCount=c;startQuiz();
 }
 
-/* ================= QUIZ ================= */
 function startQuiz(){
     let pool=[...allData];
-    if(selectedLevel!=='mixed'){
-        const m={1:'multiple_choice',2:'fill_gap',3:'matching',4:'pick_words'};
-        pool=pool.filter(q=>q.question_type===m[selectedLevel]);
-    }
+    const map={1:'multiple_choice',2:'fill_gap'};
+    pool=pool.filter(q=>q.question_type===map[selectedLevel]);
     if(selectedCount!=='all') pool=pool.slice(0,selectedCount);
     questions=pool;index=0;renderQuestion();
+}
+
+function normalize(s){
+    return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim();
 }
 
 function renderQuestion(){
     answered=false;
     const q=questions[index];
-    document.getElementById('app').innerHTML=`
+    let html=`
     <div class="card">
         <h2>Άσκηση ${index+1} / ${questions.length}</h2>
         <p><strong>${q.question}</strong></p>
         <p>${q.text}</p>
-        <div>
-            <button class="choice" onclick="check(this,1)">${q.option1}</button>
-            <button class="choice" onclick="check(this,2)">${q.option2}</button>
-            <button class="choice" onclick="check(this,3)">${q.option3}</button>
-            <button class="choice" onclick="check(this,4)">${q.option4}</button>
-        </div>
-        <div id="feedback"></div>
-    </div>`;
+    `;
+
+    if(q.question_type==='multiple_choice'){
+        html+=`
+        <button class="choice" onclick="checkMC(this,1)">${q.option1}</button>
+        <button class="choice" onclick="checkMC(this,2)">${q.option2}</button>
+        <button class="choice" onclick="checkMC(this,3)">${q.option3}</button>
+        <button class="choice" onclick="checkMC(this,4)">${q.option4}</button>`;
+    }
+
+    if(q.question_type==='fill_gap'){
+        html+=`
+        <input type="text" id="gapInput" placeholder="Γράψε τη λέξη">
+        <button class="primary" onclick="checkGap()">Έλεγχος</button>`;
+    }
+
+    html+=`<div id="feedback"></div></div>`;
+    document.getElementById('app').innerHTML=html;
 }
 
-function check(btn,val){
+function checkMC(btn,val){
     if(answered) return; answered=true;
     const q=questions[index];
     const correct=Number(String(q.answer).trim());
     document.querySelectorAll('.choice').forEach(b=>b.classList.add('disabled'));
     btn.classList.add(val===correct?'correct':'wrong');
+    showFeedback(q);
+}
 
+function checkGap(){
+    if(answered) return; answered=true;
+    const q=questions[index];
+    const user=normalize(document.getElementById('gapInput').value);
+    const correct=normalize(q.answer);
+    showFeedback(q, user===correct);
+}
+
+function showFeedback(q, ok=true){
     let fb='';
     if(q['Παρατηρήσεις']){
         fb+=`<div class="notice"><strong>Παρατήρηση:</strong><br>${q['Παρατηρήσεις']}</div>`;
     }
-    fb+=`<button class="primary back" onclick="next()">Επόμενη άσκηση →</button>`;
+    fb+=`<button class="primary" onclick="next()">Επόμενη άσκηση →</button>`;
     document.getElementById('feedback').innerHTML=fb;
 }
 
