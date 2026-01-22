@@ -10,6 +10,7 @@
     --primary:#4f46e5;
     --primary-hover:#3730a3;
     --primary-soft:#eef2ff;
+    --pink-soft:#faf5ff;
 
     --success:#16a34a;
     --success-soft:#ecfdf5;
@@ -30,7 +31,7 @@
     --shadow:0 6px 22px rgba(0,0,0,.08);
 }
 
-/* ===== ΒΑΣΗ ===== */
+/* ===== BASE ===== */
 html,body{
     height:100%;
     margin:0;
@@ -44,7 +45,7 @@ body{
     color:var(--text-main);
 }
 
-/* ===== ΕΝΙΑΙΑ ΚΑΡΤΑ ===== */
+/* ===== MAIN CARD ===== */
 .app-card{
     background:white;
     width:100%;
@@ -57,23 +58,23 @@ body{
     overflow:hidden;
 }
 
-/* ===== HEADER (ΜΕΣΑ ΣΤΗΝ ΚΑΡΤΑ) ===== */
-.header{
+/* ===== HEADER CARD ===== */
+.header-card{
+    padding:22px 24px;
+    border-bottom:1px solid var(--border);
     display:flex;
     justify-content:space-between;
     align-items:center;
-    padding:24px;
-    border-bottom:1px solid var(--border);
 }
-.header h1{
+.header-card h1{
     margin:0;
-    font-size:1.5rem;
+    font-size:1.45rem;
     font-weight:600;
 }
-.subtitle{
-    margin-top:4px;
+.header-meta{
     font-size:0.85rem;
     color:var(--text-muted);
+    margin-top:4px;
 }
 .home-btn{
     background:var(--primary-soft);
@@ -89,34 +90,46 @@ body{
     color:white;
 }
 
-/* ===== ΠΕΡΙΕΧΟΜΕΝΟ ===== */
+/* ===== CONTENT ===== */
 .main{
     flex:1;
     padding:28px;
 }
 
-/* ===== CARD ΕΣΩΤΕΡΙΚΕΣ ===== */
-.card{
+/* ===== SUB CARDS ===== */
+.sub-card{
     background:white;
     border-radius:var(--radius-md);
-    padding:24px;
+    padding:20px;
     box-shadow:0 2px 10px rgba(0,0,0,.06);
-    margin-bottom:24px;
+    margin-bottom:20px;
 }
 
-h2{
-    margin-top:0;
-    margin-bottom:14px;
-}
-p{ line-height:1.7 }
-
-.grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-    gap:12px;
+.text-card{
+    background:#f8fafc;
+    border-left:4px solid var(--primary);
 }
 
-/* ===== ΚΟΥΜΠΙΑ ===== */
+.question-card{
+    background:white;
+}
+
+.options-card{
+    background:var(--pink-soft);
+    border:1px solid #e9d5ff;
+}
+
+.feedback-card{
+    background:var(--warning-soft);
+    border:1px solid var(--warning);
+}
+
+.correct-card{
+    background:var(--success-soft);
+    border:1px solid var(--success);
+}
+
+/* ===== BUTTONS ===== */
 button{
     padding:14px 18px;
     border-radius:14px;
@@ -135,11 +148,10 @@ button{
 .choice{
     background:white;
     border:2px solid var(--border);
+    width:100%;
     text-align:left;
+    margin-bottom:10px;
     position:relative;
-}
-.choice:hover{
-    border-color:#94a3b8;
 }
 .choice.correct{
     background:var(--success);
@@ -163,7 +175,7 @@ button{
 .choice.correct::after{content:"✓";}
 .choice.wrong::after{content:"✗";}
 
-/* ===== FILL GAP ===== */
+/* ===== INPUT ===== */
 input[type="text"]{
     width:100%;
     padding:14px;
@@ -181,27 +193,14 @@ input.wrong{
     background:var(--danger-soft);
 }
 
-/* ===== FEEDBACK ===== */
-.notice{
-    background:var(--warning-soft);
-    border:1px solid var(--warning);
-    padding:14px;
-    border-radius:12px;
-    margin-top:16px;
+/* ===== ACTION ===== */
+.action-card{
+    margin-top:20px;
 }
-.correct-answer-box{
-    background:var(--success-soft);
-    border:1px solid var(--success);
-    padding:12px;
-    border-radius:12px;
-    margin-top:14px;
-}
-
 .next-btn{
+    width:100%;
     background:var(--primary);
     color:white;
-    width:100%;
-    margin-top:28px;
     padding:16px;
     border-radius:16px;
 }
@@ -209,7 +208,7 @@ input.wrong{
     background:var(--primary-hover);
 }
 
-/* ===== FOOTER (ΜΕΣΑ ΣΤΗΝ ΚΑΡΤΑ) ===== */
+/* ===== FOOTER ===== */
 .footer{
     border-top:1px solid var(--border);
     padding:12px 20px;
@@ -224,25 +223,24 @@ input.wrong{
 
 <div class="app-card">
 
-    <div class="header">
-        <div>
-            <h1>Συνοχή & Συνεκτικότητα</h1>
-            <div class="subtitle">Νεοελληνική Γλώσσα – Λύκειο</div>
-        </div>
-        <button class="home-btn" onclick="renderHome()">⌂</button>
+<div class="header-card">
+    <div>
+        <h1>Συνοχή & Συνεκτικότητα</h1>
+        <div class="header-meta" id="counter">Νεοελληνική Γλώσσα – Λύκειο</div>
     </div>
+    <button class="home-btn" onclick="renderHome()">⌂</button>
+</div>
 
-    <div class="main" id="app"></div>
+<div class="main" id="app"></div>
 
-    <div class="footer">
-        📋 Νεοελληνική Γλώσσα &amp; Λογοτεχνία – Α &amp; Σ Μητσέλος 2026
-    </div>
+<div class="footer">
+📋 Νεοελληνική Γλώσσα &amp; Λογοτεχνία – Α &amp; Σ Μητσέλος 2026
+</div>
 
 </div>
 
 <script>
-const CSV_URL =
-'https://docs.google.com/spreadsheets/d/e/2PACX-1vSBmZdhLakrSUcbxWqSdNo5O07jxI7YRJ_J890qyb-u0qqoOqe1RMl18UQx0SFbLBo2Ihdm6gOOnelY/pub?output=csv';
+const CSV_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vSBmZdhLakrSUcbxWqSdNo5O07jxI7YRJ_J890qyb-u0qqoOqe1RMl18UQx0SFbLBo2Ihdm6gOOnelY/pub?output=csv';
 
 let allData=[],questions=[],index=0;
 let selectedLevel=null,selectedCount=null,answered=false;
@@ -273,20 +271,18 @@ async function loadData(){
 }
 function renderHome(){
     selectedLevel=null;selectedCount=null;
+    document.getElementById('counter').textContent='Νεοελληνική Γλώσσα – Λύκειο';
     document.getElementById('app').innerHTML=`
-    <div class="card">
+    <div class="sub-card">
         <h2>Επιλογή Επιπέδου</h2>
-        <div class="grid">
-            <button class="primary" onclick="selectLevel(1)">Επίπεδο 1</button>
-            <button class="primary" onclick="selectLevel(2)">Επίπεδο 2</button>
-        </div>
-
-        <h2 style="margin-top:24px">Αριθμός Ασκήσεων</h2>
-        <div class="grid">
-            <button class="choice" onclick="selectCount(1)">1</button>
-            <button class="choice" onclick="selectCount(10)">10</button>
-            <button class="choice" onclick="selectCount('all')">Όλες</button>
-        </div>
+        <button class="primary" onclick="selectLevel(1)">Επίπεδο 1</button>
+        <button class="primary" onclick="selectLevel(2)">Επίπεδο 2</button>
+    </div>
+    <div class="sub-card">
+        <h2>Αριθμός Ασκήσεων</h2>
+        <button class="choice" onclick="selectCount(1)">1</button>
+        <button class="choice" onclick="selectCount(10)">10</button>
+        <button class="choice" onclick="selectCount('all')">Όλες</button>
     </div>`;
 }
 function selectLevel(l){selectedLevel=l}
@@ -306,25 +302,26 @@ function startQuiz(){
 function renderQuestion(){
     answered=false;
     const q=questions[index];
+    document.getElementById('counter').textContent=`Άσκηση ${index+1} / ${questions.length}`;
     let html=`
-    <div class="card">
-        <h2>Άσκηση ${index+1} / ${questions.length}</h2>
-        <p><strong>${q.question}</strong></p>
-        <p>${q.text}</p>
+    <div class="sub-card text-card">${q.text}</div>
+    <div class="sub-card question-card"><strong>${q.question}</strong></div>
     `;
     if(q.question_type==='multiple_choice'){
-        html+=`
-        <button class="choice" onclick="checkMC(this,1)">${q.option1}</button>
-        <button class="choice" onclick="checkMC(this,2)">${q.option2}</button>
-        <button class="choice" onclick="checkMC(this,3)">${q.option3}</button>
-        <button class="choice" onclick="checkMC(this,4)">${q.option4}</button>`;
+        html+=`<div class="sub-card options-card">`;
+        [q.option1,q.option2,q.option3,q.option4].forEach((o,i)=>{
+            html+=`<button class="choice" onclick="checkMC(this,${i+1})">${o}</button>`;
+        });
+        html+=`</div>`;
     }
     if(q.question_type==='fill_gap'){
         html+=`
-        <input type="text" id="gapInput" placeholder="Γράψε τη λέξη">
-        <button class="primary" onclick="checkGap()">Έλεγχος</button>`;
+        <div class="sub-card options-card">
+            <input type="text" id="gapInput" placeholder="Γράψε τη λέξη">
+            <button class="primary" onclick="checkGap()">Έλεγχος</button>
+        </div>`;
     }
-    html+=`<div id="feedback"></div></div>`;
+    html+=`<div id="feedback"></div>`;
     document.getElementById('app').innerHTML=html;
 }
 function checkMC(btn,val){
@@ -334,7 +331,7 @@ function checkMC(btn,val){
     const correct=Number(q.answer);
     const buttons=document.querySelectorAll('.choice');
     buttons.forEach(b=>b.classList.add('disabled'));
-    if(val===correct){btn.classList.add('correct')}
+    if(val===correct) btn.classList.add('correct');
     else{
         btn.classList.add('wrong');
         buttons[correct-1].classList.add('correct');
@@ -346,19 +343,19 @@ function checkGap(){
     answered=true;
     const q=questions[index];
     const input=document.getElementById('gapInput');
-    const ok = normalize(input.value)===normalize(q.answer);
+    const ok=normalize(input.value)===normalize(q.answer);
     input.classList.add(ok?'correct':'wrong');
-    showFeedback(q, ok);
+    showFeedback(q,ok);
 }
 function showFeedback(q,ok=true){
     let fb='';
     if(!ok && q.question_type==='fill_gap'){
-        fb+=`<div class="correct-answer-box"><strong>Σωστή απάντηση:</strong> ${q.answer}</div>`;
+        fb+=`<div class="sub-card correct-card"><strong>Σωστή απάντηση:</strong> ${q.answer}</div>`;
     }
     if(q['Παρατηρήσεις']){
-        fb+=`<div class="notice"><strong>Παρατήρηση:</strong><br>${q['Παρατηρήσεις']}</div>`;
+        fb+=`<div class="sub-card feedback-card"><strong>Παρατήρηση:</strong><br>${q['Παρατηρήσεις']}</div>`;
     }
-    fb+=`<button class="next-btn" onclick="next()">Επόμενη ερώτηση →</button>`;
+    fb+=`<div class="action-card"><button class="next-btn" onclick="next()">Επόμενη ερώτηση →</button></div>`;
     document.getElementById('feedback').innerHTML=fb;
 }
 function next(){
