@@ -132,34 +132,6 @@
             cursor: not-allowed;
         }
         
-        .home-btn {
-            background: #eef2ff;
-            color: #4f46e5;
-            border: none;
-            padding: 10px 14px;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .home-btn:hover {
-            background: #4f46e5;
-            transform: scale(1.05);
-        }
-        
-        .home-btn:hover .home-icon {
-            filter: brightness(0) invert(1);
-        }
-        
-        .home-icon {
-            width: 32px;
-            height: 32px;
-            object-fit: contain;
-        }
-        
         /* Loading */
         .loading { text-align: center; padding: 60px 20px; }
         .loading-spinner {
@@ -839,14 +811,9 @@
                             <h1>📝 Συνοχή & Συνεκτικότητα</h1>
                             <p class="header-subtitle">Νεοελληνική Γλώσσα - Λύκειο</p>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 20px;">
-                            <div class="question-counter">
-                                <p style="color: #64748b; font-size: 0.875rem;">Άσκηση</p>
-                                <span>${state.currentQuestion + 1}/${questions.length}</span>
-                            </div>
-                            <button class="home-btn" id="homeFromQuizBtn" title="Επιστροφή στην Αρχή">
-                                <svg class="home-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 9.5L12 3L21 9.5V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 22V12H15V22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                            </button>
+                        <div class="question-counter">
+                            <p style="color: #64748b; font-size: 0.875rem;">Άσκηση</p>
+                            <span>${state.currentQuestion + 1}/${questions.length}</span>
                         </div>
                     </div>
                     <div class="progress-bar">
@@ -1571,13 +1538,36 @@
             }
             
             html += `
-                <button class="main-btn success" id="nextBtn">
-                    ${state.currentQuestion < questions.length - 1 ? 'Επόμενη Άσκηση →' : 'Δες τα Αποτελέσματα'}
-                </button>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px;">
+                    <button class="main-btn" id="homeBtn" style="background: #64748b; color: white;">
+                        ⬅ Επιστροφή
+                    </button>
+                    <button class="main-btn success" id="nextBtn">
+                        ${state.currentQuestion < questions.length - 1 ? 'Επόμενη →' : 'Αποτελέσματα'}
+                    </button>
+                </div>
             </div>`;
             
             document.getElementById('feedback').innerHTML = html;
             
+            // Home button
+            document.getElementById('homeBtn').addEventListener('click', () => {
+                if (confirm('Θέλεις να επιστρέψεις στην αρχή; Η πρόοδός σου θα χαθεί.')) {
+                    state.screen = 'selection';
+                    state.selectedLevel = null;
+                    state.selectedCount = null;
+                    state.currentQuestion = 0;
+                    state.answered = false;
+                    state.correctCount = 0;
+                    state.matchingPairs = {};
+                    state.selectedWords = new Set();
+                    questions = [];
+                    wrongQuestions = [];
+                    render();
+                }
+            });
+            
+            // Next button
             document.getElementById('nextBtn').addEventListener('click', () => {
                 if (state.currentQuestion < questions.length - 1) {
                     state.currentQuestion++;
