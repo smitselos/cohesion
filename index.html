@@ -1411,7 +1411,11 @@
             state.answered = true;
             const q = questions[state.currentQuestion];
             const input = document.getElementById('gapInput');
-            const isCorrect = normalize(input.value) === normalize(q.answer);
+            
+            // Υποστήριξη πολλαπλών σωστών απαντήσεων (χωρισμένες με κόμμα)
+            const correctAnswers = q.answer.split(',').map(a => normalize(a.trim()));
+            const userAnswer = normalize(input.value);
+            const isCorrect = correctAnswers.includes(userAnswer);
             
             input.classList.add(isCorrect ? 'correct' : 'wrong');
             input.disabled = true;
