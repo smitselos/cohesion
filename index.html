@@ -136,17 +136,28 @@
             background: #eef2ff;
             color: #4f46e5;
             border: none;
-            font-size: 1.4rem;
-            padding: 8px 14px;
+            padding: 10px 14px;
             border-radius: 12px;
             cursor: pointer;
             transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .home-btn:hover {
             background: #4f46e5;
-            color: white;
             transform: scale(1.05);
+        }
+        
+        .home-btn:hover .home-icon {
+            filter: brightness(0) invert(1);
+        }
+        
+        .home-icon {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
         }
         
         /* Loading */
@@ -789,12 +800,14 @@
                             <h1>📝 Συνοχή & Συνεκτικότητα</h1>
                             <p class="header-subtitle">Νεοελληνική Γλώσσα - Λύκειο</p>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 16px;">
-                            <button class="home-btn" id="homeFromQuizBtn" title="Επιστροφή στην Αρχή">⌂</button>
+                        <div style="display: flex; align-items: center; gap: 20px;">
                             <div class="question-counter">
                                 <p style="color: #64748b; font-size: 0.875rem;">Άσκηση</p>
                                 <span>${state.currentQuestion + 1}/${questions.length}</span>
                             </div>
+                            <button class="home-btn" id="homeFromQuizBtn" title="Επιστροφή στην Αρχή">
+                                <img src="data:image/jpeg;base64,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" alt="Home" class="home-icon">
+                            </button>
                         </div>
                     </div>
                     <div class="progress-bar">
