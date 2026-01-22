@@ -289,6 +289,207 @@
             cursor: not-allowed; 
         }
         
+        /* Matching (Drag & Drop) */
+        .matching-hint {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+            color: #1e40af;
+            font-size: 0.875rem;
+            text-align: center;
+        }
+        
+        .matching-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .matching-column {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            min-height: 200px;
+        }
+        
+        .matching-column h4 {
+            color: #374151;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            text-align: center;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .matching-item {
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            background: white;
+            cursor: grab;
+            transition: all 0.2s;
+            position: relative;
+            user-select: none;
+        }
+        
+        .matching-item:active {
+            cursor: grabbing;
+        }
+        
+        .matching-item.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+        }
+        
+        .matching-item.drag-over {
+            border-color: #4f46e5;
+            background: #eef2ff;
+            border-style: dashed;
+        }
+        
+        .matching-item.matched {
+            border-color: #059669;
+            background: #ecfdf5;
+            cursor: default;
+        }
+        
+        .matching-item.matched::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            right: 12px;
+            transform: translateY(-50%);
+            color: #059669;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .matching-item.wrong {
+            border-color: #dc2626;
+            background: #fee2e2;
+        }
+        
+        .matching-item.wrong::after {
+            content: '✗';
+            position: absolute;
+            top: 50%;
+            right: 12px;
+            transform: translateY(-50%);
+            color: #dc2626;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .matching-label {
+            display: inline-block;
+            background: #4f46e5;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+        
+        .drop-zone {
+            min-height: 50px;
+            border: 2px dashed #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #f8fafc;
+            transition: all 0.2s;
+        }
+        
+        .drop-zone.drag-over {
+            border-color: #4f46e5;
+            background: #eef2ff;
+        }
+        
+        .drop-zone.filled {
+            border-style: solid;
+            border-color: #94a3b8;
+            background: white;
+        }
+        
+        .drop-zone-label {
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        
+        /* Pick Words */
+        .pick-words-hint {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+            color: #1e40af;
+            font-size: 0.875rem;
+            text-align: center;
+        }
+        
+        .pick-words-text {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            color: #1e293b;
+            padding: 20px;
+            border-radius: 12px;
+            line-height: 2;
+            font-size: 1rem;
+            border-left: 4px solid #4f46e5;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        
+        .pickable-word {
+            cursor: pointer;
+            padding: 2px 4px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            display: inline-block;
+        }
+        
+        .pickable-word:hover {
+            background: #fef3c7;
+        }
+        
+        .pickable-word.selected {
+            background: #ecfdf5;
+            color: #047857;
+            font-weight: 600;
+            border-bottom: 2px solid #059669;
+        }
+        
+        .pickable-word.correct {
+            background: #ecfdf5;
+            color: #047857;
+            font-weight: 600;
+            border-bottom: 2px solid #059669;
+            animation: pulse-green 0.6s ease-in-out;
+        }
+        
+        @keyframes pulse-green {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .pick-words-counter {
+            background: #fef3c7;
+            border: 1px solid #fcd34d;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 12px;
+            text-align: center;
+            font-size: 0.875rem;
+            color: #92400e;
+            font-weight: 500;
+        }
+        
         /* Feedback */
         .feedback-container {
             margin-top: 20px;
@@ -349,6 +550,11 @@
         .main-btn.primary:hover { background: #3730a3; }
         .main-btn.success { background: #16a34a; color: white; }
         .main-btn.success:hover { background: #15803d; }
+        .main-btn:disabled { 
+            background: #e2e8f0; 
+            color: #94a3b8; 
+            cursor: not-allowed; 
+        }
         
         /* Results */
         .results-card { text-align: center; padding: 40px 24px; }
@@ -398,6 +604,7 @@
         @media (max-width: 600px) {
             .header { flex-direction: column; align-items: flex-start; }
             .gap-input-container { flex-direction: column; }
+            .matching-container { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -420,12 +627,18 @@
         let wrongQuestions = [];
         
         let state = {
-            screen: 'loading', // loading, selection, quiz, results
-            selectedLevel: null, // 1 (multiple_choice) or 2 (fill_gap)
-            selectedCount: null, // 1, 10, 'all'
+            screen: 'loading',
+            selectedLevel: null,
+            selectedCount: null,
             currentQuestion: 0,
             answered: false,
-            correctCount: 0
+            correctCount: 0,
+            // Matching state
+            matchingPairs: {},
+            draggedItem: null,
+            // Pick words state
+            selectedWords: new Set(),
+            requiredWords: []
         };
 
         // =====================================================
@@ -523,6 +736,12 @@
                             <button class="filter-btn ${state.selectedLevel === 2 ? 'selected' : ''}" data-level="2">
                                 Επίπεδο 2 - Συμπλήρωση Κενού
                             </button>
+                            <button class="filter-btn ${state.selectedLevel === 3 ? 'selected' : ''}" data-level="3">
+                                Επίπεδο 3 - Αντιστοίχιση
+                            </button>
+                            <button class="filter-btn ${state.selectedLevel === 4 ? 'selected' : ''}" data-level="4">
+                                Επίπεδο 4 - Επιλογή Λέξεων
+                            </button>
                         </div>
                     </div>
                     
@@ -565,14 +784,34 @@
 
                 <div class="card">
                     <span class="text-label">Κείμενο ${state.currentQuestion + 1}</span>
-                    <div class="question-text">${q.text}</div>
-                    <div class="question-prompt">${q.question}</div>
+                    ${q.question_type !== 'pick_words' ? `
+                        <div class="question-text">${q.text}</div>
+                        <div class="question-prompt">${q.question}</div>
+                    ` : ''}
+                    ${q.question_type === 'pick_words' ? `
+                        <div class="question-prompt">${q.question}</div>
+                    ` : ''}
                 </div>
 
-                ${q.question_type === 'multiple_choice' ? renderMultipleChoice(q) : renderFillGap(q)}
+                ${renderQuestionType(q)}
 
                 <div id="feedback"></div>
             `;
+        }
+        
+        function renderQuestionType(q) {
+            switch(q.question_type) {
+                case 'multiple_choice':
+                    return renderMultipleChoice(q);
+                case 'fill_gap':
+                    return renderFillGap(q);
+                case 'matching':
+                    return renderMatching(q);
+                case 'pick_words':
+                    return renderPickWords(q);
+                default:
+                    return '';
+            }
         }
         
         function renderMultipleChoice(q) {
@@ -598,6 +837,97 @@
                             Έλεγχος
                         </button>
                     </div>
+                </div>
+            `;
+        }
+        
+        function renderMatching(q) {
+            // Parse answer: "Α. Επομένως | Β 1, Έμφαση|2, Συ Α-3, Β-1, Γ-4, D-2"
+            const parts = q.answer.split('|');
+            const leftItems = q.left_column ? q.left_column.split(',').map(s => s.trim()) : [];
+            const rightItems = q.right_column ? q.right_column.split(',').map(s => s.trim()) : [];
+            
+            // Parse labels from first part if exists
+            let leftLabels = [];
+            if (parts[0]) {
+                const labelMatches = parts[0].match(/([Α-ΩA-Z])\.\s*([^|]+)/g);
+                if (labelMatches) {
+                    leftLabels = labelMatches.map(m => {
+                        const match = m.match(/([Α-ΩA-Z])\.\s*(.+)/);
+                        return match ? { label: match[1], text: match[2].trim() } : null;
+                    }).filter(Boolean);
+                }
+            }
+            
+            return `
+                <div class="options-container">
+                    <div class="matching-hint">
+                        💡 Σύρετε τα στοιχεία από την αριστερή στήλη και αφήστε τα στην αντίστοιχη θέση της δεξιάς στήλης
+                    </div>
+                    <div class="matching-container">
+                        <div class="matching-column">
+                            <h4>Αριστερή Στήλη</h4>
+                            <div id="leftColumn">
+                                ${leftItems.map((item, i) => {
+                                    const label = leftLabels[i] ? leftLabels[i].label : String.fromCharCode(65 + i);
+                                    return `
+                                        <div class="matching-item" draggable="true" data-left-id="${i}" data-label="${label}">
+                                            <span class="matching-label">${label}</span>
+                                            ${item}
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                        <div class="matching-column">
+                            <h4>Δεξιά Στήλη</h4>
+                            <div id="rightColumn">
+                                ${rightItems.map((item, i) => `
+                                    <div class="drop-zone" data-right-id="${i}">
+                                        <div class="drop-zone-label">${i + 1}. ${item}</div>
+                                        <div class="drop-zone-content"></div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    <button class="main-btn primary" id="checkMatchingBtn" style="margin-top: 16px;" ${Object.keys(state.matchingPairs).length < leftItems.length ? 'disabled' : ''}>
+                        Έλεγχος Απαντήσεων
+                    </button>
+                </div>
+            `;
+        }
+        
+        function renderPickWords(q) {
+            // Parse required words from answer
+            state.requiredWords = q.answer ? q.answer.split(' ').map(w => w.trim()).filter(Boolean) : [];
+            
+            // Make words clickable
+            const words = q.text.split(' ');
+            const textHTML = words.map((word, i) => {
+                const cleanWord = word.replace(/[.,;!?]/g, '');
+                const isPickable = state.requiredWords.some(rw => normalize(rw) === normalize(cleanWord));
+                if (isPickable) {
+                    const isSelected = state.selectedWords.has(cleanWord);
+                    return `<span class="pickable-word ${isSelected ? 'selected' : ''}" data-word="${cleanWord}">${word}</span>`;
+                }
+                return word;
+            }).join(' ');
+            
+            return `
+                <div class="options-container">
+                    <div class="pick-words-hint">
+                        💡 Κάντε κλικ στις λέξεις που πιστεύετε ότι είναι σωστές. Θα πρασινίσουν όταν επιλέξετε σωστά.
+                    </div>
+                    <div class="pick-words-text">
+                        ${textHTML}
+                    </div>
+                    <div class="pick-words-counter">
+                        Έχετε επιλέξει: ${state.selectedWords.size} / ${state.requiredWords.length} λέξεις
+                    </div>
+                    <button class="main-btn primary" id="checkPickWordsBtn" style="margin-top: 16px;" ${state.selectedWords.size !== state.requiredWords.length ? 'disabled' : ''}>
+                        Έλεγχος Απαντήσεων
+                    </button>
                 </div>
             `;
         }
@@ -682,6 +1012,22 @@
                 });
             }
             
+            // Quiz screen - Matching (Drag & Drop)
+            attachMatchingListeners();
+            
+            const checkMatchingBtn = document.getElementById('checkMatchingBtn');
+            if (checkMatchingBtn) {
+                checkMatchingBtn.addEventListener('click', checkMatching);
+            }
+            
+            // Quiz screen - Pick Words
+            attachPickWordsListeners();
+            
+            const checkPickWordsBtn = document.getElementById('checkPickWordsBtn');
+            if (checkPickWordsBtn) {
+                checkPickWordsBtn.addEventListener('click', checkPickWords);
+            }
+            
             // Results screen
             const repeatBtn = document.getElementById('repeatBtn');
             if (repeatBtn) {
@@ -703,13 +1049,136 @@
                 });
             }
         }
+        
+        function attachMatchingListeners() {
+            const matchingItems = document.querySelectorAll('.matching-item[draggable="true"]');
+            const dropZones = document.querySelectorAll('.drop-zone');
+            
+            matchingItems.forEach(item => {
+                item.addEventListener('dragstart', handleDragStart);
+                item.addEventListener('dragend', handleDragEnd);
+            });
+            
+            dropZones.forEach(zone => {
+                zone.addEventListener('dragover', handleDragOver);
+                zone.addEventListener('drop', handleDrop);
+                zone.addEventListener('dragleave', handleDragLeave);
+            });
+        }
+        
+        function handleDragStart(e) {
+            state.draggedItem = e.target;
+            e.target.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', e.target.innerHTML);
+        }
+        
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+        }
+        
+        function handleDragOver(e) {
+            if (e.preventDefault) {
+                e.preventDefault();
+            }
+            e.dataTransfer.dropEffect = 'move';
+            e.target.closest('.drop-zone').classList.add('drag-over');
+            return false;
+        }
+        
+        function handleDragLeave(e) {
+            e.target.closest('.drop-zone').classList.remove('drag-over');
+        }
+        
+        function handleDrop(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            }
+            
+            const dropZone = e.target.closest('.drop-zone');
+            dropZone.classList.remove('drag-over');
+            
+            if (state.draggedItem) {
+                const leftId = state.draggedItem.dataset.leftId;
+                const rightId = dropZone.dataset.rightId;
+                const label = state.draggedItem.dataset.label;
+                
+                // Remove previous match for this left item
+                Object.keys(state.matchingPairs).forEach(key => {
+                    if (state.matchingPairs[key].leftId === leftId) {
+                        delete state.matchingPairs[key];
+                    }
+                });
+                
+                // Add new match
+                state.matchingPairs[rightId] = {
+                    leftId: leftId,
+                    label: label,
+                    content: state.draggedItem.textContent.replace(label, '').trim()
+                };
+                
+                // Update UI
+                const content = dropZone.querySelector('.drop-zone-content');
+                content.innerHTML = `<div class="matching-item matched">
+                    <span class="matching-label">${label}</span>
+                    ${state.matchingPairs[rightId].content}
+                </div>`;
+                
+                dropZone.classList.add('filled');
+                
+                // Check if we can enable the check button
+                const leftItems = document.querySelectorAll('.matching-item[draggable="true"]').length;
+                const checkBtn = document.getElementById('checkMatchingBtn');
+                if (checkBtn && Object.keys(state.matchingPairs).length >= leftItems) {
+                    checkBtn.disabled = false;
+                }
+            }
+            
+            return false;
+        }
+        
+        function attachPickWordsListeners() {
+            document.querySelectorAll('.pickable-word').forEach(word => {
+                word.addEventListener('click', () => {
+                    const wordText = word.dataset.word;
+                    const isRequired = state.requiredWords.some(rw => normalize(rw) === normalize(wordText));
+                    
+                    if (isRequired) {
+                        if (state.selectedWords.has(wordText)) {
+                            state.selectedWords.delete(wordText);
+                            word.classList.remove('selected');
+                        } else {
+                            state.selectedWords.add(wordText);
+                            word.classList.add('selected');
+                        }
+                        
+                        // Update counter
+                        const counter = document.querySelector('.pick-words-counter');
+                        if (counter) {
+                            counter.textContent = `Έχετε επιλέξει: ${state.selectedWords.size} / ${state.requiredWords.length} λέξεις`;
+                        }
+                        
+                        // Enable/disable button
+                        const checkBtn = document.getElementById('checkPickWordsBtn');
+                        if (checkBtn) {
+                            checkBtn.disabled = state.selectedWords.size !== state.requiredWords.length;
+                        }
+                    }
+                });
+            });
+        }
 
         // =====================================================
         // QUIZ LOGIC
         // =====================================================
         
         function startQuiz() {
-            const typeMap = { 1: 'multiple_choice', 2: 'fill_gap' };
+            const typeMap = { 
+                1: 'multiple_choice', 
+                2: 'fill_gap',
+                3: 'matching',
+                4: 'pick_words'
+            };
             let pool = allData.filter(q => q.question_type === typeMap[state.selectedLevel]);
             
             if (state.selectedCount !== 'all') {
@@ -721,6 +1190,8 @@
             state.currentQuestion = 0;
             state.answered = false;
             state.correctCount = 0;
+            state.matchingPairs = {};
+            state.selectedWords = new Set();
             state.screen = 'quiz';
             render();
         }
@@ -766,10 +1237,100 @@
             showFeedback(q, !isCorrect);
         }
         
-        function showFeedback(q, showCorrect = false) {
+        function checkMatching() {
+            state.answered = true;
+            const q = questions[state.currentQuestion];
+            
+            // Parse correct answers: "Α-3, Β-1, Γ-4, D-2"
+            const parts = q.answer.split('|');
+            const correctPairs = {};
+            
+            if (parts.length > 1) {
+                const pairsPart = parts[1].trim();
+                const pairs = pairsPart.split(',').map(p => p.trim());
+                pairs.forEach(pair => {
+                    const match = pair.match(/([Α-ΩA-Z])-(\d+)/);
+                    if (match) {
+                        correctPairs[match[1]] = (parseInt(match[2]) - 1).toString();
+                    }
+                });
+            }
+            
+            // Check answers
+            let allCorrect = true;
+            Object.keys(state.matchingPairs).forEach(rightId => {
+                const pair = state.matchingPairs[rightId];
+                const isCorrect = correctPairs[pair.label] === rightId;
+                
+                const dropZone = document.querySelector(`[data-right-id="${rightId}"]`);
+                const matchedItem = dropZone.querySelector('.matching-item');
+                
+                if (isCorrect) {
+                    matchedItem.classList.add('matched');
+                    matchedItem.classList.remove('wrong');
+                } else {
+                    matchedItem.classList.add('wrong');
+                    matchedItem.classList.remove('matched');
+                    allCorrect = false;
+                }
+            });
+            
+            if (allCorrect) {
+                state.correctCount++;
+            } else {
+                wrongQuestions.push(q);
+            }
+            
+            document.getElementById('checkMatchingBtn').disabled = true;
+            
+            // Show correct answers
+            let correctAnswerText = 'Σωστές αντιστοιχίσεις: ';
+            Object.keys(correctPairs).forEach(label => {
+                const rightIndex = parseInt(correctPairs[label]) + 1;
+                correctAnswerText += `${label}-${rightIndex}, `;
+            });
+            correctAnswerText = correctAnswerText.slice(0, -2);
+            
+            showFeedback(q, !allCorrect, correctAnswerText);
+        }
+        
+        function checkPickWords() {
+            state.answered = true;
+            const q = questions[state.currentQuestion];
+            
+            // Check if all selected words are correct
+            const selectedArray = Array.from(state.selectedWords);
+            const allCorrect = selectedArray.every(word => 
+                state.requiredWords.some(rw => normalize(rw) === normalize(word))
+            ) && selectedArray.length === state.requiredWords.length;
+            
+            // Update UI
+            document.querySelectorAll('.pickable-word.selected').forEach(word => {
+                word.classList.add('correct');
+            });
+            
+            document.getElementById('checkPickWordsBtn').disabled = true;
+            
+            if (allCorrect) {
+                state.correctCount++;
+            } else {
+                wrongQuestions.push(q);
+            }
+            
+            showFeedback(q, !allCorrect, `Σωστές λέξεις: ${state.requiredWords.join(', ')}`);
+        }
+        
+        function showFeedback(q, showCorrect = false, correctText = null) {
             let html = '<div class="feedback-container">';
             
-            if (showCorrect) {
+            if (showCorrect && correctText) {
+                html += `
+                    <div class="correct-answer-box">
+                        <h4>Σωστή απάντηση:</h4>
+                        <p>${correctText}</p>
+                    </div>
+                `;
+            } else if (showCorrect && q.answer) {
                 html += `
                     <div class="correct-answer-box">
                         <h4>Σωστή απάντηση:</h4>
@@ -799,6 +1360,8 @@
                 if (state.currentQuestion < questions.length - 1) {
                     state.currentQuestion++;
                     state.answered = false;
+                    state.matchingPairs = {};
+                    state.selectedWords = new Set();
                     render();
                 } else {
                     state.screen = 'results';
@@ -813,6 +1376,8 @@
             state.currentQuestion = 0;
             state.answered = false;
             state.correctCount = 0;
+            state.matchingPairs = {};
+            state.selectedWords = new Set();
             state.screen = 'quiz';
             render();
         }
