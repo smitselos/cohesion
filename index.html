@@ -7,180 +7,214 @@
 
 <style>
 :root{
-  --primary:#4f46e5;
-  --primary-hover:#3730a3;
-  --primary-soft:#eef2ff;
-  --pink-soft:#faf5ff;
+    --primary:#4f46e5;
+    --primary-hover:#3730a3;
+    --primary-soft:#eef2ff;
+    --pink-soft:#faf5ff;
 
-  --success:#16a34a;
-  --success-soft:#ecfdf5;
+    --success:#16a34a;
+    --success-soft:#ecfdf5;
 
-  --danger:#dc2626;
-  --danger-soft:#fee2e2;
+    --danger:#dc2626;
+    --danger-soft:#fee2e2;
 
-  --warning:#facc15;
-  --warning-soft:#fffbeb;
+    --warning:#facc15;
+    --warning-soft:#fffbeb;
 
-  --text-main:#1e293b;
-  --text-muted:#64748b;
-  --border:#e2e8f0;
+    --text-main:#1e293b;
+    --text-muted:#64748b;
+    --border:#e2e8f0;
 
-  --radius-lg:18px;
-  --radius-md:14px;
-  --shadow:0 6px 22px rgba(0,0,0,.08);
+    --radius-lg:18px;
+    --radius-md:14px;
+
+    --shadow:0 6px 22px rgba(0,0,0,.08);
 }
 
+/* ===== BASE ===== */
 html,body{
-  height:100%;
-  margin:0;
+    height:100%;
+    margin:0;
 }
 body{
-  font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
-  background:linear-gradient(135deg,#f8fafc,#e0e7ff);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:var(--text-main);
+    font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    background:linear-gradient(135deg,#f8fafc,#e0e7ff);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--text-main);
 }
 
-/* MAIN CARD */
+/* ===== MAIN CARD ===== */
 .app-card{
-  background:white;
-  width:100%;
-  max-width:900px;
-  min-height:100vh;
-  display:flex;
-  flex-direction:column;
-  border-radius:var(--radius-lg);
-  box-shadow:var(--shadow);
-  overflow:hidden;
+    background:white;
+    width:100%;
+    max-width:900px;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    border-radius:var(--radius-lg);
+    box-shadow:var(--shadow);
+    overflow:hidden;
 }
 
-/* HEADER */
+/* ===== HEADER CARD ===== */
 .header-card{
-  padding:22px 24px;
-  border-bottom:1px solid var(--border);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+    padding:22px 24px;
+    border-bottom:1px solid var(--border);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
 }
 .header-card h1{
-  margin:0;
-  font-size:1.45rem;
+    margin:0;
+    font-size:1.45rem;
+    font-weight:600;
 }
 .header-meta{
-  font-size:.85rem;
-  color:var(--text-muted);
+    font-size:0.85rem;
+    color:var(--text-muted);
+    margin-top:4px;
 }
 .home-btn{
-  background:var(--primary-soft);
-  color:var(--primary);
-  border:none;
-  font-size:1.4rem;
-  padding:8px 14px;
-  border-radius:12px;
-  cursor:pointer;
+    background:var(--primary-soft);
+    color:var(--primary);
+    border:none;
+    font-size:1.5rem;
+    padding:8px 14px;
+    border-radius:12px;
+    cursor:pointer;
 }
 .home-btn:hover{
-  background:var(--primary);
-  color:white;
+    background:var(--primary);
+    color:white;
 }
 
-/* CONTENT */
+/* ===== CONTENT ===== */
 .main{
-  flex:1;
-  padding:28px;
+    flex:1;
+    padding:28px;
 }
 
-/* SUB CARDS */
+/* ===== SUB CARDS ===== */
 .sub-card{
-  background:white;
-  border-radius:var(--radius-md);
-  padding:20px;
-  box-shadow:0 2px 10px rgba(0,0,0,.06);
-  margin-bottom:20px;
+    background:white;
+    border-radius:var(--radius-md);
+    padding:20px;
+    box-shadow:0 2px 10px rgba(0,0,0,.06);
+    margin-bottom:20px;
 }
 
 .text-card{
-  background:#f8fafc;
-  border-left:4px solid var(--primary);
-}
-.options-card{
-  background:var(--pink-soft);
-  border:1px solid #e9d5ff;
-}
-.feedback-card{
-  background:var(--warning-soft);
-  border:1px solid var(--warning);
-}
-.correct-card{
-  background:var(--success-soft);
-  border:1px solid var(--success);
+    background:#f8fafc;
+    border-left:4px solid var(--primary);
 }
 
-/* BUTTONS */
+.question-card{
+    background:white;
+}
+
+.options-card{
+    background:var(--pink-soft);
+    border:1px solid #e9d5ff;
+}
+
+.feedback-card{
+    background:var(--warning-soft);
+    border:1px solid var(--warning);
+}
+
+.correct-card{
+    background:var(--success-soft);
+    border:1px solid var(--success);
+}
+
+/* ===== BUTTONS ===== */
 button{
-  padding:14px 18px;
-  border-radius:14px;
-  border:none;
-  cursor:pointer;
-  font-size:1rem;
+    padding:14px 18px;
+    border-radius:14px;
+    border:none;
+    cursor:pointer;
+    font-size:1rem;
 }
 .primary{
-  background:var(--primary);
-  color:white;
+    background:var(--primary);
+    color:white;
 }
 .primary:hover{
-  background:var(--primary-hover);
+    background:var(--primary-hover);
 }
+
 .choice{
-  background:white;
-  border:2px solid var(--border);
-  width:100%;
-  text-align:left;
-  margin-bottom:10px;
-  position:relative;
+    background:white;
+    border:2px solid var(--border);
+    width:100%;
+    text-align:left;
+    margin-bottom:10px;
+    position:relative;
 }
-.choice.correct{background:var(--success);color:white;}
-.choice.wrong{background:var(--danger);color:white;}
-.choice.disabled{pointer-events:none;}
+.choice.correct{
+    background:var(--success);
+    color:white;
+}
+.choice.wrong{
+    background:var(--danger);
+    color:white;
+}
+.choice.disabled{
+    pointer-events:none;
+    opacity:.95;
+}
 .choice.correct::after,
 .choice.wrong::after{
-  position:absolute;
-  top:8px;
-  right:10px;
-  font-weight:700;
+    position:absolute;
+    top:8px;
+    right:10px;
+    font-weight:700;
 }
 .choice.correct::after{content:"✓";}
 .choice.wrong::after{content:"✗";}
 
+/* ===== INPUT ===== */
 input[type="text"]{
-  width:100%;
-  padding:14px;
-  font-size:1rem;
-  border-radius:12px;
-  border:2px solid #c7d2fe;
+    width:100%;
+    padding:14px;
+    font-size:1rem;
+    border-radius:12px;
+    border:2px solid #c7d2fe;
+    margin-top:12px;
 }
-input.correct{background:var(--success-soft);border-color:var(--success);}
-input.wrong{background:var(--danger-soft);border-color:var(--danger);}
+input.correct{
+    border-color:var(--success);
+    background:var(--success-soft);
+}
+input.wrong{
+    border-color:var(--danger);
+    background:var(--danger-soft);
+}
 
-/* ACTION */
+/* ===== ACTION ===== */
+.action-card{
+    margin-top:20px;
+}
 .next-btn{
-  width:100%;
-  background:var(--primary);
-  color:white;
-  padding:16px;
-  border-radius:16px;
+    width:100%;
+    background:var(--primary);
+    color:white;
+    padding:16px;
+    border-radius:16px;
 }
-.next-btn:hover{background:var(--primary-hover);}
+.next-btn:hover{
+    background:var(--primary-hover);
+}
 
-/* FOOTER */
+/* ===== FOOTER ===== */
 .footer{
-  border-top:1px solid var(--border);
-  padding:12px;
-  font-size:.75rem;
-  color:var(--text-muted);
-  text-align:center;
+    border-top:1px solid var(--border);
+    padding:12px 20px;
+    font-size:0.75rem;
+    color:var(--text-muted);
+    text-align:center;
 }
 </style>
 </head>
@@ -190,11 +224,11 @@ input.wrong{background:var(--danger-soft);border-color:var(--danger);}
 <div class="app-card">
 
 <div class="header-card">
-  <div>
-    <h1>Συνοχή & Συνεκτικότητα</h1>
-    <div class="header-meta" id="counter">Νεοελληνική Γλώσσα – Λύκειο</div>
-  </div>
-  <button class="home-btn" onclick="renderHome()">⌂</button>
+    <div>
+        <h1>Συνοχή & Συνεκτικότητα</h1>
+        <div class="header-meta" id="counter">Νεοελληνική Γλώσσα – Λύκειο</div>
+    </div>
+    <button class="home-btn" onclick="renderHome()">⌂</button>
 </div>
 
 <div class="main" id="app"></div>
@@ -208,142 +242,127 @@ input.wrong{background:var(--danger-soft);border-color:var(--danger);}
 <script>
 const CSV_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vSBmZdhLakrSUcbxWqSdNo5O07jxI7YRJ_J890qyb-u0qqoOqe1RMl18UQx0SFbLBo2Ihdm6gOOnelY/pub?output=csv';
 
-let allData=[],questions=[],wrongQuestions=[];
-let index=0,correctCount=0,answered=false;
+let allData=[],questions=[],index=0;
+let selectedLevel=null,selectedCount=null,answered=false;
 
 function parseCSV(t){
-  const r=[],h=[];
-  let row=[],c='',q=false;
-  for(let i=0;i<t.length;i++){
-    const ch=t[i],n=t[i+1];
-    if(ch=='"'&&q&&n=='"'){c+='"';i++}
-    else if(ch=='"'){q=!q}
-    else if(ch==','&&!q){row.push(c);c=''}
-    else if((ch=='\n'||ch=='\r')&&!q){
-      if(c||row.length){row.push(c);r.push(row)}
-      row=[];c=''
-    } else c+=ch;
-  }
-  if(c||row.length){row.push(c);r.push(row)}
-  const head=r.shift();
-  return r.map(x=>{let o={};head.forEach((k,i)=>o[k]=x[i]||'');return o});
+    const r=[];let row=[],c='',q=false;
+    for(let i=0;i<t.length;i++){
+        const ch=t[i],n=t[i+1];
+        if(ch=='"'&&q&&n=='"'){c+='"';i++}
+        else if(ch=='"'){q=!q}
+        else if(ch==','&&!q){row.push(c);c=''}
+        else if((ch=='\n'||ch=='\r')&&!q){
+            if(c||row.length){row.push(c);r.push(row)}
+            row=[];c=''
+        } else c+=ch;
+    }
+    if(c||row.length){row.push(c);r.push(row)}
+    const h=r.shift();
+    return r.map(x=>{let o={};h.forEach((k,i)=>o[k]=x[i]||'');return o});
 }
 function normalize(s){
-  return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim();
+    return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim();
 }
 async function loadData(){
-  const res=await fetch(CSV_URL);
-  allData=parseCSV(await res.text());
-  renderHome();
+    const res=await fetch(CSV_URL);
+    allData=parseCSV(await res.text());
+    renderHome();
 }
-
 function renderHome(){
-  index=0;correctCount=0;wrongQuestions=[];
-  document.getElementById('counter').textContent='Νεοελληνική Γλώσσα – Λύκειο';
-  document.getElementById('app').innerHTML=`
+    selectedLevel=null;selectedCount=null;
+    document.getElementById('counter').textContent='Νεοελληνική Γλώσσα – Λύκειο';
+    document.getElementById('app').innerHTML=`
     <div class="sub-card">
-      <h2>Έναρξη ασκήσεων</h2>
-      <button class="primary" onclick="start()">Ξεκίνα</button>
-    </div>`;
-}
-
-function start(){
-  questions=[...allData];
-  renderQuestion();
-}
-
-function renderQuestion(){
-  answered=false;
-  const q=questions[index];
-  document.getElementById('counter').textContent=`Άσκηση ${index+1} / ${questions.length}`;
-  let html=`
-    <div class="sub-card text-card">${q.text}</div>
-    <div class="sub-card"><strong>${q.question}</strong></div>
-  `;
-  if(q.question_type==='multiple_choice'){
-    html+=`<div class="sub-card options-card">`;
-    [q.option1,q.option2,q.option3,q.option4].forEach((o,i)=>{
-      html+=`<button class="choice" onclick="checkMC(this,${i+1})">${o}</button>`;
-    });
-    html+=`</div>`;
-  } else {
-    html+=`
-      <div class="sub-card options-card">
-        <input type="text" id="gap">
-        <button class="primary" onclick="checkGap()">Έλεγχος</button>
-      </div>`;
-  }
-  html+=`<div id="feedback"></div>`;
-  document.getElementById('app').innerHTML=html;
-}
-
-function checkMC(btn,val){
-  if(answered) return;
-  answered=true;
-  const q=questions[index];
-  const correct=Number(q.answer);
-  document.querySelectorAll('.choice').forEach(b=>b.classList.add('disabled'));
-  if(val===correct){
-    btn.classList.add('correct');correctCount++;
-  }else{
-    btn.classList.add('wrong');
-    document.querySelectorAll('.choice')[correct-1].classList.add('correct');
-    wrongQuestions.push(q);
-  }
-  showFeedback(q);
-}
-
-function checkGap(){
-  if(answered) return;
-  answered=true;
-  const q=questions[index];
-  const input=document.getElementById('gap');
-  const ok=normalize(input.value)===normalize(q.answer);
-  input.classList.add(ok?'correct':'wrong');
-  if(ok) correctCount++; else wrongQuestions.push(q);
-  showFeedback(q,!ok);
-}
-
-function showFeedback(q,showCorrect){
-  let fb='';
-  if(showCorrect){
-    fb+=`<div class="sub-card correct-card"><strong>Σωστή απάντηση:</strong> ${q.answer}</div>`;
-  }
-  if(q['Παρατηρήσεις']){
-    fb+=`<div class="sub-card feedback-card">${q['Παρατηρήσεις']}</div>`;
-  }
-  fb+=`<button class="next-btn" onclick="next()">Επόμενη</button>`;
-  document.getElementById('feedback').innerHTML=fb;
-}
-
-function next(){
-  index++;
-  if(index<questions.length) renderQuestion();
-  else renderSummary();
-}
-
-function renderSummary(){
-  document.getElementById('counter').textContent='Ανατροφοδότηση';
-  document.getElementById('app').innerHTML=`
-    <div class="sub-card">
-      <h2>Βαθμός</h2>
-      <p><strong>${correctCount} / ${questions.length}</strong></p>
+        <h2>Επιλογή Επιπέδου</h2>
+        <button class="primary" onclick="selectLevel(1)">Επίπεδο 1</button>
+        <button class="primary" onclick="selectLevel(2)">Επίπεδο 2</button>
     </div>
-    ${wrongQuestions.length?`
     <div class="sub-card">
-      <button class="primary" onclick="repeatWrong()">🔁 Επανάληψη λανθασμένων</button>
-    </div>`:''}
-    <div class="sub-card">
-      <button onclick="renderHome()">⬅ Επιστροφή</button>
+        <h2>Αριθμός Ασκήσεων</h2>
+        <button class="choice" onclick="selectCount(1)">1</button>
+        <button class="choice" onclick="selectCount(10)">10</button>
+        <button class="choice" onclick="selectCount('all')">Όλες</button>
     </div>`;
 }
-
-function repeatWrong(){
-  questions=[...wrongQuestions];
-  wrongQuestions=[];correctCount=0;index=0;
-  renderQuestion();
+function selectLevel(l){selectedLevel=l}
+function selectCount(c){
+    if(selectedLevel===null){alert('Διάλεξε πρώτα επίπεδο');return}
+    selectedCount=c;
+    startQuiz();
 }
-
+function startQuiz(){
+    const map={1:'multiple_choice',2:'fill_gap'};
+    let pool=allData.filter(q=>q.question_type===map[selectedLevel]);
+    if(selectedCount!=='all') pool=pool.slice(0,selectedCount);
+    questions=pool;
+    index=0;
+    renderQuestion();
+}
+function renderQuestion(){
+    answered=false;
+    const q=questions[index];
+    document.getElementById('counter').textContent=`Άσκηση ${index+1} / ${questions.length}`;
+    let html=`
+    <div class="sub-card text-card">${q.text}</div>
+    <div class="sub-card question-card"><strong>${q.question}</strong></div>
+    `;
+    if(q.question_type==='multiple_choice'){
+        html+=`<div class="sub-card options-card">`;
+        [q.option1,q.option2,q.option3,q.option4].forEach((o,i)=>{
+            html+=`<button class="choice" onclick="checkMC(this,${i+1})">${o}</button>`;
+        });
+        html+=`</div>`;
+    }
+    if(q.question_type==='fill_gap'){
+        html+=`
+        <div class="sub-card options-card">
+            <input type="text" id="gapInput" placeholder="Γράψε τη λέξη">
+            <button class="primary" onclick="checkGap()">Έλεγχος</button>
+        </div>`;
+    }
+    html+=`<div id="feedback"></div>`;
+    document.getElementById('app').innerHTML=html;
+}
+function checkMC(btn,val){
+    if(answered) return;
+    answered=true;
+    const q=questions[index];
+    const correct=Number(q.answer);
+    const buttons=document.querySelectorAll('.choice');
+    buttons.forEach(b=>b.classList.add('disabled'));
+    if(val===correct) btn.classList.add('correct');
+    else{
+        btn.classList.add('wrong');
+        buttons[correct-1].classList.add('correct');
+    }
+    showFeedback(q);
+}
+function checkGap(){
+    if(answered) return;
+    answered=true;
+    const q=questions[index];
+    const input=document.getElementById('gapInput');
+    const ok=normalize(input.value)===normalize(q.answer);
+    input.classList.add(ok?'correct':'wrong');
+    showFeedback(q,ok);
+}
+function showFeedback(q,ok=true){
+    let fb='';
+    if(!ok && q.question_type==='fill_gap'){
+        fb+=`<div class="sub-card correct-card"><strong>Σωστή απάντηση:</strong> ${q.answer}</div>`;
+    }
+    if(q['Παρατηρήσεις']){
+        fb+=`<div class="sub-card feedback-card"><strong>Παρατήρηση:</strong><br>${q['Παρατηρήσεις']}</div>`;
+    }
+    fb+=`<div class="action-card"><button class="next-btn" onclick="next()">Επόμενη ερώτηση →</button></div>`;
+    document.getElementById('feedback').innerHTML=fb;
+}
+function next(){
+    index++;
+    if(index<questions.length) renderQuestion();
+    else renderHome();
+}
 loadData();
 </script>
 
