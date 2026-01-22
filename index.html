@@ -1250,6 +1250,7 @@
             
             // Quiz screen - Multiple Choice
             let selectedOption = null;
+            let checkTimeout = null; // Για να ακυρώσουμε το timeout
             
             // Hint button
             const hintBtn = document.getElementById('hintBtn');
@@ -1269,6 +1270,12 @@
             document.querySelectorAll('.option-btn[data-value]').forEach(btn => {
                 btn.addEventListener('click', () => {
                     if (!state.answered) {
+                        // Ακύρωση του προηγούμενου timeout
+                        if (checkTimeout) {
+                            clearTimeout(checkTimeout);
+                            checkTimeout = null;
+                        }
+                        
                         // Remove previous selection
                         document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
                         
@@ -1277,7 +1284,7 @@
                         selectedOption = parseInt(btn.dataset.value);
                         
                         // Auto-check after 1 second
-                        setTimeout(() => {
+                        checkTimeout = setTimeout(() => {
                             if (selectedOption !== null && !state.answered) {
                                 checkMultipleChoice(btn, selectedOption);
                             }
