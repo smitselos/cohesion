@@ -37,10 +37,38 @@
         .header-subtitle { color: #64748b; font-size: 0.875rem; }
         
         .question-counter { text-align: right; }
+        .question-counter p {
+            color: #64748b;
+            font-size: 0.875rem;
+            margin-bottom: 4px;
+        }
         .question-counter span {
             font-size: 1.75rem;
             font-weight: 700;
             color: #4f46e5;
+        }
+        
+        @media (max-width: 600px) {
+            .header {
+                gap: 8px;
+            }
+            .header h1 {
+                font-size: 1.1rem;
+            }
+            .header-subtitle {
+                font-size: 0.75rem;
+                display: none; /* Απόκρυψη subtitle σε mobile */
+            }
+            .question-counter p {
+                font-size: 0.7rem;
+                margin-bottom: 2px;
+            }
+            .question-counter span {
+                font-size: 1.3rem;
+            }
+            .card {
+                padding: 16px; /* Λιγότερο padding σε mobile */
+            }
         }
         
         .progress-bar {
