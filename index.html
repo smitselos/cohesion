@@ -232,12 +232,19 @@
         }
         
         .question-prompt {
-            background: white;
+            background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+            border: 2px solid #c084fc;
             border-radius: 12px;
-            padding: 16px;
-            margin-top: 16px;
+            padding: 20px;
             font-weight: 600;
-            color: #374151;
+            color: #581c87;
+            text-align: center;
+            font-size: 1.05rem;
+            box-shadow: 0 2px 10px rgba(192, 132, 252, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100px;
         }
         
         .options-container {
@@ -621,17 +628,19 @@
         .hint-btn {
             background: #fef3c7;
             color: #92400e;
-            border: 2px solid #fcd34d;
-            padding: 12px 20px;
-            border-radius: 10px;
-            font-size: 0.95rem;
+            border: 1px solid #fcd34d;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 0.8rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
             margin-top: 12px;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            width: 100%;
+            justify-content: center;
         }
         
         .hint-btn:hover {
@@ -642,10 +651,10 @@
         
         .hint-box {
             background: #fffbeb;
-            border: 2px solid #fcd34d;
-            border-radius: 12px;
-            padding: 16px;
-            margin-top: 12px;
+            border: 1px solid #fcd34d;
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 8px;
             display: none;
         }
         
@@ -667,17 +676,17 @@
         
         .hint-box h4 {
             color: #92400e;
-            font-size: 0.95rem;
-            margin-bottom: 8px;
+            font-size: 0.8rem;
+            margin-bottom: 6px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
         
         .hint-box p {
             color: #78350f;
-            font-size: 0.9rem;
-            line-height: 1.6;
+            font-size: 0.8rem;
+            line-height: 1.5;
         }
         
         .sound-toggle {
