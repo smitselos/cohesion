@@ -7,17 +7,19 @@
 
 <style>
 :root{
-    --blue:#1e3a8a;
-    --blue-soft:#eef2ff;
+    --primary:#4f46e5;
+    --primary-soft:#eef2ff;
     --green:#16a34a;
     --red:#dc2626;
+    --amber:#facc15;
 }
 
 /* ===== ΒΑΣΗ ===== */
 body{
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background:#f5f7fb;
+    background:linear-gradient(135deg,#f8fafc,#e0e7ff);
     margin:0;
+    line-height:1.6;
 }
 .app-wrapper{
     max-width:900px;
@@ -26,24 +28,25 @@ body{
 
 /* ===== HEADER ===== */
 .header{
-    background:var(--blue);
+    background:linear-gradient(135deg,#4f46e5,#6366f1);
     color:white;
-    padding:16px 22px;
+    padding:20px 24px;
     display:flex;
     justify-content:space-between;
     align-items:center;
-    border-radius:0 0 14px 14px;
+    border-radius:0 0 18px 18px;
 }
 .header h1{
-    font-size:1.25rem;
+    font-size:1.35rem;
     margin:0;
     font-weight:600;
+    letter-spacing:.2px;
 }
 .home-btn{
     background:rgba(255,255,255,0.15);
     border:none;
     color:white;
-    font-size:1.8rem;          /* ΜΕΓΑΛΥΤΕΡΟ */
+    font-size:1.6rem;
     padding:6px 14px;
     border-radius:10px;
     cursor:pointer;
@@ -53,17 +56,22 @@ body{
 }
 
 /* ===== ΚΥΡΙΟ ===== */
-.main{ padding:22px 0; }
+.main{ padding:24px 0; }
 
 .card{
     background:#fff;
-    border-radius:16px;
-    padding:22px;
-    box-shadow:0 4px 16px rgba(0,0,0,.08);
-    margin-bottom:22px;
+    border-radius:18px;
+    padding:24px;
+    box-shadow:0 6px 22px rgba(0,0,0,.08);
+    margin-bottom:24px;
 }
 
-h2{margin-top:0}
+h2{
+    margin-top:0;
+    margin-bottom:14px;
+}
+
+p{ line-height:1.7 }
 
 .grid{
     display:grid;
@@ -74,27 +82,40 @@ h2{margin-top:0}
 /* ===== ΚΟΥΜΠΙΑ ===== */
 button{
     padding:14px 18px;
-    border-radius:12px;
+    border-radius:14px;
     border:none;
     cursor:pointer;
     font-size:1rem;
+    transition:.2s;
 }
-.primary{background:#4f46e5;color:#fff}
+.primary{
+    background:var(--primary);
+    color:#fff;
+}
+.primary:hover{
+    background:#3730a3;
+}
+
 .choice{
-    background:var(--blue-soft);
-    border:2px solid #c7d2fe;
+    background:#fff;
+    border:2px solid #e2e8f0;
     width:100%;
     text-align:left;
     position:relative;
 }
+.choice:hover{
+    border-color:#94a3b8;
+}
 
-/* πολλαπλής επιλογής – καταστάσεις */
+/* καταστάσεις */
 .choice.correct{
-    background:var(--green);
+    background:#059669;
+    border-color:#047857;
     color:white;
 }
 .choice.wrong{
-    background:var(--red);
+    background:#dc2626;
+    border-color:#b91c1c;
     color:white;
 }
 .choice.disabled{
@@ -117,11 +138,11 @@ button{
 /* ===== FILL GAP ===== */
 input[type="text"]{
     width:100%;
-    padding:12px;
+    padding:14px;
     font-size:1rem;
-    border-radius:10px;
+    border-radius:12px;
     border:2px solid #c7d2fe;
-    margin-top:10px;
+    margin-top:12px;
 }
 input.correct{
     border-color:var(--green);
@@ -135,39 +156,42 @@ input.wrong{
 /* ===== ΠΑΡΑΤΗΡΗΣΕΙΣ / ΣΩΣΤΗ ΑΠΑΝΤΗΣΗ ===== */
 .notice{
     background:#fffbeb;
-    border:1px solid #facc15;
-    padding:12px;
-    border-radius:10px;
-    margin-top:14px;
+    border:1px solid var(--amber);
+    padding:14px;
+    border-radius:12px;
+    margin-top:16px;
 }
 .correct-answer-box{
     background:#ecfdf5;
     border:1px solid var(--green);
-    padding:10px;
-    border-radius:10px;
-    margin-top:12px;
+    padding:12px;
+    border-radius:12px;
+    margin-top:14px;
     font-size:0.95rem;
 }
 
 /* ===== ΕΠΟΜΕΝΗ ΕΡΩΤΗΣΗ ===== */
 .next-btn{
-    background:var(--red);
+    background:var(--primary);
     color:white;
     width:100%;
-    margin-top:26px;      /* ΑΠΟΣΤΑΣΗ */
+    margin-top:28px;
     padding:16px;
     font-size:1.05rem;
-    border-radius:14px;
+    border-radius:16px;
+}
+.next-btn:hover{
+    background:#3730a3;
 }
 
 /* ===== FOOTER ===== */
 .footer{
-    background:var(--blue);
-    color:rgba(255,255,255,.7);
+    background:#eef2ff;
+    color:#64748b;
     font-size:0.75rem;
-    padding:10px 20px;
+    padding:12px 20px;
     text-align:center;
-    border-radius:14px 14px 0 0;
+    border-radius:16px 16px 0 0;
     margin-bottom:10px;
 }
 </style>
@@ -237,7 +261,7 @@ function renderHome(){
             <button class="primary" onclick="selectLevel(2)">Επίπεδο 2</button>
         </div>
 
-        <h2 style="margin-top:22px">Αριθμός Ασκήσεων</h2>
+        <h2 style="margin-top:24px">Αριθμός Ασκήσεων</h2>
         <div class="grid">
             <button class="choice" onclick="selectCount(1)">1</button>
             <button class="choice" onclick="selectCount(10)">10</button>
