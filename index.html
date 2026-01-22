@@ -8,61 +8,99 @@
 <style>
 :root{
     --primary:#4f46e5;
+    --primary-hover:#3730a3;
     --primary-soft:#eef2ff;
-    --green:#16a34a;
-    --red:#dc2626;
-    --amber:#facc15;
+
+    --success:#16a34a;
+    --success-soft:#ecfdf5;
+
+    --danger:#dc2626;
+    --danger-soft:#fee2e2;
+
+    --warning:#facc15;
+    --warning-soft:#fffbeb;
+
+    --text-main:#1e293b;
+    --text-muted:#64748b;
+    --border:#e2e8f0;
+
+    --radius-lg:18px;
+    --radius-md:14px;
+
+    --shadow:0 6px 22px rgba(0,0,0,.08);
 }
 
 /* ===== ΒΑΣΗ ===== */
-body{
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background:linear-gradient(135deg,#f8fafc,#e0e7ff);
+html,body{
+    height:100%;
     margin:0;
-    line-height:1.6;
 }
-.app-wrapper{
-    max-width:900px;
-    margin:0 auto;
+body{
+    font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    background:linear-gradient(135deg,#f8fafc,#e0e7ff);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--text-main);
 }
 
-/* ===== HEADER ===== */
+/* ===== ΕΝΙΑΙΑ ΚΑΡΤΑ ===== */
+.app-card{
+    background:white;
+    width:100%;
+    max-width:900px;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    border-radius:var(--radius-lg);
+    box-shadow:var(--shadow);
+    overflow:hidden;
+}
+
+/* ===== HEADER (ΜΕΣΑ ΣΤΗΝ ΚΑΡΤΑ) ===== */
 .header{
-    background:linear-gradient(135deg,#4f46e5,#6366f1);
-    color:white;
-    padding:20px 24px;
     display:flex;
     justify-content:space-between;
     align-items:center;
-    border-radius:0 0 18px 18px;
+    padding:24px;
+    border-bottom:1px solid var(--border);
 }
 .header h1{
-    font-size:1.35rem;
     margin:0;
+    font-size:1.5rem;
     font-weight:600;
-    letter-spacing:.2px;
+}
+.subtitle{
+    margin-top:4px;
+    font-size:0.85rem;
+    color:var(--text-muted);
 }
 .home-btn{
-    background:rgba(255,255,255,0.15);
+    background:var(--primary-soft);
+    color:var(--primary);
     border:none;
-    color:white;
-    font-size:1.6rem;
-    padding:6px 14px;
-    border-radius:10px;
+    font-size:1.5rem;
+    padding:8px 14px;
+    border-radius:12px;
     cursor:pointer;
 }
 .home-btn:hover{
-    background:rgba(255,255,255,0.25);
+    background:var(--primary);
+    color:white;
 }
 
-/* ===== ΚΥΡΙΟ ===== */
-.main{ padding:24px 0; }
+/* ===== ΠΕΡΙΕΧΟΜΕΝΟ ===== */
+.main{
+    flex:1;
+    padding:28px;
+}
 
+/* ===== CARD ΕΣΩΤΕΡΙΚΕΣ ===== */
 .card{
-    background:#fff;
-    border-radius:18px;
+    background:white;
+    border-radius:var(--radius-md);
     padding:24px;
-    box-shadow:0 6px 22px rgba(0,0,0,.08);
+    box-shadow:0 2px 10px rgba(0,0,0,.06);
     margin-bottom:24px;
 }
 
@@ -70,7 +108,6 @@ h2{
     margin-top:0;
     margin-bottom:14px;
 }
-
 p{ line-height:1.7 }
 
 .grid{
@@ -86,50 +123,41 @@ button{
     border:none;
     cursor:pointer;
     font-size:1rem;
-    transition:.2s;
 }
 .primary{
     background:var(--primary);
-    color:#fff;
+    color:white;
 }
 .primary:hover{
-    background:#3730a3;
+    background:var(--primary-hover);
 }
 
 .choice{
-    background:#fff;
-    border:2px solid #e2e8f0;
-    width:100%;
+    background:white;
+    border:2px solid var(--border);
     text-align:left;
     position:relative;
 }
 .choice:hover{
     border-color:#94a3b8;
 }
-
-/* καταστάσεις */
 .choice.correct{
-    background:#059669;
-    border-color:#047857;
+    background:var(--success);
     color:white;
 }
 .choice.wrong{
-    background:#dc2626;
-    border-color:#b91c1c;
+    background:var(--danger);
     color:white;
 }
 .choice.disabled{
     pointer-events:none;
-    opacity:0.95;
+    opacity:.95;
 }
-
-/* εικονίδια ✓ / ✗ */
 .choice.correct::after,
 .choice.wrong::after{
     position:absolute;
     top:8px;
     right:10px;
-    font-size:1.2rem;
     font-weight:700;
 }
 .choice.correct::after{content:"✓";}
@@ -145,72 +173,70 @@ input[type="text"]{
     margin-top:12px;
 }
 input.correct{
-    border-color:var(--green);
-    background:#ecfdf5;
+    border-color:var(--success);
+    background:var(--success-soft);
 }
 input.wrong{
-    border-color:var(--red);
-    background:#fee2e2;
+    border-color:var(--danger);
+    background:var(--danger-soft);
 }
 
-/* ===== ΠΑΡΑΤΗΡΗΣΕΙΣ / ΣΩΣΤΗ ΑΠΑΝΤΗΣΗ ===== */
+/* ===== FEEDBACK ===== */
 .notice{
-    background:#fffbeb;
-    border:1px solid var(--amber);
+    background:var(--warning-soft);
+    border:1px solid var(--warning);
     padding:14px;
     border-radius:12px;
     margin-top:16px;
 }
 .correct-answer-box{
-    background:#ecfdf5;
-    border:1px solid var(--green);
+    background:var(--success-soft);
+    border:1px solid var(--success);
     padding:12px;
     border-radius:12px;
     margin-top:14px;
-    font-size:0.95rem;
 }
 
-/* ===== ΕΠΟΜΕΝΗ ΕΡΩΤΗΣΗ ===== */
 .next-btn{
     background:var(--primary);
     color:white;
     width:100%;
     margin-top:28px;
     padding:16px;
-    font-size:1.05rem;
     border-radius:16px;
 }
 .next-btn:hover{
-    background:#3730a3;
+    background:var(--primary-hover);
 }
 
-/* ===== FOOTER ===== */
+/* ===== FOOTER (ΜΕΣΑ ΣΤΗΝ ΚΑΡΤΑ) ===== */
 .footer{
-    background:#eef2ff;
-    color:#64748b;
-    font-size:0.75rem;
+    border-top:1px solid var(--border);
     padding:12px 20px;
+    font-size:0.75rem;
+    color:var(--text-muted);
     text-align:center;
-    border-radius:16px 16px 0 0;
-    margin-bottom:10px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="app-wrapper">
+<div class="app-card">
 
-<div class="header">
-    <h1>Συνοχή & Συνεκτικότητα</h1>
-    <button class="home-btn" onclick="renderHome()" title="Αρχική">⌂</button>
-</div>
+    <div class="header">
+        <div>
+            <h1>Συνοχή & Συνεκτικότητα</h1>
+            <div class="subtitle">Νεοελληνική Γλώσσα – Λύκειο</div>
+        </div>
+        <button class="home-btn" onclick="renderHome()">⌂</button>
+    </div>
 
-<div class="main" id="app"></div>
+    <div class="main" id="app"></div>
 
-<div class="footer">
-📋 Νεοελληνική Γλώσσα &amp; Λογοτεχνία – Α &amp; Σ Μητσέλος 2026
-</div>
+    <div class="footer">
+        📋 Νεοελληνική Γλώσσα &amp; Λογοτεχνία – Α &amp; Σ Μητσέλος 2026
+    </div>
 
 </div>
 
@@ -221,7 +247,6 @@ const CSV_URL =
 let allData=[],questions=[],index=0;
 let selectedLevel=null,selectedCount=null,answered=false;
 
-/* ===== CSV PARSER ===== */
 function parseCSV(t){
     const r=[];let row=[],c='',q=false;
     for(let i=0;i<t.length;i++){
@@ -238,19 +263,14 @@ function parseCSV(t){
     const h=r.shift();
     return r.map(x=>{let o={};h.forEach((k,i)=>o[k]=x[i]||'');return o});
 }
-
 function normalize(s){
     return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim();
 }
-
-/* ===== LOAD ===== */
 async function loadData(){
     const res=await fetch(CSV_URL);
     allData=parseCSV(await res.text());
     renderHome();
 }
-
-/* ===== HOME ===== */
 function renderHome(){
     selectedLevel=null;selectedCount=null;
     document.getElementById('app').innerHTML=`
@@ -269,15 +289,12 @@ function renderHome(){
         </div>
     </div>`;
 }
-
 function selectLevel(l){selectedLevel=l}
 function selectCount(c){
     if(selectedLevel===null){alert('Διάλεξε πρώτα επίπεδο');return}
     selectedCount=c;
     startQuiz();
 }
-
-/* ===== QUIZ ===== */
 function startQuiz(){
     const map={1:'multiple_choice',2:'fill_gap'};
     let pool=allData.filter(q=>q.question_type===map[selectedLevel]);
@@ -286,7 +303,6 @@ function startQuiz(){
     index=0;
     renderQuestion();
 }
-
 function renderQuestion(){
     answered=false;
     const q=questions[index];
@@ -296,7 +312,6 @@ function renderQuestion(){
         <p><strong>${q.question}</strong></p>
         <p>${q.text}</p>
     `;
-
     if(q.question_type==='multiple_choice'){
         html+=`
         <button class="choice" onclick="checkMC(this,1)">${q.option1}</button>
@@ -304,78 +319,53 @@ function renderQuestion(){
         <button class="choice" onclick="checkMC(this,3)">${q.option3}</button>
         <button class="choice" onclick="checkMC(this,4)">${q.option4}</button>`;
     }
-
     if(q.question_type==='fill_gap'){
         html+=`
         <input type="text" id="gapInput" placeholder="Γράψε τη λέξη">
         <button class="primary" onclick="checkGap()">Έλεγχος</button>`;
     }
-
     html+=`<div id="feedback"></div></div>`;
     document.getElementById('app').innerHTML=html;
 }
-
-/* ===== ΕΛΕΓΧΟΙ ===== */
 function checkMC(btn,val){
     if(answered) return;
     answered=true;
-
     const q=questions[index];
     const correct=Number(q.answer);
-
     const buttons=document.querySelectorAll('.choice');
     buttons.forEach(b=>b.classList.add('disabled'));
-
-    if(val===correct){
-        btn.classList.add('correct');
-    }else{
+    if(val===correct){btn.classList.add('correct')}
+    else{
         btn.classList.add('wrong');
         buttons[correct-1].classList.add('correct');
     }
-
     showFeedback(q);
 }
-
 function checkGap(){
     if(answered) return;
     answered=true;
-
     const q=questions[index];
     const input=document.getElementById('gapInput');
     const ok = normalize(input.value)===normalize(q.answer);
-
     input.classList.add(ok?'correct':'wrong');
-
     showFeedback(q, ok);
 }
-
 function showFeedback(q,ok=true){
     let fb='';
-
     if(!ok && q.question_type==='fill_gap'){
-        fb+=`
-        <div class="correct-answer-box">
-            <strong>Σωστή απάντηση:</strong> ${q.answer}
-        </div>`;
+        fb+=`<div class="correct-answer-box"><strong>Σωστή απάντηση:</strong> ${q.answer}</div>`;
     }
-
     if(q['Παρατηρήσεις']){
-        fb+=`
-        <div class="notice">
-            <strong>Παρατήρηση:</strong><br>${q['Παρατηρήσεις']}
-        </div>`;
+        fb+=`<div class="notice"><strong>Παρατήρηση:</strong><br>${q['Παρατηρήσεις']}</div>`;
     }
-
     fb+=`<button class="next-btn" onclick="next()">Επόμενη ερώτηση →</button>`;
     document.getElementById('feedback').innerHTML=fb;
 }
-
 function next(){
     index++;
     if(index<questions.length) renderQuestion();
     else renderHome();
 }
-
 loadData();
 </script>
 
