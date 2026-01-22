@@ -51,23 +51,37 @@
         @media (max-width: 600px) {
             .header {
                 gap: 8px;
+                flex-wrap: nowrap; /* Μην αναδιπλώνεις */
+            }
+            .header > div:first-child {
+                flex: 1;
+                min-width: 0; /* Επιτρέπει shrinking */
             }
             .header h1 {
-                font-size: 1.1rem;
+                font-size: 1rem;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
             .header-subtitle {
-                font-size: 0.75rem;
+                font-size: 0.7rem;
                 display: none; /* Απόκρυψη subtitle σε mobile */
             }
+            .question-counter {
+                flex-shrink: 0; /* Μην συρρικνώνεται */
+            }
             .question-counter p {
-                font-size: 0.7rem;
-                margin-bottom: 2px;
+                font-size: 0.65rem;
+                margin-bottom: 0;
             }
             .question-counter span {
-                font-size: 1.3rem;
+                font-size: 1.1rem;
             }
             .card {
-                padding: 16px; /* Λιγότερο padding σε mobile */
+                padding: 12px; /* Ακόμα λιγότερο padding */
+            }
+            .progress-bar {
+                margin-top: 8px; /* Λιγότερο space */
             }
         }
         
