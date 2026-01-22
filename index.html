@@ -618,6 +618,44 @@
             line-height: 1.6;
         }
         
+        .sound-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+        
+        .sound-toggle:hover {
+            border-color: #4f46e5;
+            transform: scale(1.05);
+        }
+        
+        .sound-toggle svg {
+            width: 24px;
+            height: 24px;
+            color: #4f46e5;
+        }
+        
+        .sound-toggle.muted {
+            background: #fee2e2;
+            border-color: #dc2626;
+        }
+        
+        .sound-toggle.muted svg {
+            color: #dc2626;
+        }
+        
         /* Results */
         .results-card { text-align: center; padding: 40px 24px; }
         .results-emoji { font-size: 4rem; margin-bottom: 16px; }
@@ -695,6 +733,7 @@
             currentQuestion: 0,
             answered: false,
             correctCount: 0,
+            soundEnabled: true, // Sound on by default
             // Matching state
             matchingPairs: {},
             draggedItem: null,
@@ -708,6 +747,8 @@
         // =====================================================
         
         function playCorrectSound() {
+            if (!state.soundEnabled) return;
+            
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
             const oscillator = audioContext.createOscillator();
             const gainNode = audioContext.createGain();
@@ -725,6 +766,8 @@
         }
         
         function playWrongSound() {
+            if (!state.soundEnabled) return;
+            
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
             const oscillator = audioContext.createOscillator();
             const gainNode = audioContext.createGain();
@@ -739,6 +782,38 @@
             
             oscillator.start(audioContext.currentTime);
             oscillator.stop(audioContext.currentTime + 0.3);
+        }
+        
+        function toggleSound() {
+            state.soundEnabled = !state.soundEnabled;
+            updateSoundButton();
+        }
+        
+        function updateSoundButton() {
+            const btn = document.getElementById('soundToggle');
+            if (!btn) return;
+            
+            if (state.soundEnabled) {
+                btn.classList.remove('muted');
+                btn.innerHTML = `
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M11 5L6 9H2V15H6L11 19V5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M15.54 8.46C16.4774 9.39764 17.0039 10.6692 17.0039 11.995C17.0039 13.3208 16.4774 14.5924 15.54 15.53" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M19.07 4.93C20.9447 6.80528 21.9979 9.34836 21.9979 12C21.9979 14.6516 20.9447 17.1947 19.07 19.07" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                `;
+                btn.title = 'Απενεργοποίηση ήχου';
+            } else {
+                btn.classList.add('muted');
+                btn.innerHTML = `
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M11 5L6 9H2V15H6L11 19V5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <line x1="23" y1="9" x2="17" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <line x1="17" y1="9" x2="23" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                `;
+                btn.title = 'Ενεργοποίηση ήχου';
+            }
         }
 
         // =====================================================
@@ -842,9 +917,21 @@
                     break;
                 case 'quiz':
                     app.innerHTML = renderQuiz();
+                    // Add sound toggle button
+                    if (!document.getElementById('soundToggle')) {
+                        const soundBtn = document.createElement('button');
+                        soundBtn.id = 'soundToggle';
+                        soundBtn.className = 'sound-toggle';
+                        document.body.appendChild(soundBtn);
+                        updateSoundButton();
+                        soundBtn.addEventListener('click', toggleSound);
+                    }
                     break;
                 case 'results':
                     app.innerHTML = renderResults();
+                    // Remove sound button on results screen
+                    const existingBtn = document.getElementById('soundToggle');
+                    if (existingBtn) existingBtn.remove();
                     break;
             }
             
