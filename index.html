@@ -704,14 +704,53 @@
         async function loadData() {
             try {
                 const response = await fetch(CSV_URL);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
                 const csv = await response.text();
                 allData = parseCSV(csv);
+                
+                if (allData.length === 0) {
+                    console.warn('No data loaded from CSV');
+                }
+                
                 state.screen = 'selection';
                 render();
             } catch (error) {
                 console.error('Σφάλμα φόρτωσης:', error);
-                state.screen = 'selection';
-                render();
+                // Προσπάθεια με direct Google Sheets URL
+                try {
+                    const directUrl = CSV_URL.replace('/pub?', '/pub?gid=0&single=true&');
+                    const response2 = await fetch(directUrl);
+                    const csv2 = await response2.text();
+                    allData = parseCSV(csv2);
+                    state.screen = 'selection';
+                    render();
+                } catch (error2) {
+                    // Fallback - δείξε την οθόνη επιλογής ούτως ή άλλως
+                    console.error('Δεύτερη προσπάθεια απέτυχε:', error2);
+                    state.screen = 'selection';
+                    render();
+                    
+                    // Δείξε μήνυμα στον χρήστη
+                    setTimeout(() => {
+                        const app = document.getElementById('app');
+                        if (allData.length === 0) {
+                            app.innerHTML = `
+                                <div class="card" style="text-align: center; padding: 40px;">
+                                    <h2 style="color: #dc2626; margin-bottom: 16px;">⚠️ Πρόβλημα Φόρτωσης</h2>
+                                    <p style="color: #64748b; margin-bottom: 20px;">
+                                        Δεν μπόρεσαν να φορτώσουν τα δεδομένα από το Google Sheet.<br>
+                                        Παρακαλώ ελέγξτε τη σύνδεσή σας στο internet.
+                                    </p>
+                                    <button class="start-btn" onclick="location.reload()">
+                                        🔄 Δοκιμάστε Ξανά
+                                    </button>
+                                </div>
+                            `;
+                        }
+                    }, 500);
+                }
             }
         }
 
@@ -1097,17 +1136,25 @@
             const dropZones = document.querySelectorAll('.drop-zone');
             
             matchingItems.forEach(item => {
+                // Mouse events (Desktop)
                 item.addEventListener('dragstart', handleDragStart);
                 item.addEventListener('dragend', handleDragEnd);
+                
+                // Touch events (Mobile)
+                item.addEventListener('touchstart', handleTouchStart);
+                item.addEventListener('touchmove', handleTouchMove);
+                item.addEventListener('touchend', handleTouchEnd);
             });
             
             dropZones.forEach(zone => {
+                // Mouse events (Desktop)
                 zone.addEventListener('dragover', handleDragOver);
                 zone.addEventListener('drop', handleDrop);
                 zone.addEventListener('dragleave', handleDragLeave);
             });
         }
         
+        // Mouse Events (Desktop)
         function handleDragStart(e) {
             state.draggedItem = e.target;
             e.target.classList.add('dragging');
@@ -1132,6 +1179,80 @@
             e.target.closest('.drop-zone').classList.remove('drag-over');
         }
         
+        // Touch Events (Mobile)
+        let touchStartX, touchStartY;
+        let clone = null;
+        
+        function handleTouchStart(e) {
+            state.draggedItem = e.target.closest('.matching-item');
+            const touch = e.touches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+            
+            // Create a clone for visual feedback
+            clone = state.draggedItem.cloneNode(true);
+            clone.style.position = 'fixed';
+            clone.style.opacity = '0.7';
+            clone.style.pointerEvents = 'none';
+            clone.style.zIndex = '1000';
+            clone.style.width = state.draggedItem.offsetWidth + 'px';
+            document.body.appendChild(clone);
+            
+            state.draggedItem.classList.add('dragging');
+            e.preventDefault();
+        }
+        
+        function handleTouchMove(e) {
+            if (!state.draggedItem) return;
+            
+            const touch = e.touches[0];
+            
+            // Move the clone with finger
+            if (clone) {
+                clone.style.left = (touch.clientX - clone.offsetWidth / 2) + 'px';
+                clone.style.top = (touch.clientY - clone.offsetHeight / 2) + 'px';
+            }
+            
+            // Check if over a drop zone
+            const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+            const dropZone = elementBelow ? elementBelow.closest('.drop-zone') : null;
+            
+            // Remove all drag-over classes
+            document.querySelectorAll('.drop-zone').forEach(z => z.classList.remove('drag-over'));
+            
+            // Add drag-over to current zone
+            if (dropZone) {
+                dropZone.classList.add('drag-over');
+            }
+            
+            e.preventDefault();
+        }
+        
+        function handleTouchEnd(e) {
+            if (!state.draggedItem) return;
+            
+            const touch = e.changedTouches[0];
+            const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+            const dropZone = elementBelow ? elementBelow.closest('.drop-zone') : null;
+            
+            // Remove clone
+            if (clone) {
+                document.body.removeChild(clone);
+                clone = null;
+            }
+            
+            state.draggedItem.classList.remove('dragging');
+            
+            // Handle drop if over a valid zone
+            if (dropZone) {
+                dropZone.classList.remove('drag-over');
+                performDrop(dropZone);
+            }
+            
+            state.draggedItem = null;
+            e.preventDefault();
+        }
+        
         function handleDrop(e) {
             if (e.stopPropagation) {
                 e.stopPropagation();
@@ -1140,6 +1261,12 @@
             const dropZone = e.target.closest('.drop-zone');
             dropZone.classList.remove('drag-over');
             
+            performDrop(dropZone);
+            
+            return false;
+        }
+        
+        function performDrop(dropZone) {
             if (state.draggedItem) {
                 const leftId = state.draggedItem.dataset.leftId;
                 const rightId = dropZone.dataset.rightId;
@@ -1175,8 +1302,6 @@
                     checkBtn.disabled = false;
                 }
             }
-            
-            return false;
         }
         
         function attachPickWordsListeners() {
