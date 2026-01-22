@@ -132,6 +132,23 @@
             cursor: not-allowed;
         }
         
+        .home-btn {
+            background: #eef2ff;
+            color: #4f46e5;
+            border: none;
+            font-size: 1.4rem;
+            padding: 8px 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .home-btn:hover {
+            background: #4f46e5;
+            color: white;
+            transform: scale(1.05);
+        }
+        
         /* Loading */
         .loading { text-align: center; padding: 60px 20px; }
         .loading-spinner {
@@ -772,9 +789,12 @@
                             <h1>📝 Συνοχή & Συνεκτικότητα</h1>
                             <p class="header-subtitle">Νεοελληνική Γλώσσα - Λύκειο</p>
                         </div>
-                        <div class="question-counter">
-                            <p style="color: #64748b; font-size: 0.875rem;">Άσκηση</p>
-                            <span>${state.currentQuestion + 1}/${questions.length}</span>
+                        <div style="display: flex; align-items: center; gap: 16px;">
+                            <button class="home-btn" id="homeFromQuizBtn" title="Επιστροφή στην Αρχή">⌂</button>
+                            <div class="question-counter">
+                                <p style="color: #64748b; font-size: 0.875rem;">Άσκηση</p>
+                                <span>${state.currentQuestion + 1}/${questions.length}</span>
+                            </div>
                         </div>
                     </div>
                     <div class="progress-bar">
@@ -985,6 +1005,26 @@
                     }
                 });
             });
+            
+            // Home button from quiz
+            const homeFromQuizBtn = document.getElementById('homeFromQuizBtn');
+            if (homeFromQuizBtn) {
+                homeFromQuizBtn.addEventListener('click', () => {
+                    if (confirm('Θέλεις να επιστρέψεις στην αρχή; Η πρόοδός σου θα χαθεί.')) {
+                        state.screen = 'selection';
+                        state.selectedLevel = null;
+                        state.selectedCount = null;
+                        state.currentQuestion = 0;
+                        state.answered = false;
+                        state.correctCount = 0;
+                        state.matchingPairs = {};
+                        state.selectedWords = new Set();
+                        questions = [];
+                        wrongQuestions = [];
+                        render();
+                    }
+                });
+            }
             
             // Quiz screen - Fill Gap
             const checkGapBtn = document.getElementById('checkGapBtn');
@@ -1331,7 +1371,8 @@
                 `;
             }
             
-            if (q['Παρατηρήσεις']) {
+            // Εμφάνιση παρατηρήσεων ΑΝ ΥΠΑΡΧΟΥΝ (για όλους τους τύπους ερωτήσεων)
+            if (q['Παρατηρήσεις'] && q['Παρατηρήσεις'].trim() !== '') {
                 html += `
                     <div class="notes-box">
                         <h4>💡 Παρατήρηση:</h4>
