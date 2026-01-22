@@ -1106,9 +1106,9 @@
                     content: state.draggedItem.textContent.replace(label, '').trim()
                 };
                 
-                // Update UI
+                // Update UI - ΧΩΡΙΣ την κλάση matched (θα προστεθεί μόνο μετά τον έλεγχο)
                 const content = dropZone.querySelector('.drop-zone-content');
-                content.innerHTML = `<div class="matching-item matched">
+                content.innerHTML = `<div class="matching-item">
                     <span class="matching-label">${label}</span>
                     ${state.matchingPairs[rightId].content}
                 </div>`;
