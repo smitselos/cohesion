@@ -1060,9 +1060,6 @@
                             </button>
                         `).join('')}
                     </div>
-                    <button class="main-btn primary" id="checkMultipleChoiceBtn" style="margin-top: 16px;" disabled>
-                        Έλεγχος Απάντησης
-                    </button>
                 </div>
             `;
         }
@@ -1244,25 +1241,15 @@
                         btn.classList.add('selected');
                         selectedOption = parseInt(btn.dataset.value);
                         
-                        // Enable check button
-                        const checkBtn = document.getElementById('checkMultipleChoiceBtn');
-                        if (checkBtn) {
-                            checkBtn.disabled = false;
-                        }
+                        // Auto-check after 1 second
+                        setTimeout(() => {
+                            if (selectedOption !== null && !state.answered) {
+                                checkMultipleChoice(btn, selectedOption);
+                            }
+                        }, 1000);
                     }
                 });
             });
-            
-            // Check Multiple Choice button
-            const checkMultipleChoiceBtn = document.getElementById('checkMultipleChoiceBtn');
-            if (checkMultipleChoiceBtn) {
-                checkMultipleChoiceBtn.addEventListener('click', () => {
-                    if (selectedOption !== null) {
-                        const selectedBtn = document.querySelector(`.option-btn[data-value="${selectedOption}"]`);
-                        checkMultipleChoice(selectedBtn, selectedOption);
-                    }
-                });
-            }
             
             // Home button from quiz
             const homeFromQuizBtn = document.getElementById('homeFromQuizBtn');
