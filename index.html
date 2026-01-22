@@ -1,4 +1,4 @@
-        <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="el">
 <head>
     <meta charset="UTF-8">
@@ -1391,6 +1391,9 @@
             };
             let pool = allData.filter(q => q.question_type === typeMap[state.selectedLevel]);
             
+            // Shuffle για τυχαία σειρά
+            pool = shuffleArray(pool);
+            
             if (state.selectedCount !== 'all') {
                 pool = pool.slice(0, state.selectedCount);
             }
@@ -1404,6 +1407,15 @@
             state.selectedWords = new Set();
             state.screen = 'quiz';
             render();
+        }
+        
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
         }
         
         function checkMultipleChoice(btn, value) {
