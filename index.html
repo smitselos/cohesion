@@ -642,6 +642,44 @@
         };
 
         // =====================================================
+        // ΗΧΟΙ
+        // =====================================================
+        
+        function playCorrectSound() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = 800;
+            oscillator.type = 'sine';
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.3);
+        }
+        
+        function playWrongSound() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = 200;
+            oscillator.type = 'sawtooth';
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.3);
+        }
+
+        // =====================================================
         // DATA LOADING
         // =====================================================
         
@@ -1396,10 +1434,12 @@
             if (value === correct) {
                 btn.classList.add('correct-answer');
                 state.correctCount++;
+                playCorrectSound();
             } else {
                 btn.classList.add('wrong-answer');
                 buttons[correct - 1].classList.add('correct-answer');
                 wrongQuestions.push(q);
+                playWrongSound();
             }
             
             showFeedback(q);
@@ -1423,8 +1463,10 @@
             
             if (isCorrect) {
                 state.correctCount++;
+                playCorrectSound();
             } else {
                 wrongQuestions.push(q);
+                playWrongSound();
             }
             
             showFeedback(q, !isCorrect);
@@ -1469,8 +1511,10 @@
             
             if (allCorrect) {
                 state.correctCount++;
+                playCorrectSound();
             } else {
                 wrongQuestions.push(q);
+                playWrongSound();
             }
             
             document.getElementById('checkMatchingBtn').disabled = true;
@@ -1505,8 +1549,10 @@
             
             if (allCorrect) {
                 state.correctCount++;
+                playCorrectSound();
             } else {
                 wrongQuestions.push(q);
+                playWrongSound();
             }
             
             showFeedback(q, !allCorrect, `Σωστές λέξεις: ${state.requiredWords.join(', ')}`);
