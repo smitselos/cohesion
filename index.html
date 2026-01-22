@@ -842,22 +842,12 @@
         }
         
         function renderMatching(q) {
-            // Parse answer: "Α. Επομένως | Β 1, Έμφαση|2, Συ Α-3, Β-1, Γ-4, D-2"
-            const parts = q.answer.split('|');
+            // Parse columns
             const leftItems = q.left_column ? q.left_column.split(',').map(s => s.trim()) : [];
             const rightItems = q.right_column ? q.right_column.split(',').map(s => s.trim()) : [];
             
-            // Parse labels from first part if exists
-            let leftLabels = [];
-            if (parts[0]) {
-                const labelMatches = parts[0].match(/([Α-ΩA-Z])\.\s*([^|]+)/g);
-                if (labelMatches) {
-                    leftLabels = labelMatches.map(m => {
-                        const match = m.match(/([Α-ΩA-Z])\.\s*(.+)/);
-                        return match ? { label: match[1], text: match[2].trim() } : null;
-                    }).filter(Boolean);
-                }
-            }
+            // Αυτόματη ανάθεση ελληνικών labels (Α, Β, Γ, Δ, Ε, Ζ...)
+            const greekLabels = ['Α', 'Β', 'Γ', 'Δ', 'Ε', 'Ζ', 'Η', 'Θ'];
             
             return `
                 <div class="options-container">
@@ -869,7 +859,7 @@
                             <h4>Αριστερή Στήλη</h4>
                             <div id="leftColumn">
                                 ${leftItems.map((item, i) => {
-                                    const label = leftLabels[i] ? leftLabels[i].label : String.fromCharCode(65 + i);
+                                    const label = greekLabels[i] || String.fromCharCode(913 + i); // 913 = Α
                                     return `
                                         <div class="matching-item" draggable="true" data-left-id="${i}" data-label="${label}">
                                             <span class="matching-label">${label}</span>
@@ -1244,20 +1234,19 @@
             state.answered = true;
             const q = questions[state.currentQuestion];
             
-            // Parse correct answers: "Α-3, Β-1, Γ-4, D-2"
-            const parts = q.answer.split('|');
+            // Parse correct answers: "Α-2, Β-4, Γ-1, Δ-3"
             const correctPairs = {};
+            const pairs = q.answer.split(',').map(p => p.trim());
             
-            if (parts.length > 1) {
-                const pairsPart = parts[1].trim();
-                const pairs = pairsPart.split(',').map(p => p.trim());
-                pairs.forEach(pair => {
-                    const match = pair.match(/([Α-ΩA-Z])-(\d+)/);
-                    if (match) {
-                        correctPairs[match[1]] = (parseInt(match[2]) - 1).toString();
-                    }
-                });
-            }
+            pairs.forEach(pair => {
+                // Match both Greek (Α-Ω) and Latin (A-Z) letters
+                const match = pair.match(/([Α-ΩA-Z])-(\d+)/);
+                if (match) {
+                    const label = match[1];
+                    const rightIndex = (parseInt(match[2]) - 1).toString();
+                    correctPairs[label] = rightIndex;
+                }
+            });
             
             // Check answers
             let allCorrect = true;
