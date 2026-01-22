@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+        <!DOCTYPE html>
 <html lang="el">
 <head>
     <meta charset="UTF-8">
@@ -896,6 +896,9 @@
                             </button>
                         `).join('')}
                     </div>
+                    <button class="main-btn primary" id="checkMultipleChoiceBtn" style="margin-top: 16px;" disabled>
+                        Έλεγχος Απάντησης
+                    </button>
                 </div>
             `;
         }
@@ -1050,13 +1053,37 @@
             }
             
             // Quiz screen - Multiple Choice
+            let selectedOption = null;
+            
             document.querySelectorAll('.option-btn[data-value]').forEach(btn => {
                 btn.addEventListener('click', () => {
                     if (!state.answered) {
-                        checkMultipleChoice(btn, parseInt(btn.dataset.value));
+                        // Remove previous selection
+                        document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+                        
+                        // Mark this as selected
+                        btn.classList.add('selected');
+                        selectedOption = parseInt(btn.dataset.value);
+                        
+                        // Enable check button
+                        const checkBtn = document.getElementById('checkMultipleChoiceBtn');
+                        if (checkBtn) {
+                            checkBtn.disabled = false;
+                        }
                     }
                 });
             });
+            
+            // Check Multiple Choice button
+            const checkMultipleChoiceBtn = document.getElementById('checkMultipleChoiceBtn');
+            if (checkMultipleChoiceBtn) {
+                checkMultipleChoiceBtn.addEventListener('click', () => {
+                    if (selectedOption !== null) {
+                        const selectedBtn = document.querySelector(`.option-btn[data-value="${selectedOption}"]`);
+                        checkMultipleChoice(selectedBtn, selectedOption);
+                    }
+                });
+            }
             
             // Home button from quiz
             const homeFromQuizBtn = document.getElementById('homeFromQuizBtn');
@@ -1211,6 +1238,18 @@
             if (clone) {
                 clone.style.left = (touch.clientX - clone.offsetWidth / 2) + 'px';
                 clone.style.top = (touch.clientY - clone.offsetHeight / 2) + 'px';
+            }
+            
+            // Auto-scroll when near edges
+            const scrollThreshold = 100; // pixels from edge to start scrolling
+            const scrollSpeed = 15;
+            
+            if (touch.clientY < scrollThreshold) {
+                // Near top - scroll up
+                window.scrollBy(0, -scrollSpeed);
+            } else if (touch.clientY > window.innerHeight - scrollThreshold) {
+                // Near bottom - scroll down
+                window.scrollBy(0, scrollSpeed);
             }
             
             // Check if over a drop zone
