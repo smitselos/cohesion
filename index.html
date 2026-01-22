@@ -51,37 +51,28 @@
         @media (max-width: 600px) {
             .header {
                 gap: 8px;
-                flex-wrap: nowrap; /* Μην αναδιπλώνεις */
+                flex-wrap: nowrap;
+                justify-content: flex-end; /* Δεξιά στοίχιση */
             }
             .header > div:first-child {
-                flex: 1;
-                min-width: 0; /* Επιτρέπει shrinking */
-            }
-            .header h1 {
-                font-size: 1rem;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-            .header-subtitle {
-                font-size: 0.7rem;
-                display: none; /* Απόκρυψη subtitle σε mobile */
+                display: none; /* Κρύψε τον τίτλο τελείως */
             }
             .question-counter {
-                flex-shrink: 0; /* Μην συρρικνώνεται */
+                flex-shrink: 0;
             }
             .question-counter p {
-                font-size: 0.65rem;
+                font-size: 0.7rem;
                 margin-bottom: 0;
             }
             .question-counter span {
-                font-size: 1.1rem;
+                font-size: 1.2rem;
             }
             .card {
-                padding: 12px; /* Ακόμα λιγότερο padding */
+                padding: 10px; /* Ελάχιστο padding */
             }
             .progress-bar {
-                margin-top: 8px; /* Λιγότερο space */
+                margin-top: 6px;
+                height: 6px; /* Πιο λεπτό progress bar */
             }
         }
         
