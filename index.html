@@ -2308,20 +2308,6 @@
             
             showFeedback(q, !allCorrect);
         }
-            }
-            
-            document.getElementById('checkMatchingBtn').disabled = true;
-            
-            // Show correct answers
-            let correctAnswerText = 'Σωστές αντιστοιχίσεις: ';
-            Object.keys(correctPairs).forEach(label => {
-                const rightIndex = parseInt(correctPairs[label]) + 1;
-                correctAnswerText += `${label}-${rightIndex}, `;
-            });
-            correctAnswerText = correctAnswerText.slice(0, -2);
-            
-            showFeedback(q, !allCorrect, correctAnswerText);
-        }
         
         function checkPickWords() {
             state.answered = true;
