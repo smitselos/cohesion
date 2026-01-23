@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="el">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Ανάλυσης Παραγράφου - Α' Λυκείου</title>
+    <title>Quiz Συνοχής & Συνεκτικότητας - Α' Λυκείου</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -25,6 +25,12 @@
             margin-bottom: 20px;
         }
         
+        .card.full-height {
+            min-height: calc(100vh - 80px);
+            display: flex;
+            flex-direction: column;
+        }
+        
         .header {
             display: flex;
             justify-content: space-between;
@@ -37,10 +43,43 @@
         .header-subtitle { color: #64748b; font-size: 0.875rem; }
         
         .question-counter { text-align: right; }
+        .question-counter p {
+            color: #64748b;
+            font-size: 0.875rem;
+            margin-bottom: 4px;
+        }
         .question-counter span {
             font-size: 1.75rem;
             font-weight: 700;
             color: #4f46e5;
+        }
+        
+        @media (max-width: 600px) {
+            .header {
+                gap: 8px;
+                flex-wrap: nowrap;
+                justify-content: flex-end; /* Δεξιά στοίχιση */
+            }
+            .header > div:first-child {
+                display: none; /* Κρύψε τον τίτλο τελείως */
+            }
+            .question-counter {
+                flex-shrink: 0;
+            }
+            .question-counter p {
+                font-size: 0.7rem;
+                margin-bottom: 0;
+            }
+            .question-counter span {
+                font-size: 1.2rem;
+            }
+            .card {
+                padding: 10px; /* Ελάχιστο padding */
+            }
+            .progress-bar {
+                margin-top: 6px;
+                height: 6px; /* Πιο λεπτό progress bar */
+            }
         }
         
         .progress-bar {
@@ -132,18 +171,25 @@
             cursor: not-allowed;
         }
         
-        .count-info {
-            background: #ecfdf5;
-            color: #065f46;
-            padding: 12px;
-            border-radius: 8px;
-            margin-top: 16px;
-            font-weight: 500;
+        .print-btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            background: #059669;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 12px;
         }
         
-        .count-info.warning {
-            background: #fef3c7;
-            color: #92400e;
+        .print-btn:hover { background: #047857; }
+        .print-btn:disabled {
+            background: #e2e8f0;
+            color: #94a3b8;
+            cursor: not-allowed;
         }
         
         /* Loading */
@@ -160,7 +206,7 @@
         @keyframes spin { to { transform: rotate(360deg); } }
         
         /* Quiz */
-        .paragraph-label {
+        .text-label {
             display: inline-block;
             background: #e0e7ff;
             color: #3730a3;
@@ -171,76 +217,44 @@
             margin-bottom: 12px;
         }
         
-        .syndyasmos-badge {
-            display: inline-block;
-            background: #fef3c7;
-            color: #92400e;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-left: 8px;
-        }
-        
-        .paragraph-text {
+        .question-text {
             background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
             color: #1e293b;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             padding: 20px;
             border-radius: 12px;
-            text-align: justify;
-            line-height: 1.9;
+            line-height: 1.8;
             font-size: 1rem;
             border-left: 4px solid #4f46e5;
             box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-            /* Απαγόρευση επιλογής/αντιγραφής */
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
         }
         
-        .questions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-        
-        .question-card {
+        .question-prompt {
             background: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            padding: 20px;
-            border: 2px solid transparent;
-        }
-        
-        .question-card.correct { background: #dcfce7; border-color: #22c55e; }
-        .question-card.incorrect { background: #fee2e2; border-color: #ef4444; }
-        .question-card.partial { background: #fef9c3; border-color: #eab308; }
-        
-        .question-card h3 {
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 16px;
+            font-weight: 600;
             color: #374151;
-            font-size: 1rem;
-            margin-bottom: 12px;
         }
         
-        .multi-select-hint {
-            font-size: 0.75rem;
-            color: #6b7280;
-            margin-bottom: 10px;
-            font-style: italic;
+        .options-container {
+            background: #faf5ff;
+            border: 1px solid #e9d5ff;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 16px;
         }
         
         .options-list {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
         }
         
         .option-btn {
             width: 100%;
-            padding: 12px 16px;
+            padding: 14px 16px;
             border: 2px solid #e2e8f0;
             border-radius: 10px;
             background: white;
@@ -258,31 +272,15 @@
             background: #059669; 
             color: white;
             font-weight: 600;
-            animation: glow 1.5s ease-in-out infinite;
         }
-        @keyframes glow {
-            0%, 100% { 
-                box-shadow: 0 0 5px #059669, 0 0 10px #059669, 0 0 15px #059669;
-            }
-            50% { 
-                box-shadow: 0 0 10px #10b981, 0 0 20px #10b981, 0 0 30px #10b981, 0 0 40px #10b981;
-            }
-        }
-        .option-btn.correct-answer.was-selected::after {
+        .option-btn.correct-answer::after {
             content: '✓';
             position: absolute;
-            top: -8px;
-            right: -8px;
-            background: #047857;
-            color: white;
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            font-size: 14px;
+            top: 50%;
+            right: 16px;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
             font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
         .option-btn.wrong-answer { 
             border-color: #b91c1c; 
@@ -293,6 +291,79 @@
         .option-btn.wrong-answer::after {
             content: '✗';
             position: absolute;
+            top: 50%;
+            right: 16px;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .option-btn:disabled { cursor: default; }
+        
+        /* Syndesmoi Grid - Multiple Choice Level 1 */
+        .syndesmoi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+        }
+        
+        .syndesmos-btn {
+            padding: 14px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            background: white;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+            font-weight: 500;
+            position: relative;
+        }
+        
+        .syndesmos-btn:hover:not(:disabled) {
+            border-color: #94a3b8;
+            background: #f8fafc;
+        }
+        
+        .syndesmos-btn.selected {
+            border-color: #4f46e5;
+            background: #eef2ff;
+        }
+        
+        .syndesmos-btn.correct-answer {
+            border-color: #047857;
+            background: #059669;
+            color: white;
+            font-weight: 600;
+            animation: glow 1.5s ease-in-out infinite;
+        }
+        
+        .syndesmos-btn.correct-answer.was-selected::after {
+            content: '✓';
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #047857;
+            color: white;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .syndesmos-btn.wrong-answer {
+            border-color: #b91c1c;
+            background: #dc2626;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .syndesmos-btn.wrong-answer::after {
+            content: '✗';
+            position: absolute;
             top: -8px;
             right: -8px;
             background: #b91c1c;
@@ -306,114 +377,310 @@
             align-items: center;
             justify-content: center;
         }
-        .option-btn:disabled { cursor: default; }
-        .option-hint { font-size: 0.75rem; color: #64748b; margin-left: 8px; }
-        .option-btn.correct-answer .option-hint,
-        .option-btn.wrong-answer .option-hint { color: rgba(255,255,255,0.8); }
         
-        .tropos-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
+        @keyframes glow {
+            0%, 100% {
+                box-shadow: 0 0 5px #059669, 0 0 10px #059669;
+            }
+            50% {
+                box-shadow: 0 0 10px #10b981, 0 0 20px #10b981, 0 0 30px #10b981;
+            }
         }
         
-        .tropos-btn {
-            padding: 10px 8px;
+        /* Gap Input */
+        .gap-input-container {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+        }
+        
+        input[type="text"] {
+            flex: 1;
+            padding: 14px;
+            font-size: 1rem;
+            border-radius: 10px;
+            border: 2px solid #c7d2fe;
+            transition: all 0.2s;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #4f46e5;
+        }
+        
+        input.correct {
+            background: #ecfdf5;
+            border-color: #059669;
+        }
+        
+        input.wrong {
+            background: #fee2e2;
+            border-color: #dc2626;
+        }
+        
+        .check-gap-btn {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 10px;
+            background: #4f46e5;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .check-gap-btn:hover { background: #3730a3; }
+        .check-gap-btn:disabled { 
+            background: #e2e8f0; 
+            color: #94a3b8; 
+            cursor: not-allowed; 
+        }
+        
+        /* Matching (Drag & Drop) */
+        .matching-hint {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+            color: #1e40af;
+            font-size: 0.875rem;
+            text-align: center;
+        }
+        
+        .matching-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .matching-column {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            min-height: 200px;
+        }
+        
+        .matching-column h4 {
+            color: #374151;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            text-align: center;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .matching-item {
+            padding: 12px 14px;
+            margin-bottom: 10px;
             border: 2px solid #e2e8f0;
             border-radius: 8px;
             background: white;
-            cursor: pointer;
-            font-size: 0.85rem;
+            cursor: grab;
             transition: all 0.2s;
             position: relative;
+            user-select: none;
         }
         
-        .tropos-btn:hover:not(:disabled) { border-color: #94a3b8; }
-        .tropos-btn.selected { border-color: #7c3aed; background: #f3e8ff; }
-        .tropos-btn.selected-primary { border-color: #7c3aed; background: #ddd6fe; }
-        .tropos-btn.correct-answer { 
-            border-color: #047857; 
-            background: #059669; 
-            color: white;
-            font-weight: 600;
-            animation: glow 1.5s ease-in-out infinite;
+        .matching-item:active {
+            cursor: grabbing;
         }
-        .tropos-btn.correct-answer.was-selected::after {
+        
+        .matching-item.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+        }
+        
+        .matching-item.drag-over {
+            border-color: #4f46e5;
+            background: #eef2ff;
+            border-style: dashed;
+        }
+        
+        .matching-item.matched {
+            border-color: #059669;
+            background: #ecfdf5;
+            cursor: default;
+        }
+        
+        .matching-item.matched::after {
             content: '✓';
             position: absolute;
-            top: -8px;
-            right: -8px;
-            background: #047857;
-            color: white;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            font-size: 12px;
+            top: 50%;
+            right: 12px;
+            transform: translateY(-50%);
+            color: #059669;
             font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            font-size: 1.1rem;
         }
-        .tropos-btn.correct-primary { 
-            border-color: #047857; 
-            background: #059669; 
-            color: white;
-            font-weight: 600;
-            animation: glow 1.5s ease-in-out infinite;
+        
+        .matching-item.wrong {
+            border-color: #dc2626;
+            background: #fee2e2;
         }
-        .tropos-btn.correct-primary.was-selected::after {
-            content: '✓';
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: #047857;
-            color: white;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            font-size: 12px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .tropos-btn.wrong-answer {
-            border-color: #b91c1c;
-            background: #dc2626;
-            color: white;
-            font-weight: 600;
-        }
-        .tropos-btn.wrong-answer::after {
+        
+        .matching-item.wrong::after {
             content: '✗';
             position: absolute;
-            top: -8px;
-            right: -8px;
-            background: #b91c1c;
-            color: white;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            font-size: 12px;
+            top: 50%;
+            right: 12px;
+            transform: translateY(-50%);
+            color: #dc2626;
             font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            font-size: 1.1rem;
         }
         
-        .selection-order {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: #7c3aed;
+        .matching-label {
+            display: inline-block;
+            background: #4f46e5;
             color: white;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            font-size: 0.7rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+        
+        .drop-zone {
+            min-height: 50px;
+            border: 2px dashed #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #f8fafc;
+            transition: all 0.2s;
+        }
+        
+        .drop-zone.drag-over {
+            border-color: #4f46e5;
+            background: #eef2ff;
+        }
+        
+        .drop-zone.filled {
+            border-style: solid;
+            border-color: #94a3b8;
+            background: white;
+        }
+        
+        .drop-zone-label {
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        
+        /* Pick Words */
+        .pick-words-hint {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+            color: #1e40af;
+            font-size: 0.875rem;
+            text-align: center;
+        }
+        
+        .pick-words-text {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            color: #1e293b;
+            padding: 20px;
+            border-radius: 12px;
+            line-height: 2;
+            font-size: 1rem;
+            border-left: 4px solid #4f46e5;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        
+        .pickable-word {
+            cursor: pointer;
+            padding: 2px 4px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            display: inline-block;
+        }
+        
+        .pickable-word:hover {
+            background: #fef3c7;
+        }
+        
+        .pickable-word.selected {
+            background: #ecfdf5;
+            color: #047857;
+            font-weight: 600;
+            border-bottom: 2px solid #059669;
+        }
+        
+        .pickable-word.correct {
+            background: #ecfdf5;
+            color: #047857;
+            font-weight: 600;
+            border-bottom: 2px solid #059669;
+            animation: pulse-green 0.6s ease-in-out;
+        }
+        
+        @keyframes pulse-green {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .pick-words-counter {
+            background: #fef3c7;
+            border: 1px solid #fcd34d;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 12px;
+            text-align: center;
+            font-size: 0.875rem;
+            color: #92400e;
+            font-weight: 500;
+        }
+        
+        /* Feedback */
+        .feedback-container {
+            margin-top: 20px;
+        }
+        
+        .correct-answer-box {
+            background: #ecfdf5;
+            border: 1px solid #059669;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .correct-answer-box h4 {
+            color: #065f46;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+        }
+        
+        .correct-answer-box p {
+            color: #047857;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+        
+        .notes-box {
+            background: #fffbeb;
+            border: 1px solid #fcd34d;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .notes-box h4 {
+            color: #92400e;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+        }
+        
+        .notes-box p {
+            color: #78350f;
+            font-size: 0.875rem;
+            line-height: 1.6;
         }
         
         .main-btn {
@@ -431,52 +698,113 @@
         .main-btn.primary:hover { background: #3730a3; }
         .main-btn.success { background: #16a34a; color: white; }
         .main-btn.success:hover { background: #15803d; }
-        .main-btn:disabled { background: #e2e8f0; color: #94a3b8; cursor: not-allowed; }
-        
-        .feedback-section {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            padding: 24px;
-            margin-bottom: 20px;
+        .main-btn:disabled { 
+            background: #e2e8f0; 
+            color: #94a3b8; 
+            cursor: not-allowed; 
         }
         
-        .feedback-section h3 {
-            color: #1e293b;
-            font-size: 1.2rem;
-            margin-bottom: 16px;
-        }
-        
-        .feedback-box {
-            padding: 16px;
-            border-radius: 12px;
-            margin-bottom: 16px;
-        }
-        
-        .feedback-box.blue { background: #eff6ff; }
-        .feedback-box.purple { background: #faf5ff; }
-        .feedback-box.green { background: #ecfdf5; }
-        .feedback-box.amber { background: #fffbeb; }
-        
-        .feedback-box h4 { font-size: 0.95rem; margin-bottom: 8px; }
-        .feedback-box.blue h4 { color: #1e40af; }
-        .feedback-box.purple h4 { color: #6b21a8; }
-        .feedback-box.green h4 { color: #065f46; }
-        .feedback-box.amber h4 { color: #92400e; }
-        
-        .feedback-box p { font-size: 0.875rem; color: #374151; margin-bottom: 6px; }
-        
-        .tropos-tag {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 4px;
+        .hint-btn {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fcd34d;
+            padding: 8px 14px;
+            border-radius: 8px;
             font-size: 0.8rem;
             font-weight: 600;
-            margin-right: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            width: 100%;
+            justify-content: center;
         }
         
-        .tropos-tag.primary { background: #ddd6fe; color: #5b21b6; }
-        .tropos-tag.secondary { background: #e0e7ff; color: #3730a3; }
+        .hint-btn:hover {
+            background: #fde68a;
+            border-color: #f59e0b;
+            transform: translateY(-2px);
+        }
+        
+        .hint-box {
+            background: #fffbeb;
+            border: 1px solid #fcd34d;
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 8px;
+            display: none;
+        }
+        
+        .hint-box.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .hint-box h4 {
+            color: #92400e;
+            font-size: 0.8rem;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .hint-box p {
+            color: #78350f;
+            font-size: 0.8rem;
+            line-height: 1.5;
+        }
+        
+        .sound-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+        
+        .sound-toggle:hover {
+            border-color: #4f46e5;
+            transform: scale(1.05);
+        }
+        
+        .sound-toggle svg {
+            width: 24px;
+            height: 24px;
+            color: #4f46e5;
+        }
+        
+        .sound-toggle.muted {
+            background: #fee2e2;
+            border-color: #dc2626;
+        }
+        
+        .sound-toggle.muted svg {
+            color: #dc2626;
+        }
         
         /* Results */
         .results-card { text-align: center; padding: 40px 24px; }
@@ -493,125 +821,41 @@
         .results-score { font-size: 3rem; font-weight: 700; color: #4f46e5; }
         .results-percentage { color: #64748b; font-size: 1.1rem; }
         
-        .results-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-        
-        .detail-box { padding: 16px; border-radius: 12px; }
-        .detail-box.blue { background: #eff6ff; }
-        .detail-box.purple { background: #faf5ff; }
-        .detail-box.green { background: #ecfdf5; }
-        
-        .detail-box p:first-child { font-size: 0.8rem; font-weight: 500; }
-        .detail-box.blue p:first-child { color: #2563eb; }
-        .detail-box.purple p:first-child { color: #7c3aed; }
-        .detail-box.green p:first-child { color: #059669; }
-        
-        .detail-box p:last-child { font-size: 1.5rem; font-weight: 700; }
-        .detail-box.blue p:last-child { color: #1d4ed8; }
-        .detail-box.purple p:last-child { color: #6b21a8; }
-        .detail-box.green p:last-child { color: #047857; }
-        
-        .theory-toggle {
-            background: none;
-            border: none;
-            color: #4f46e5;
-            cursor: pointer;
-            font-size: 0.875rem;
-            font-weight: 500;
-            padding: 8px 0;
-        }
-        
-        .theory-box {
-            background: #fffbeb;
+        .wrong-questions-section {
+            background: #fef3c7;
             border: 1px solid #fcd34d;
             border-radius: 12px;
-            padding: 16px;
+            padding: 20px;
             margin-bottom: 20px;
-            font-size: 0.875rem;
+            text-align: left;
         }
         
-        .theory-box h3 { color: #92400e; margin-bottom: 12px; }
-        .theory-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 16px;
+        .wrong-questions-section h3 {
+            color: #92400e;
+            font-size: 1.1rem;
+            margin-bottom: 12px;
         }
-        .theory-box ul { margin-left: 20px; color: #78350f; }
-        .theory-box li { margin-bottom: 4px; font-size: 0.8rem; }
+        
+        .repeat-btn {
+            background: #f59e0b;
+            color: white;
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 12px;
+        }
+        
+        .repeat-btn:hover { background: #d97706; }
         
         @media (max-width: 600px) {
             .header { flex-direction: column; align-items: flex-start; }
-            .tropos-grid { grid-template-columns: 1fr; }
-            .results-grid { grid-template-columns: 1fr; }
-            .filter-options { flex-direction: column; }
-            .filter-btn { width: 100%; text-align: center; }
+            .gap-input-container { flex-direction: column; }
+            .matching-container { grid-template-columns: 1fr; }
         }
-        
-        /* Εκτύπωση */
-        @media print {
-            body { background: white; padding: 0; }
-            .no-print { display: none !important; }
-            .print-only { display: block !important; }
-            .print-container {
-                max-width: 100%;
-                padding: 20px;
-            }
-            .print-header {
-                text-align: center;
-                margin-bottom: 30px;
-                border-bottom: 2px solid #333;
-                padding-bottom: 15px;
-            }
-            .print-header h1 { font-size: 18pt; margin-bottom: 5px; }
-            .print-header p { font-size: 11pt; color: #666; }
-            .print-paragraph {
-                margin-bottom: 25px;
-                page-break-inside: avoid;
-            }
-            .print-paragraph-number {
-                font-weight: bold;
-                font-size: 12pt;
-                margin-bottom: 8px;
-            }
-            .print-paragraph-text {
-                font-size: 11pt;
-                line-height: 1.8;
-                text-align: justify;
-                border: 1px solid #ccc;
-                padding: 15px;
-                background: #fafafa;
-            }
-            .print-answer-section {
-                margin-top: 10px;
-                border: 1px dashed #ccc;
-                padding: 10px;
-                min-height: 60px;
-            }
-            .print-answer-section p {
-                font-size: 10pt;
-                color: #666;
-                margin-bottom: 5px;
-            }
-        }
-        
-        .print-only { display: none; }
-        
-        .print-btn {
-            background: #059669;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-size: 1rem;
-            cursor: pointer;
-            margin-top: 10px;
-            width: 100%;
-        }
-        .print-btn:hover { background: #047857; }
     </style>
 </head>
 <body>
@@ -626,167 +870,202 @@
         // =====================================================
         // ΡΥΘΜΙΣΕΙΣ
         // =====================================================
-        const GOOGLE_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTH8nczzu7hQKzQrz4ndfbiFsryk-5XUZ9Wn8tx6mOuW3FBXNyD2U0CCS22sh6Pj0pkRfFNk4rLjDnK/pub?output=csv';
-        
-        const tropoiAnaptyxis = [
-            "Παραδείγματα",
-            "Αιτιολόγηση", 
-            "Αίτιο-αποτέλεσμα",
-            "Διαίρεση",
-            "Σύγκριση-αντίθεση",
-            "Αναλογία",
-            "Ορισμός"
+        const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSBmZdhLakrSUcbxWqSdNo5O07jxI7YRJ_J890qyb-u0qqoOqe1RMl18UQx0SFbLBo2Ihdm6gOOnelY/pub?output=csv';
+
+        const syndesmoi = [
+            "Χρόνος",
+            "Σειρά/αρίθμηση",
+            "Αιτία",
+            "Αποτέλεσμα/σκοπός",
+            "Συμπέρασμα",
+            "Παράδειγμα",
+            "Επεξήγηση",
+            "Αντίθεση",
+            "Βεβαιότητα",
+            "Έμφαση",
+            "Προσθήκη",
+            "Διάζευξη",
+            "Προϋπόθεση",
+            "Αναλογία"
         ];
 
-        let allData = []; // Όλα τα δεδομένα
-        let quizData = []; // Φιλτραρισμένα δεδομένα
+        let allData = [];
+        let questions = [];
+        let wrongQuestions = [];
         
         let state = {
-            screen: 'loading', // loading, selection, quiz, results
-            // Φίλτρα
-            selectedDomiFilter: 'all', // all, Διμερής, Τριμερής
-            selectedTroposFilter: 'all', // all, Αιτιολόγηση, κλπ, syndyasmos
-            selectedCount: 10, // 1, 10, 20
-            selectedDifficulty: 'all', // all, 1, 2, 3
-            // Quiz
+            screen: 'loading',
+            selectedLevel: 1, // Προεπιλεγμένο: Επίπεδο 1
+            selectedCount: 10, // Προεπιλεγμένο: 10 ερωτήσεις
             currentQuestion: 0,
-            selectedDomi: null,
-            selectedTropoi: [],
-            showResult: false,
-            score: { domi: 0, tropiKyrios: 0, tropiDeytereyon: 0 },
-            showTheory: false
+            answered: false,
+            correctCount: 0,
+            soundEnabled: true, // Sound on by default
+            // Matching state
+            matchingPairs: {},
+            draggedItem: null,
+            // Pick words state
+            selectedWords: new Set(),
+            requiredWords: []
         };
+
+        // =====================================================
+        // ΗΧΟΙ
+        // =====================================================
+        
+        function playCorrectSound() {
+            if (!state.soundEnabled) return;
+            
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = 800;
+            oscillator.type = 'sine';
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.3);
+        }
+        
+        function playWrongSound() {
+            if (!state.soundEnabled) return;
+            
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = 200;
+            oscillator.type = 'sawtooth';
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.3);
+        }
+        
+        function toggleSound() {
+            state.soundEnabled = !state.soundEnabled;
+            updateSoundButton();
+        }
+        
+        function updateSoundButton() {
+            const btn = document.getElementById('soundToggle');
+            if (!btn) return;
+            
+            if (state.soundEnabled) {
+                btn.classList.remove('muted');
+                btn.innerHTML = `
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M11 5L6 9H2V15H6L11 19V5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M15.54 8.46C16.4774 9.39764 17.0039 10.6692 17.0039 11.995C17.0039 13.3208 16.4774 14.5924 15.54 15.53" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M19.07 4.93C20.9447 6.80528 21.9979 9.34836 21.9979 12C21.9979 14.6516 20.9447 17.1947 19.07 19.07" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                `;
+                btn.title = 'Απενεργοποίηση ήχου';
+            } else {
+                btn.classList.add('muted');
+                btn.innerHTML = `
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M11 5L6 9H2V15H6L11 19V5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <line x1="23" y1="9" x2="17" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <line x1="17" y1="9" x2="23" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                `;
+                btn.title = 'Ενεργοποίηση ήχου';
+            }
+        }
 
         // =====================================================
         // DATA LOADING
         // =====================================================
         
-        function parseCSVLine(line, delimiter) {
-            const result = [];
-            let current = '';
-            let inQuotes = false;
+        function parseCSV(text) {
+            const rows = [];
+            let row = [], cell = '', inQuotes = false;
             
-            for (let i = 0; i < line.length; i++) {
-                const char = line[i];
-                if (char === '"') {
-                    inQuotes = !inQuotes;
-                } else if (char === delimiter && !inQuotes) {
-                    result.push(current);
-                    current = '';
-                } else {
-                    current += char;
-                }
+            for (let i = 0; i < text.length; i++) {
+                const ch = text[i], next = text[i + 1];
+                if (ch === '"' && inQuotes && next === '"') { cell += '"'; i++; }
+                else if (ch === '"') { inQuotes = !inQuotes; }
+                else if (ch === ',' && !inQuotes) { row.push(cell); cell = ''; }
+                else if ((ch === '\n' || ch === '\r') && !inQuotes) {
+                    if (cell || row.length) { row.push(cell); rows.push(row); }
+                    row = []; cell = '';
+                } else cell += ch;
             }
-            result.push(current);
-            return result.map(val => val.replace(/^"|"$/g, '').replace(/""/g, '"'));
+            if (cell || row.length) { row.push(cell); rows.push(row); }
+            
+            const headers = rows.shift();
+            return rows.map(r => {
+                let obj = {};
+                headers.forEach((k, i) => obj[k] = r[i] || '');
+                return obj;
+            });
         }
         
-        function detectDelimiter(firstLine) {
-            const commas = (firstLine.match(/,/g) || []).length;
-            const semicolons = (firstLine.match(/;/g) || []).length;
-            return semicolons > commas ? ';' : ',';
+        function normalize(str) {
+            return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
         }
         
-        function parseCSV(csv) {
-            const lines = csv.split('\n').filter(line => line.trim());
-            if (lines.length < 2) return [];
-            
-            const delimiter = detectDelimiter(lines[0]);
-            const headers = parseCSVLine(lines[0], delimiter);
-            const data = [];
-            
-            for (let i = 1; i < lines.length; i++) {
-                const values = parseCSVLine(lines[i], delimiter);
-                if (values.length >= 3) {
-                    const obj = {};
-                    headers.forEach((header, index) => {
-                        let value = values[index] || '';
-                        value = value.trim();
-                        if (value === '' || value.toLowerCase() === 'null') {
-                            value = null;
-                        }
-                        obj[header.trim().toLowerCase()] = value;
-                    });
-                    
-                    if (obj.keimeno && obj.domi && obj.kyrios) {
-                        data.push(obj);
-                    }
-                }
-            }
-            return data;
-        }
-
         async function loadData() {
-            const proxies = [
-                (u) => 'https://corsproxy.io/?' + encodeURIComponent(u),
-                (u) => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u),
-                (u) => u
-            ];
-            
-            for (const getProxyUrl of proxies) {
+            try {
+                const response = await fetch(CSV_URL);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const csv = await response.text();
+                allData = parseCSV(csv);
+                
+                if (allData.length === 0) {
+                    console.warn('No data loaded from CSV');
+                }
+                
+                state.screen = 'selection';
+                render();
+            } catch (error) {
+                console.error('Σφάλμα φόρτωσης:', error);
+                // Προσπάθεια με direct Google Sheets URL
                 try {
-                    const fetchUrl = getProxyUrl(GOOGLE_SHEET_CSV_URL);
-                    const response = await fetch(fetchUrl);
+                    const directUrl = CSV_URL.replace('/pub?', '/pub?gid=0&single=true&');
+                    const response2 = await fetch(directUrl);
+                    const csv2 = await response2.text();
+                    allData = parseCSV(csv2);
+                    state.screen = 'selection';
+                    render();
+                } catch (error2) {
+                    // Fallback - δείξε την οθόνη επιλογής ούτως ή άλλως
+                    console.error('Δεύτερη προσπάθεια απέτυχε:', error2);
+                    state.screen = 'selection';
+                    render();
                     
-                    if (!response.ok) continue;
-                    
-                    const csv = await response.text();
-                    if (!csv || csv.trim().startsWith('<!') || csv.trim().startsWith('<html')) continue;
-                    
-                    allData = parseCSV(csv);
-                    if (allData.length > 0) {
-                        state.screen = 'selection';
-                        render();
-                        return;
-                    }
-                } catch (e) {
-                    continue;
+                    // Δείξε μήνυμα στον χρήστη
+                    setTimeout(() => {
+                        const app = document.getElementById('app');
+                        if (allData.length === 0) {
+                            app.innerHTML = `
+                                <div class="card" style="text-align: center; padding: 40px;">
+                                    <h2 style="color: #dc2626; margin-bottom: 16px;">⚠️ Πρόβλημα Φόρτωσης</h2>
+                                    <p style="color: #64748b; margin-bottom: 20px;">
+                                        Δεν μπόρεσαν να φορτώσουν τα δεδομένα από το Google Sheet.<br>
+                                        Παρακαλώ ελέγξτε τη σύνδεσή σας στο internet.
+                                    </p>
+                                    <button class="start-btn" onclick="location.reload()">
+                                        🔄 Δοκιμάστε Ξανά
+                                    </button>
+                                </div>
+                            `;
+                        }
+                    }, 500);
                 }
             }
-            
-            // Fallback αν αποτύχουν όλα
-            state.screen = 'selection';
-            render();
-        }
-        
-        function shuffleArray(array) {
-            const newArray = [...array];
-            for (let i = newArray.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-            }
-            return newArray;
-        }
-
-        // =====================================================
-        // FILTERING
-        // =====================================================
-        
-        function getFilteredData() {
-            let filtered = [...allData];
-            
-            // Φίλτρο δομής
-            if (state.selectedDomiFilter !== 'all') {
-                filtered = filtered.filter(item => item.domi === state.selectedDomiFilter);
-            }
-            
-            // Φίλτρο τρόπου
-            if (state.selectedTroposFilter === 'syndyasmos') {
-                filtered = filtered.filter(item => item.deytereyon !== null);
-            } else if (state.selectedTroposFilter !== 'all') {
-                filtered = filtered.filter(item => item.kyrios === state.selectedTroposFilter);
-            }
-            
-            // Φίλτρο δυσκολίας
-            if (state.selectedDifficulty !== 'all') {
-                filtered = filtered.filter(item => item.dyskoleia === state.selectedDifficulty);
-            }
-            
-            return filtered;
-        }
-        
-        function hasSyndyasmos(question) {
-            return question.deytereyon !== null;
         }
 
         // =====================================================
@@ -805,9 +1084,21 @@
                     break;
                 case 'quiz':
                     app.innerHTML = renderQuiz();
+                    // Add sound toggle button
+                    if (!document.getElementById('soundToggle')) {
+                        const soundBtn = document.createElement('button');
+                        soundBtn.id = 'soundToggle';
+                        soundBtn.className = 'sound-toggle';
+                        document.body.appendChild(soundBtn);
+                        updateSoundButton();
+                        soundBtn.addEventListener('click', toggleSound);
+                    }
                     break;
                 case 'results':
                     app.innerHTML = renderResults();
+                    // Remove sound button on results screen
+                    const existingBtn = document.getElementById('soundToggle');
+                    if (existingBtn) existingBtn.remove();
                     break;
             }
             
@@ -824,67 +1115,43 @@
         }
         
         function renderSelection() {
-            const filteredCount = getFilteredData().length;
-            
             return `
-                <div class="card selection-screen">
-                    <h2>📝 Quiz Ανάλυσης Παραγράφου</h2>
+                <div class="card selection-screen full-height">
+                    <h2>📝 Quiz Συνοχής & Συνεκτικότητας</h2>
                     <p>Νεοελληνική Γλώσσα - Λύκειο</p>
                     
                     <div class="filter-section">
-                        <h3>📐 Επιλέξτε Δομή</h3>
+                        <h3>📊 Επιλέξτε Επίπεδο</h3>
                         <div class="filter-options">
-                            <button class="filter-btn ${state.selectedDomiFilter === 'all' ? 'selected' : ''}" data-domi-filter="all">Όλες</button>
-                            <button class="filter-btn ${state.selectedDomiFilter === 'Διμερής' ? 'selected' : ''}" data-domi-filter="Διμερής">Διμερής</button>
-                            <button class="filter-btn ${state.selectedDomiFilter === 'Τριμερής' ? 'selected' : ''}" data-domi-filter="Τριμερής">Τριμερής</button>
+                            <button class="filter-btn ${state.selectedLevel === 1 ? 'selected' : ''}" data-level="1">
+                                Επίπεδο 1 - Πολλαπλή Επιλογή
+                            </button>
+                            <button class="filter-btn ${state.selectedLevel === 2 ? 'selected' : ''}" data-level="2">
+                                Επίπεδο 2 - Συμπλήρωση Κενού
+                            </button>
+                            <button class="filter-btn ${state.selectedLevel === 3 ? 'selected' : ''}" data-level="3">
+                                Επίπεδο 3 - Αντιστοίχιση
+                            </button>
+                            <button class="filter-btn ${state.selectedLevel === 4 ? 'selected' : ''}" data-level="4">
+                                Επίπεδο 4 - Επιλογή Λέξεων
+                            </button>
                         </div>
                     </div>
                     
                     <div class="filter-section">
-                        <h3>📚 Επιλέξτε Τρόπο Ανάπτυξης</h3>
-                        <div class="filter-options">
-                            <button class="filter-btn ${state.selectedTroposFilter === 'all' ? 'selected' : ''}" data-tropos-filter="all">Όλοι</button>
-                            <button class="filter-btn ${state.selectedTroposFilter === 'Αιτιολόγηση' ? 'selected' : ''}" data-tropos-filter="Αιτιολόγηση">Αιτιολόγηση</button>
-                            <button class="filter-btn ${state.selectedTroposFilter === 'Αίτιο-αποτέλεσμα' ? 'selected' : ''}" data-tropos-filter="Αίτιο-αποτέλεσμα">Αίτιο-αποτέλεσμα</button>
-                            <button class="filter-btn ${state.selectedTroposFilter === 'Διαίρεση' ? 'selected' : ''}" data-tropos-filter="Διαίρεση">Διαίρεση</button>
-                            <button class="filter-btn ${state.selectedTroposFilter === 'Παραδείγματα' ? 'selected' : ''}" data-tropos-filter="Παραδείγματα">Παραδείγματα</button>
-                            <button class="filter-btn ${state.selectedTroposFilter === 'Σύγκριση-αντίθεση' ? 'selected' : ''}" data-tropos-filter="Σύγκριση-αντίθεση">Σύγκριση-αντίθεση</button>
-                            <button class="filter-btn ${state.selectedTroposFilter === 'Αναλογία' ? 'selected' : ''}" data-tropos-filter="Αναλογία">Αναλογία</button>
-                            <button class="filter-btn ${state.selectedTroposFilter === 'Ορισμός' ? 'selected' : ''}" data-tropos-filter="Ορισμός">Ορισμός</button>
-                            <button class="filter-btn ${state.selectedTroposFilter === 'syndyasmos' ? 'selected' : ''}" data-tropos-filter="syndyasmos">Συνδυασμός</button>
-                        </div>
-                    </div>
-                    
-                    <div class="filter-section">
-                        <h3>🔢 Αριθμός Παραγράφων</h3>
+                        <h3>🔢 Αριθμός Ασκήσεων</h3>
                         <div class="filter-options">
                             <button class="filter-btn ${state.selectedCount === 1 ? 'selected' : ''}" data-count="1">1</button>
                             <button class="filter-btn ${state.selectedCount === 10 ? 'selected' : ''}" data-count="10">10</button>
-                            <button class="filter-btn ${state.selectedCount === 20 ? 'selected' : ''}" data-count="20">20</button>
+                            <button class="filter-btn ${state.selectedCount === 'all' ? 'selected' : ''}" data-count="all">Όλες</button>
                         </div>
                     </div>
                     
-                    <div class="filter-section">
-                        <h3>⚡ Βαθμός Δυσκολίας</h3>
-                        <div class="filter-options">
-                            <button class="filter-btn ${state.selectedDifficulty === 'all' ? 'selected' : ''}" data-difficulty="all">Όλοι</button>
-                            <button class="filter-btn ${state.selectedDifficulty === '1' ? 'selected' : ''}" data-difficulty="1">Επίπεδο 1</button>
-                            <button class="filter-btn ${state.selectedDifficulty === '2' ? 'selected' : ''}" data-difficulty="2">Επίπεδο 2</button>
-                            <button class="filter-btn ${state.selectedDifficulty === '3' ? 'selected' : ''}" data-difficulty="3">Επίπεδο 3</button>
-                        </div>
-                    </div>
-                    
-                    <div class="count-info ${filteredCount === 0 ? 'warning' : ''}">
-                        ${filteredCount > 0 
-                            ? `✅ Βρέθηκαν <strong>${filteredCount}</strong> παράγραφοι ${filteredCount < state.selectedCount ? `(θα εμφανιστούν όλες)` : `(θα εμφανιστούν ${state.selectedCount})`}` 
-                            : '⚠️ Δεν βρέθηκαν παράγραφοι με αυτά τα κριτήρια'}
-                    </div>
-                    
-                    <button class="start-btn" id="startBtn" ${filteredCount === 0 ? 'disabled' : ''}>
+                    <button class="start-btn" id="startBtn" ${state.selectedLevel === null || state.selectedCount === null ? 'disabled' : ''}>
                         Ξεκινήστε το Quiz
                     </button>
                     
-                    <button class="print-btn" id="printBtn" ${filteredCount === 0 ? 'disabled' : ''}>
+                    <button class="print-btn" id="printBtn" ${state.selectedLevel === null || state.selectedCount === null ? 'disabled' : ''}>
                         🖨️ Εκτύπωση Άσκησης (Φύλλο Εργασίας)
                     </button>
                 </div>
@@ -892,20 +1159,19 @@
         }
         
         function renderQuiz() {
-            const current = quizData[state.currentQuestion];
-            const progress = ((state.currentQuestion + 1) / quizData.length) * 100;
-            const isSyndyasmos = hasSyndyasmos(current);
+            const q = questions[state.currentQuestion];
+            const progress = ((state.currentQuestion + 1) / questions.length) * 100;
             
             return `
                 <div class="card">
                     <div class="header">
                         <div>
-                            <h1>📝 Ανάλυση Παραγράφου</h1>
+                            <h1>📝 Συνοχή & Συνεκτικότητα</h1>
                             <p class="header-subtitle">Νεοελληνική Γλώσσα - Λύκειο</p>
                         </div>
                         <div class="question-counter">
-                            <p style="color: #64748b; font-size: 0.875rem;">Ερώτηση</p>
-                            <span>${state.currentQuestion + 1}/${quizData.length}</span>
+                            <p style="color: #64748b; font-size: 0.875rem;">Άσκηση</p>
+                            <span>${state.currentQuestion + 1}/${questions.length}</span>
                         </div>
                     </div>
                     <div class="progress-bar">
@@ -913,188 +1179,194 @@
                     </div>
                 </div>
 
-                <button class="theory-toggle" id="theoryToggle">
-                    ${state.showTheory ? '▼' : '▶'} Βοήθεια: Θεωρητικό Πλαίσιο
-                </button>
-
-                ${state.showTheory ? `
-                <div class="theory-box">
-                    <h3>📚 Υπενθύμιση</h3>
-                    <div class="theory-grid">
-                        <div>
-                            <p style="font-weight: 600; margin-bottom: 8px; color: #92400e;">Δομή Παραγράφου:</p>
-                            <ul>
-                                <li><strong>Τριμερής:</strong> Θεματική + Σχόλια + Κατακλείδα</li>
-                                <li><strong>Διμερής:</strong> Θεματική + Σχόλια (χωρίς κατακλείδα)</li>
-                            </ul>
-                        </div>
-                        <div>
-                            <p style="font-weight: 600; margin-bottom: 8px; color: #92400e;">Συνδυασμός Μεθόδων:</p>
-                            <ul>
-                                <li>Μία <strong>κύρια</strong> μέθοδος (βασική πρόθεση)</li>
-                                <li>Μία ή περισσότερες <strong>δευτερεύουσες</strong></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                ` : ''}
-
                 <div class="card">
-                    <span class="paragraph-label">Παράγραφος ${state.currentQuestion + 1}</span>
-                    ${isSyndyasmos ? '<span class="syndyasmos-badge">⚡ Συνδυασμός μεθόδων</span>' : ''}
-                    <p class="paragraph-text">${current.keimeno}</p>
+                    <span class="text-label">Κείμενο ${state.currentQuestion + 1}</span>
+                    ${q.question_type !== 'pick_words' ? `
+                        <div class="question-text">${q.text}</div>
+                        <div class="question-prompt">${q.question}</div>
+                    ` : ''}
+                    ${q.question_type === 'pick_words' ? `
+                        <div class="question-prompt">${q.question}</div>
+                    ` : ''}
+                    
+                    ${q['Βοήθεια'] && q['Βοήθεια'].trim() !== '' && !state.answered ? `
+                        <button class="hint-btn" id="hintBtn">
+                            💡 Βοήθεια
+                        </button>
+                        <div class="hint-box" id="hintBox">
+                            <h4>💡 Υπόδειξη:</h4>
+                            <p>${q['Βοήθεια']}</p>
+                        </div>
+                    ` : ''}
                 </div>
 
-                <div class="questions-grid">
-                    <div class="question-card ${state.showResult ? (state.selectedDomi === current.domi ? 'correct' : 'incorrect') : ''}">
-                        <h3>1️⃣ Ποια είναι η δομή της παραγράφου;</h3>
-                        <div class="options-list">
-                            <button class="option-btn ${state.selectedDomi === 'Τριμερής' ? 'selected' : ''} ${state.showResult && 'Τριμερής' === current.domi ? 'correct-answer' : ''} ${state.showResult && state.selectedDomi === 'Τριμερής' && 'Τριμερής' === current.domi ? 'was-selected' : ''} ${state.showResult && state.selectedDomi === 'Τριμερής' && 'Τριμερής' !== current.domi ? 'wrong-answer' : ''}" 
-                                    data-domi="Τριμερής" ${state.showResult ? 'disabled' : ''}>
-                                Τριμερής <span class="option-hint">(με κατακλείδα)</span>
-                            </button>
-                            <button class="option-btn ${state.selectedDomi === 'Διμερής' ? 'selected' : ''} ${state.showResult && 'Διμερής' === current.domi ? 'correct-answer' : ''} ${state.showResult && state.selectedDomi === 'Διμερής' && 'Διμερής' === current.domi ? 'was-selected' : ''} ${state.showResult && state.selectedDomi === 'Διμερής' && 'Διμερής' !== current.domi ? 'wrong-answer' : ''}" 
-                                    data-domi="Διμερής" ${state.showResult ? 'disabled' : ''}>
-                                Διμερής <span class="option-hint">(χωρίς κατακλείδα)</span>
-                            </button>
-                        </div>
-                    </div>
+                ${renderQuestionType(q)}
 
-                    <div class="question-card ${state.showResult ? getTroposResultClass(current) : ''}">
-                        <h3>2️⃣ Ποιος είναι ο τρόπος ανάπτυξης;</h3>
-                        <p class="multi-select-hint">
-                            💡 Επίλεξε με τη σειρά: 1ος = κύριος, 2ος = δευτερεύων (αν υπάρχει)
-                        </p>
-                        <div class="tropos-grid">
-                            ${tropoiAnaptyxis.map(tropos => {
-                                const selIndex = state.selectedTropoi.indexOf(tropos);
-                                const isSelected = selIndex !== -1;
-                                const isPrimary = selIndex === 0;
-                                const isCorrectKyrios = tropos === current.kyrios;
-                                const isCorrectDeyt = tropos === current.deytereyon;
-                                const isWrong = isSelected && !isCorrectKyrios && !isCorrectDeyt;
-                                
-                                let classes = 'tropos-btn';
-                                if (isSelected && !state.showResult) classes += isPrimary ? ' selected-primary' : ' selected';
-                                if (state.showResult) {
-                                    if (isCorrectKyrios) classes += ' correct-primary';
-                                    else if (isCorrectDeyt) classes += ' correct-answer';
-                                    else if (isWrong) classes += ' wrong-answer';
-                                    // Προσθήκη was-selected αν επιλέχθηκε και είναι σωστό
-                                    if (isSelected && (isCorrectKyrios || isCorrectDeyt)) classes += ' was-selected';
-                                }
-                                
-                                return `
-                                    <button class="${classes}" data-tropos="${tropos}" ${state.showResult ? 'disabled' : ''}>
-                                        ${tropos}
-                                        ${isSelected && !state.showResult ? `<span class="selection-order">${selIndex + 1}</span>` : ''}
-                                    </button>
-                                `;
-                            }).join('')}
-                        </div>
-                    </div>
-                </div>
-
-                ${!state.showResult ? `
-                    <button class="main-btn primary" id="checkBtn" ${!state.selectedDomi || state.selectedTropoi.length === 0 ? 'disabled' : ''}>
-                        Έλεγχος Απάντησης
-                    </button>
-                ` : `
-                    <div class="feedback-section">
-                        <h3>📋 Ανάλυση Απάντησης</h3>
-                        
-                        <div class="feedback-box blue">
-                            <h4>${state.selectedDomi === current.domi ? '✅' : '❌'} Δομή: ${current.domi}</h4>
-                            ${current.thematiki ? `<p><strong>Θεματική:</strong> ${current.thematiki}</p>` : ''}
-                            ${current.scholia ? `<p><strong>Σχόλια:</strong> ${current.scholia}</p>` : ''}
-                            ${current.katakleida ? `<p><strong>Κατακλείδα:</strong> ${current.katakleida}</p>` : ''}
-                        </div>
-
-                        <div class="feedback-box purple">
-                            <h4>Τρόπος/οι Ανάπτυξης:</h4>
-                            <p>
-                                <span class="tropos-tag primary">Κύριος: ${current.kyrios}</span>
-                                ${current.deytereyon ? `<span class="tropos-tag secondary">Δευτερεύων: ${current.deytereyon}</span>` : ''}
-                            </p>
-                            ${current.aitiologisi ? `<p style="margin-top: 10px;">${current.aitiologisi}</p>` : ''}
-                        </div>
-
-                        <div class="feedback-box amber">
-                            <h4>📊 Η επιλογή σου:</h4>
-                            <p>
-                                ${state.selectedTropoi.length > 0 ? `<span class="tropos-tag primary">1ος: ${state.selectedTropoi[0]}</span>` : ''}
-                                ${state.selectedTropoi.length > 1 ? `<span class="tropos-tag secondary">2ος: ${state.selectedTropoi[1]}</span>` : ''}
-                            </p>
-                            <p style="margin-top: 8px;">
-                                Κύριος: ${state.selectedTropoi[0] === current.kyrios ? '✅ Σωστά' : '❌ Λάθος'}
-                                ${current.deytereyon ? ` | Δευτερεύων: ${state.selectedTropoi[1] === current.deytereyon ? '✅ Σωστά' : (state.selectedTropoi.length < 2 ? '⚠️ Δεν επιλέχθηκε' : '❌ Λάθος')}` : ''}
-                            </p>
-                        </div>
-
-                        ${current.prothesi ? `
-                        <div class="feedback-box green">
-                            <h4>🎯 Πρόθεση Συντάκτη</h4>
-                            <p>${current.prothesi}</p>
-                        </div>
-                        ` : ''}
-                    </div>
-
-                    <button class="main-btn success" id="nextBtn">
-                        ${state.currentQuestion < quizData.length - 1 ? 'Επόμενη Ερώτηση →' : 'Δες τα Αποτελέσματα'}
-                    </button>
-                `}
+                <div id="feedback"></div>
             `;
         }
-
-        function getTroposResultClass(current) {
-            const kyriosCorrect = state.selectedTropoi[0] === current.kyrios;
-            const deytereyonCorrect = !current.deytereyon || state.selectedTropoi[1] === current.deytereyon;
-            
-            if (kyriosCorrect && deytereyonCorrect) return 'correct';
-            if (kyriosCorrect || (current.deytereyon && state.selectedTropoi.includes(current.deytereyon))) return 'partial';
-            return 'incorrect';
+        
+        function renderQuestionType(q) {
+            switch(q.question_type) {
+                case 'multiple_choice':
+                    return renderMultipleChoice(q);
+                case 'fill_gap':
+                    return renderFillGap(q);
+                case 'matching':
+                    return renderMatching(q);
+                case 'pick_words':
+                    return renderPickWords(q);
+                default:
+                    return '';
+            }
         }
-
-        function renderResults() {
-            const maxDomi = quizData.length;
-            const maxTropiKyrios = quizData.length;
-            const maxTropiDeytereyon = quizData.filter(q => q.deytereyon).length;
+        
+        function renderMultipleChoice(q) {
+            return `
+                <div class="card" style="padding: 24px;">
+                    <h3 style="color: #374151; font-size: 1rem; margin-bottom: 16px; text-align: center;">
+                        Τι δηλώνει η τονισμένη λέξη/φράση;
+                    </h3>
+                    <div class="syndesmoi-grid">
+                        ${syndesmoi.map((syndesmos, i) => {
+                            const isCorrect = parseInt(q.answer) === (i + 1);
+                            const isSelected = state.answered && parseInt(q.answer) === (i + 1);
+                            
+                            let classes = 'syndesmos-btn';
+                            if (state.answered) {
+                                if (isCorrect) classes += ' correct-answer';
+                                if (isSelected) classes += ' was-selected';
+                            }
+                            
+                            return `
+                                <button class="${classes}" data-value="${i + 1}" ${state.answered ? 'disabled' : ''}>
+                                    ${syndesmos}
+                                </button>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+        
+        function renderFillGap(q) {
+            return `
+                <div class="options-container">
+                    <div class="gap-input-container">
+                        <input type="text" id="gapInput" placeholder="Γράψε την απάντησή σου..." ${state.answered ? 'disabled' : ''}>
+                        <button class="check-gap-btn" id="checkGapBtn" ${state.answered ? 'disabled' : ''}>
+                            Έλεγχος
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function renderMatching(q) {
+            // Parse columns
+            const leftItems = q.left_column ? q.left_column.split(',').map(s => s.trim()) : [];
+            const rightItems = q.right_column ? q.right_column.split(',').map(s => s.trim()) : [];
             
-            const totalMax = maxDomi + maxTropiKyrios + maxTropiDeytereyon;
-            const totalScore = state.score.domi + state.score.tropiKyrios + state.score.tropiDeytereyon;
-            const percentage = Math.round((totalScore / totalMax) * 100);
+            // Αυτόματη ανάθεση ελληνικών labels (Α, Β, Γ, Δ, Ε, Ζ...)
+            const greekLabels = ['Α', 'Β', 'Γ', 'Δ', 'Ε', 'Ζ', 'Η', 'Θ'];
+            
+            return `
+                <div class="options-container">
+                    <div class="matching-hint">
+                        💡 Σύρετε τα στοιχεία από την αριστερή στήλη και αφήστε τα στην αντίστοιχη θέση της δεξιάς στήλης
+                    </div>
+                    <div class="matching-container">
+                        <div class="matching-column">
+                            <h4>Αριστερή Στήλη</h4>
+                            <div id="leftColumn">
+                                ${leftItems.map((item, i) => {
+                                    const label = greekLabels[i] || String.fromCharCode(913 + i); // 913 = Α
+                                    return `
+                                        <div class="matching-item" draggable="true" data-left-id="${i}" data-label="${label}">
+                                            <span class="matching-label">${label}</span>
+                                            ${item}
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                        <div class="matching-column">
+                            <h4>Δεξιά Στήλη</h4>
+                            <div id="rightColumn">
+                                ${rightItems.map((item, i) => `
+                                    <div class="drop-zone" data-right-id="${i}">
+                                        <div class="drop-zone-label">${i + 1}. ${item}</div>
+                                        <div class="drop-zone-content"></div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    <button class="main-btn primary" id="checkMatchingBtn" style="margin-top: 16px;" ${Object.keys(state.matchingPairs).length < leftItems.length ? 'disabled' : ''}>
+                        Έλεγχος Απαντήσεων
+                    </button>
+                </div>
+            `;
+        }
+        
+        function renderPickWords(q) {
+            // Parse required words from answer (διαχωρισμένες με κενό)
+            state.requiredWords = q.answer ? q.answer.split(' ').map(w => w.trim()).filter(Boolean) : [];
+            
+            // Make ALL words clickable
+            const words = q.text.split(' ');
+            const textHTML = words.map((word, i) => {
+                const cleanWord = word.replace(/[.,;!?]/g, '');
+                const isSelected = state.selectedWords.has(cleanWord);
+                const isCorrect = state.requiredWords.some(rw => normalize(rw) === normalize(cleanWord));
+                
+                // Όλες οι λέξεις είναι clickable
+                return `<span class="pickable-word ${isSelected ? 'selected' : ''}" data-word="${cleanWord}" data-is-correct="${isCorrect}">${word}</span>`;
+            }).join(' ');
+            
+            return `
+                <div class="options-container">
+                    <div class="pick-words-hint">
+                        💡 Κάντε κλικ στις λέξεις που πιστεύετε ότι είναι σωστές. Οι σωστές λέξεις θα πρασινίσουν.
+                    </div>
+                    <div class="pick-words-text">
+                        ${textHTML}
+                    </div>
+                    <div class="pick-words-counter">
+                        Έχετε επιλέξει σωστά: ${state.selectedWords.size} / ${state.requiredWords.length} λέξεις
+                    </div>
+                    <button class="main-btn primary" id="checkPickWordsBtn" style="margin-top: 16px;" ${state.selectedWords.size !== state.requiredWords.length ? 'disabled' : ''}>
+                        Έλεγχος Απαντήσεων
+                    </button>
+                </div>
+            `;
+        }
+        
+        function renderResults() {
+            const percentage = Math.round((state.correctCount / questions.length) * 100);
             const emoji = percentage >= 80 ? '🎉' : percentage >= 60 ? '👍' : '📚';
-
+            
             return `
                 <div class="card results-card">
                     <div class="results-emoji">${emoji}</div>
                     <h2 class="results-title">Ολοκλήρωσες το Quiz!</h2>
                     
                     <div class="results-score-box">
-                        <p class="results-score">${totalScore} / ${totalMax}</p>
+                        <p class="results-score">${state.correctCount} / ${questions.length}</p>
                         <p class="results-percentage">(${percentage}%)</p>
                     </div>
 
-                    <div class="results-grid">
-                        <div class="detail-box blue">
-                            <p>Δομή</p>
-                            <p>${state.score.domi}/${maxDomi}</p>
+                    ${wrongQuestions.length > 0 ? `
+                        <div class="wrong-questions-section">
+                            <h3>📌 Έχεις ${wrongQuestions.length} λανθασμένη/ες απάντηση/εις</h3>
+                            <button class="repeat-btn" id="repeatBtn">
+                                🔁 Επανάληψη Λανθασμένων
+                            </button>
                         </div>
-                        <div class="detail-box purple">
-                            <p>Κύριος Τρόπος</p>
-                            <p>${state.score.tropiKyrios}/${maxTropiKyrios}</p>
-                        </div>
-                        <div class="detail-box green">
-                            <p>Δευτερεύων</p>
-                            <p>${state.score.tropiDeytereyon}/${maxTropiDeytereyon}</p>
-                        </div>
-                    </div>
+                    ` : ''}
 
-                    <button class="main-btn primary" id="restartBtn" style="margin-bottom: 12px;">
-                        Ξεκίνα Ξανά
-                    </button>
-                    <button class="main-btn" id="newSelectionBtn" style="background: #64748b; color: white;">
-                        Νέα Επιλογή Κριτηρίων
+                    <button class="main-btn primary" id="homeBtn">
+                        ⬅ Επιστροφή στην Αρχή
                     </button>
                 </div>
             `;
@@ -1106,170 +1378,449 @@
         
         function attachEventListeners() {
             // Selection screen
-            document.querySelectorAll('[data-domi-filter]').forEach(btn => {
+            document.querySelectorAll('[data-level]').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    state.selectedDomiFilter = btn.dataset.domiFilter;
-                    render();
-                });
-            });
-            
-            document.querySelectorAll('[data-tropos-filter]').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    state.selectedTroposFilter = btn.dataset.troposFilter;
+                    state.selectedLevel = parseInt(btn.dataset.level);
                     render();
                 });
             });
             
             document.querySelectorAll('[data-count]').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    state.selectedCount = parseInt(btn.dataset.count);
-                    render();
-                });
-            });
-            
-            document.querySelectorAll('[data-difficulty]').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    state.selectedDifficulty = btn.dataset.difficulty;
+                    const count = btn.dataset.count;
+                    state.selectedCount = count === 'all' ? 'all' : parseInt(count);
                     render();
                 });
             });
             
             const startBtn = document.getElementById('startBtn');
             if (startBtn) {
-                startBtn.addEventListener('click', () => {
-                    let filtered = shuffleArray(getFilteredData());
-                    // Περιορισμός στον επιλεγμένο αριθμό
-                    quizData = filtered.slice(0, state.selectedCount);
-                    state.screen = 'quiz';
-                    state.currentQuestion = 0;
-                    state.selectedDomi = null;
-                    state.selectedTropoi = [];
-                    state.showResult = false;
-                    state.score = { domi: 0, tropiKyrios: 0, tropiDeytereyon: 0 };
-                    render();
-                });
+                startBtn.addEventListener('click', startQuiz);
             }
             
             const printBtn = document.getElementById('printBtn');
             if (printBtn) {
-                printBtn.addEventListener('click', () => {
-                    let filtered = shuffleArray(getFilteredData());
-                    const printData = filtered.slice(0, state.selectedCount);
-                    printWorksheet(printData);
+                printBtn.addEventListener('click', printWorksheet);
+            }
+            
+            // Quiz screen - Multiple Choice
+            let selectedOption = null;
+            let checkTimeout = null; // Για να ακυρώσουμε το timeout
+            
+            // Hint button
+            const hintBtn = document.getElementById('hintBtn');
+            const hintBox = document.getElementById('hintBox');
+            if (hintBtn && hintBox) {
+                hintBtn.addEventListener('click', () => {
+                    if (hintBox.classList.contains('show')) {
+                        hintBox.classList.remove('show');
+                        hintBtn.textContent = '💡 Βοήθεια';
+                    } else {
+                        hintBox.classList.add('show');
+                        hintBtn.textContent = '🔼 Απόκρυψη';
+                    }
                 });
             }
             
-            // Quiz screen
-            const theoryToggle = document.getElementById('theoryToggle');
-            if (theoryToggle) {
-                theoryToggle.addEventListener('click', () => {
-                    state.showTheory = !state.showTheory;
-                    render();
-                });
-            }
-
-            document.querySelectorAll('[data-domi]').forEach(btn => {
+            document.querySelectorAll('.syndesmos-btn[data-value]').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    state.selectedDomi = btn.dataset.domi;
-                    render();
+                    if (!state.answered) {
+                        // Ακύρωση του προηγούμενου timeout
+                        if (checkTimeout) {
+                            clearTimeout(checkTimeout);
+                            checkTimeout = null;
+                        }
+                        
+                        // Remove previous selection
+                        document.querySelectorAll('.syndesmos-btn').forEach(b => b.classList.remove('selected'));
+                        
+                        // Mark this as selected
+                        btn.classList.add('selected');
+                        selectedOption = parseInt(btn.dataset.value);
+                        
+                        // Auto-check after 1 second
+                        checkTimeout = setTimeout(() => {
+                            if (selectedOption !== null && !state.answered) {
+                                checkMultipleChoice(btn, selectedOption);
+                            }
+                        }, 1000);
+                    }
                 });
             });
-
-            document.querySelectorAll('[data-tropos]').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const tropos = btn.dataset.tropos;
-                    const index = state.selectedTropoi.indexOf(tropos);
-                    
-                    if (index !== -1) {
-                        state.selectedTropoi.splice(index, 1);
-                    } else if (state.selectedTropoi.length < 2) {
-                        state.selectedTropoi.push(tropos);
-                    } else {
-                        state.selectedTropoi[1] = tropos;
+            
+            // Home button from quiz
+            const homeFromQuizBtn = document.getElementById('homeFromQuizBtn');
+            if (homeFromQuizBtn) {
+                homeFromQuizBtn.addEventListener('click', () => {
+                    if (confirm('Θέλεις να επιστρέψεις στην αρχή; Η πρόοδός σου θα χαθεί.')) {
+                        state.screen = 'selection';
+                        state.selectedLevel = null;
+                        state.selectedCount = null;
+                        state.currentQuestion = 0;
+                        state.answered = false;
+                        state.correctCount = 0;
+                        state.matchingPairs = {};
+                        state.selectedWords = new Set();
+                        questions = [];
+                        wrongQuestions = [];
+                        render();
                     }
-                    render();
-                });
-            });
-
-            const checkBtn = document.getElementById('checkBtn');
-            if (checkBtn) {
-                checkBtn.addEventListener('click', () => {
-                    const current = quizData[state.currentQuestion];
-                    
-                    if (state.selectedDomi === current.domi) state.score.domi += 1;
-                    if (state.selectedTropoi[0] === current.kyrios) state.score.tropiKyrios += 1;
-                    if (current.deytereyon && state.selectedTropoi[1] === current.deytereyon) state.score.tropiDeytereyon += 1;
-                    
-                    state.showResult = true;
-                    render();
                 });
             }
-
-            const nextBtn = document.getElementById('nextBtn');
-            if (nextBtn) {
-                nextBtn.addEventListener('click', () => {
-                    if (state.currentQuestion < quizData.length - 1) {
-                        state.currentQuestion += 1;
-                        state.selectedDomi = null;
-                        state.selectedTropoi = [];
-                        state.showResult = false;
-                    } else {
-                        state.screen = 'results';
+            
+            // Quiz screen - Fill Gap
+            const checkGapBtn = document.getElementById('checkGapBtn');
+            if (checkGapBtn) {
+                checkGapBtn.addEventListener('click', checkGap);
+            }
+            
+            const gapInput = document.getElementById('gapInput');
+            if (gapInput) {
+                gapInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && !state.answered) {
+                        checkGap();
                     }
-                    render();
                 });
             }
-
+            
+            // Quiz screen - Matching (Drag & Drop)
+            attachMatchingListeners();
+            
+            const checkMatchingBtn = document.getElementById('checkMatchingBtn');
+            if (checkMatchingBtn) {
+                checkMatchingBtn.addEventListener('click', checkMatching);
+            }
+            
+            // Quiz screen - Pick Words
+            attachPickWordsListeners();
+            
+            const checkPickWordsBtn = document.getElementById('checkPickWordsBtn');
+            if (checkPickWordsBtn) {
+                checkPickWordsBtn.addEventListener('click', checkPickWords);
+            }
+            
             // Results screen
-            const restartBtn = document.getElementById('restartBtn');
-            if (restartBtn) {
-                restartBtn.addEventListener('click', () => {
-                    let filtered = shuffleArray(getFilteredData());
-                    quizData = filtered.slice(0, state.selectedCount);
-                    state.currentQuestion = 0;
-                    state.selectedDomi = null;
-                    state.selectedTropoi = [];
-                    state.showResult = false;
-                    state.score = { domi: 0, tropiKyrios: 0, tropiDeytereyon: 0 };
-                    state.screen = 'quiz';
-                    render();
-                });
+            const repeatBtn = document.getElementById('repeatBtn');
+            if (repeatBtn) {
+                repeatBtn.addEventListener('click', repeatWrong);
             }
             
-            const newSelectionBtn = document.getElementById('newSelectionBtn');
-            if (newSelectionBtn) {
-                newSelectionBtn.addEventListener('click', () => {
+            const homeBtn = document.getElementById('homeBtn');
+            if (homeBtn) {
+                homeBtn.addEventListener('click', () => {
                     state.screen = 'selection';
+                    state.selectedLevel = null;
+                    state.selectedCount = null;
                     state.currentQuestion = 0;
-                    state.selectedDomi = null;
-                    state.selectedTropoi = [];
-                    state.showResult = false;
-                    state.score = { domi: 0, tropiKyrios: 0, tropiDeytereyon: 0 };
+                    state.answered = false;
+                    state.correctCount = 0;
+                    questions = [];
+                    wrongQuestions = [];
                     render();
                 });
             }
         }
+        
+        function attachMatchingListeners() {
+            const matchingItems = document.querySelectorAll('.matching-item[draggable="true"]');
+            const dropZones = document.querySelectorAll('.drop-zone');
+            
+            matchingItems.forEach(item => {
+                // Mouse events (Desktop)
+                item.addEventListener('dragstart', handleDragStart);
+                item.addEventListener('dragend', handleDragEnd);
+                
+                // Touch events (Mobile)
+                item.addEventListener('touchstart', handleTouchStart);
+                item.addEventListener('touchmove', handleTouchMove);
+                item.addEventListener('touchend', handleTouchEnd);
+            });
+            
+            dropZones.forEach(zone => {
+                // Mouse events (Desktop)
+                zone.addEventListener('dragover', handleDragOver);
+                zone.addEventListener('drop', handleDrop);
+                zone.addEventListener('dragleave', handleDragLeave);
+            });
+        }
+        
+        // Mouse Events (Desktop)
+        function handleDragStart(e) {
+            state.draggedItem = e.target;
+            e.target.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', e.target.innerHTML);
+        }
+        
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+        }
+        
+        function handleDragOver(e) {
+            if (e.preventDefault) {
+                e.preventDefault();
+            }
+            e.dataTransfer.dropEffect = 'move';
+            e.target.closest('.drop-zone').classList.add('drag-over');
+            return false;
+        }
+        
+        function handleDragLeave(e) {
+            e.target.closest('.drop-zone').classList.remove('drag-over');
+        }
+        
+        // Touch Events (Mobile)
+        let touchStartX, touchStartY;
+        let clone = null;
+        
+        function handleTouchStart(e) {
+            state.draggedItem = e.target.closest('.matching-item');
+            const touch = e.touches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+            
+            // Create a clone for visual feedback
+            clone = state.draggedItem.cloneNode(true);
+            clone.style.position = 'fixed';
+            clone.style.opacity = '0.7';
+            clone.style.pointerEvents = 'none';
+            clone.style.zIndex = '1000';
+            clone.style.width = state.draggedItem.offsetWidth + 'px';
+            document.body.appendChild(clone);
+            
+            state.draggedItem.classList.add('dragging');
+            e.preventDefault();
+        }
+        
+        function handleTouchMove(e) {
+            if (!state.draggedItem) return;
+            
+            const touch = e.touches[0];
+            
+            // Move the clone with finger
+            if (clone) {
+                clone.style.left = (touch.clientX - clone.offsetWidth / 2) + 'px';
+                clone.style.top = (touch.clientY - clone.offsetHeight / 2) + 'px';
+            }
+            
+            // Auto-scroll when near edges
+            const scrollThreshold = 100; // pixels from edge to start scrolling
+            const scrollSpeed = 15;
+            
+            if (touch.clientY < scrollThreshold) {
+                // Near top - scroll up
+                window.scrollBy(0, -scrollSpeed);
+            } else if (touch.clientY > window.innerHeight - scrollThreshold) {
+                // Near bottom - scroll down
+                window.scrollBy(0, scrollSpeed);
+            }
+            
+            // Check if over a drop zone
+            const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+            const dropZone = elementBelow ? elementBelow.closest('.drop-zone') : null;
+            
+            // Remove all drag-over classes
+            document.querySelectorAll('.drop-zone').forEach(z => z.classList.remove('drag-over'));
+            
+            // Add drag-over to current zone
+            if (dropZone) {
+                dropZone.classList.add('drag-over');
+            }
+            
+            e.preventDefault();
+        }
+        
+        function handleTouchEnd(e) {
+            if (!state.draggedItem) return;
+            
+            const touch = e.changedTouches[0];
+            const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+            const dropZone = elementBelow ? elementBelow.closest('.drop-zone') : null;
+            
+            // Remove clone
+            if (clone) {
+                document.body.removeChild(clone);
+                clone = null;
+            }
+            
+            state.draggedItem.classList.remove('dragging');
+            
+            // Handle drop if over a valid zone
+            if (dropZone) {
+                dropZone.classList.remove('drag-over');
+                performDrop(dropZone);
+            }
+            
+            state.draggedItem = null;
+            e.preventDefault();
+        }
+        
+        function handleDrop(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            }
+            
+            const dropZone = e.target.closest('.drop-zone');
+            dropZone.classList.remove('drag-over');
+            
+            performDrop(dropZone);
+            
+            return false;
+        }
+        
+        function performDrop(dropZone) {
+            if (state.draggedItem) {
+                const leftId = state.draggedItem.dataset.leftId;
+                const rightId = dropZone.dataset.rightId;
+                const label = state.draggedItem.dataset.label;
+                
+                // Remove previous match for this left item
+                Object.keys(state.matchingPairs).forEach(key => {
+                    if (state.matchingPairs[key].leftId === leftId) {
+                        delete state.matchingPairs[key];
+                    }
+                });
+                
+                // Add new match
+                state.matchingPairs[rightId] = {
+                    leftId: leftId,
+                    label: label,
+                    content: state.draggedItem.textContent.replace(label, '').trim()
+                };
+                
+                // Update UI - ΧΩΡΙΣ την κλάση matched (θα προστεθεί μόνο μετά τον έλεγχο)
+                const content = dropZone.querySelector('.drop-zone-content');
+                content.innerHTML = `<div class="matching-item">
+                    <span class="matching-label">${label}</span>
+                    ${state.matchingPairs[rightId].content}
+                </div>`;
+                
+                dropZone.classList.add('filled');
+                
+                // Check if we can enable the check button
+                const leftItems = document.querySelectorAll('.matching-item[draggable="true"]').length;
+                const checkBtn = document.getElementById('checkMatchingBtn');
+                if (checkBtn && Object.keys(state.matchingPairs).length >= leftItems) {
+                    checkBtn.disabled = false;
+                }
+            }
+        }
+        
+        function attachPickWordsListeners() {
+            document.querySelectorAll('.pickable-word').forEach(word => {
+                word.addEventListener('click', () => {
+                    const wordText = word.dataset.word;
+                    const isCorrect = word.dataset.isCorrect === 'true';
+                    
+                    // Μόνο αν είναι σωστή λέξη, πρασινίζει
+                    if (isCorrect) {
+                        if (state.selectedWords.has(wordText)) {
+                            // Deselect
+                            state.selectedWords.delete(wordText);
+                            word.classList.remove('selected');
+                        } else {
+                            // Select
+                            state.selectedWords.add(wordText);
+                            word.classList.add('selected');
+                        }
+                        
+                        // Update counter
+                        const counter = document.querySelector('.pick-words-counter');
+                        if (counter) {
+                            counter.textContent = `Έχετε επιλέξει σωστά: ${state.selectedWords.size} / ${state.requiredWords.length} λέξεις`;
+                        }
+                        
+                        // Enable/disable button
+                        const checkBtn = document.getElementById('checkPickWordsBtn');
+                        if (checkBtn) {
+                            checkBtn.disabled = state.selectedWords.size !== state.requiredWords.length;
+                        }
+                    }
+                    // Αν δεν είναι σωστή → δεν κάνει τίποτα
+                });
+            });
+        }
 
         // =====================================================
-        // PRINT WORKSHEET
+        // QUIZ LOGIC
         // =====================================================
         
-        function printWorksheet(data) {
+        function startQuiz() {
+            const typeMap = { 
+                1: 'multiple_choice', 
+                2: 'fill_gap',
+                3: 'matching',
+                4: 'pick_words'
+            };
+            let pool = allData.filter(q => q.question_type === typeMap[state.selectedLevel]);
+            
+            // Shuffle για τυχαία σειρά
+            pool = shuffleArray(pool);
+            
+            if (state.selectedCount !== 'all') {
+                pool = pool.slice(0, state.selectedCount);
+            }
+            
+            questions = pool;
+            wrongQuestions = [];
+            state.currentQuestion = 0;
+            state.answered = false;
+            state.correctCount = 0;
+            state.matchingPairs = {};
+            state.selectedWords = new Set();
+            state.screen = 'quiz';
+            render();
+        }
+        
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+        
+        function printWorksheet() {
+            const typeMap = { 
+                1: 'multiple_choice', 
+                2: 'fill_gap',
+                3: 'matching',
+                4: 'pick_words'
+            };
+            let pool = allData.filter(q => q.question_type === typeMap[state.selectedLevel]);
+            pool = shuffleArray(pool);
+            
+            if (state.selectedCount !== 'all') {
+                pool = pool.slice(0, state.selectedCount);
+            }
+            
             const printWindow = window.open('', '_blank');
             
-            let paragraphsHTML = data.map((item, index) => `
-                <div class="print-paragraph">
-                    <div class="print-paragraph-number"><b>Παράγραφος ${index + 1}</b></div>
-                    <div class="print-paragraph-text">${item.keimeno}</div>
+            let questionsHTML = pool.map((item, index) => `
+                <div class="print-question">
+                    <div class="print-question-number"><b>Ερώτηση ${index + 1}</b></div>
+                    <div class="print-question-text">${item.text || item.question}</div>
+                    <div class="print-answer-section">
+                        <p><i>Απάντηση:</i></p>
+                        <div style="min-height: 60px; border-top: 1px solid #ccc; margin-top: 10px;"></div>
+                    </div>
                 </div>
             `).join('');
+            
+            const levelNames = {
+                1: 'Πολλαπλή Επιλογή',
+                2: 'Συμπλήρωση Κενού',
+                3: 'Αντιστοίχιση',
+                4: 'Επιλογή Λέξεων'
+            };
             
             printWindow.document.write(`
                 <!DOCTYPE html>
                 <html lang="el">
                 <head>
                     <meta charset="UTF-8">
-                    <title>ΑΣΚΗΣΗ - Ανάλυση Παραγράφου</title>
+                    <title>ΑΣΚΗΣΗ - Συνοχή & Συνεκτικότητα</title>
                     <style>
                         * { margin: 0; padding: 0; box-sizing: border-box; }
                         body {
@@ -1281,6 +1832,12 @@
                             text-align: center;
                             font-size: 18pt;
                             font-weight: bold;
+                            margin-bottom: 10px;
+                        }
+                        .print-subtitle {
+                            text-align: center;
+                            font-size: 12pt;
+                            color: #666;
                             margin-bottom: 20px;
                         }
                         .print-instructions {
@@ -1289,18 +1846,26 @@
                             margin-bottom: 30px;
                             line-height: 1.8;
                         }
-                        .print-paragraph {
-                            margin-bottom: 25px;
+                        .print-question {
+                            margin-bottom: 30px;
                             page-break-inside: avoid;
                         }
-                        .print-paragraph-number {
+                        .print-question-number {
                             font-size: 11pt;
                             margin-bottom: 8px;
                         }
-                        .print-paragraph-text {
+                        .print-question-text {
                             font-size: 11pt;
                             line-height: 1.8;
                             text-align: justify;
+                            border: 1px solid #ccc;
+                            padding: 15px;
+                            background: #fafafa;
+                        }
+                        .print-answer-section {
+                            margin-top: 15px;
+                            padding: 10px;
+                            border: 1px dashed #ccc;
                         }
                         @media print {
                             body { padding: 20px; }
@@ -1310,12 +1875,13 @@
                 </head>
                 <body>
                     <div class="print-title">ΑΣΚΗΣΗ</div>
+                    <div class="print-subtitle">Συνοχή & Συνεκτικότητα - Επίπεδο ${state.selectedLevel}: ${levelNames[state.selectedLevel]}</div>
                     
                     <div class="print-instructions">
-                        Να εντοπίσετε τη δομή και τον τρόπο ή τους τρόπους ανάπτυξης της παραγράφου και να τους αιτιολογήσετε με βάση την πρόθεση του συντάκτη.
+                        Απαντήστε στις παρακάτω ερωτήσεις.
                     </div>
                     
-                    ${paragraphsHTML}
+                    ${questionsHTML}
                     
                     <button class="no-print" onclick="window.print()" style="
                         position: fixed;
@@ -1335,26 +1901,256 @@
             
             printWindow.document.close();
         }
+        
+        function checkMultipleChoice(btn, value) {
+            state.answered = true;
+            const q = questions[state.currentQuestion];
+            
+            // Βρες τη σωστή επιλογή - έξυπνο matching
+            let correctIndex;
+            if (!isNaN(q.answer)) {
+                // Αν είναι αριθμός (1-14)
+                correctIndex = Number(q.answer) - 1;
+            } else {
+                // Αν είναι όνομα επιλογής - έξυπνο matching
+                const answerNormalized = q.answer.toLowerCase().trim();
+                correctIndex = syndesmoi.findIndex(syndesmos => {
+                    const syndesmosNormalized = syndesmos.toLowerCase();
+                    // Exact match ή partial match (για "Σειρά/αρίθμηση" κλπ)
+                    return syndesmosNormalized === answerNormalized || 
+                           syndesmosNormalized.includes(answerNormalized) ||
+                           answerNormalized.includes(syndesmosNormalized);
+                });
+            }
+            
+            const buttons = document.querySelectorAll('.syndesmos-btn');
+            buttons.forEach(b => b.disabled = true);
+            
+            if (value === correctIndex + 1) {
+                // Σωστή επιλογή
+                btn.classList.add('correct-answer');
+                btn.classList.add('was-selected');
+                state.correctCount++;
+                playCorrectSound();
+            } else {
+                // Λάθος επιλογή - κοκκινίζει με X
+                btn.classList.add('wrong-answer');
+                
+                // Η σωστή επιλογή - πρασινίζει με glow (χωρίς ✓)
+                if (correctIndex >= 0 && correctIndex < buttons.length) {
+                    buttons[correctIndex].classList.add('correct-answer');
+                }
+                
+                wrongQuestions.push(q);
+                playWrongSound();
+            }
+            
+            showFeedback(q);
+        }
+        
+        function checkGap() {
+            if (state.answered) return;
+            
+            state.answered = true;
+            const q = questions[state.currentQuestion];
+            const input = document.getElementById('gapInput');
+            
+            // Υποστήριξη πολλαπλών σωστών απαντήσεων (χωρισμένες με κόμμα)
+            const correctAnswers = q.answer.split(',').map(a => normalize(a.trim()));
+            const userAnswer = normalize(input.value);
+            const isCorrect = correctAnswers.includes(userAnswer);
+            
+            input.classList.add(isCorrect ? 'correct' : 'wrong');
+            input.disabled = true;
+            document.getElementById('checkGapBtn').disabled = true;
+            
+            if (isCorrect) {
+                state.correctCount++;
+                playCorrectSound();
+            } else {
+                wrongQuestions.push(q);
+                playWrongSound();
+            }
+            
+            showFeedback(q, !isCorrect);
+        }
+        
+        function checkMatching() {
+            state.answered = true;
+            const q = questions[state.currentQuestion];
+            
+            // Parse correct answers: "Α-2, Β-4, Γ-1, Δ-3"
+            const correctPairs = {};
+            const pairs = q.answer.split(',').map(p => p.trim());
+            
+            pairs.forEach(pair => {
+                // Match both Greek (Α-Ω) and Latin (A-Z) letters
+                const match = pair.match(/([Α-ΩA-Z])-(\d+)/);
+                if (match) {
+                    const label = match[1];
+                    const rightIndex = (parseInt(match[2]) - 1).toString();
+                    correctPairs[label] = rightIndex;
+                }
+            });
+            
+            // Check answers
+            let allCorrect = true;
+            Object.keys(state.matchingPairs).forEach(rightId => {
+                const pair = state.matchingPairs[rightId];
+                const isCorrect = correctPairs[pair.label] === rightId;
+                
+                const dropZone = document.querySelector(`[data-right-id="${rightId}"]`);
+                const matchedItem = dropZone.querySelector('.matching-item');
+                
+                if (isCorrect) {
+                    matchedItem.classList.add('matched');
+                    matchedItem.classList.remove('wrong');
+                } else {
+                    matchedItem.classList.add('wrong');
+                    matchedItem.classList.remove('matched');
+                    allCorrect = false;
+                }
+            });
+            
+            if (allCorrect) {
+                state.correctCount++;
+                playCorrectSound();
+            } else {
+                wrongQuestions.push(q);
+                playWrongSound();
+            }
+            
+            document.getElementById('checkMatchingBtn').disabled = true;
+            
+            // Show correct answers
+            let correctAnswerText = 'Σωστές αντιστοιχίσεις: ';
+            Object.keys(correctPairs).forEach(label => {
+                const rightIndex = parseInt(correctPairs[label]) + 1;
+                correctAnswerText += `${label}-${rightIndex}, `;
+            });
+            correctAnswerText = correctAnswerText.slice(0, -2);
+            
+            showFeedback(q, !allCorrect, correctAnswerText);
+        }
+        
+        function checkPickWords() {
+            state.answered = true;
+            const q = questions[state.currentQuestion];
+            
+            // Check if all selected words are correct
+            const selectedArray = Array.from(state.selectedWords);
+            const allCorrect = selectedArray.every(word => 
+                state.requiredWords.some(rw => normalize(rw) === normalize(word))
+            ) && selectedArray.length === state.requiredWords.length;
+            
+            // Update UI
+            document.querySelectorAll('.pickable-word.selected').forEach(word => {
+                word.classList.add('correct');
+            });
+            
+            document.getElementById('checkPickWordsBtn').disabled = true;
+            
+            if (allCorrect) {
+                state.correctCount++;
+                playCorrectSound();
+            } else {
+                wrongQuestions.push(q);
+                playWrongSound();
+            }
+            
+            showFeedback(q, !allCorrect, `Σωστές λέξεις: ${state.requiredWords.join(', ')}`);
+        }
+        
+        function showFeedback(q, showCorrect = false, correctText = null) {
+            let html = '<div class="feedback-container">';
+            
+            if (showCorrect && correctText) {
+                html += `
+                    <div class="correct-answer-box">
+                        <h4>Σωστή απάντηση:</h4>
+                        <p>${correctText}</p>
+                    </div>
+                `;
+            } else if (showCorrect && q.answer) {
+                html += `
+                    <div class="correct-answer-box">
+                        <h4>Σωστή απάντηση:</h4>
+                        <p>${q.answer}</p>
+                    </div>
+                `;
+            }
+            
+            // Εμφάνιση παρατηρήσεων ΑΝ ΥΠΑΡΧΟΥΝ (για όλους τους τύπους ερωτήσεων)
+            if (q['Παρατηρήσεις'] && q['Παρατηρήσεις'].trim() !== '') {
+                html += `
+                    <div class="notes-box">
+                        <h4>💡 Παρατήρηση:</h4>
+                        <p>${q['Παρατηρήσεις']}</p>
+                    </div>
+                `;
+            }
+            
+            html += `
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px;">
+                    <button class="main-btn" id="homeBtn" style="background: #64748b; color: white;">
+                        ⬅ Επιστροφή
+                    </button>
+                    <button class="main-btn success" id="nextBtn">
+                        ${state.currentQuestion < questions.length - 1 ? 'Επόμενη →' : 'Αποτελέσματα'}
+                    </button>
+                </div>
+            </div>`;
+            
+            document.getElementById('feedback').innerHTML = html;
+            
+            // Home button
+            document.getElementById('homeBtn').addEventListener('click', () => {
+                if (confirm('Θέλεις να επιστρέψεις στην αρχή; Η πρόοδός σου θα χαθεί.')) {
+                    state.screen = 'selection';
+                    state.selectedLevel = null;
+                    state.selectedCount = null;
+                    state.currentQuestion = 0;
+                    state.answered = false;
+                    state.correctCount = 0;
+                    state.matchingPairs = {};
+                    state.selectedWords = new Set();
+                    questions = [];
+                    wrongQuestions = [];
+                    render();
+                }
+            });
+            
+            // Next button
+            document.getElementById('nextBtn').addEventListener('click', () => {
+                if (state.currentQuestion < questions.length - 1) {
+                    state.currentQuestion++;
+                    state.answered = false;
+                    state.matchingPairs = {};
+                    state.selectedWords = new Set();
+                    render();
+                } else {
+                    state.screen = 'results';
+                    render();
+                }
+            });
+        }
+        
+        function repeatWrong() {
+            questions = [...wrongQuestions];
+            wrongQuestions = [];
+            state.currentQuestion = 0;
+            state.answered = false;
+            state.correctCount = 0;
+            state.matchingPairs = {};
+            state.selectedWords = new Set();
+            state.screen = 'quiz';
+            render();
+        }
 
         // =====================================================
         // INIT
         // =====================================================
         loadData();
-        
-        // Απαγόρευση αντιγραφής στην παράγραφο
-        document.addEventListener('copy', function(e) {
-            const selection = window.getSelection();
-            const container = selection.anchorNode?.parentElement;
-            if (container && container.closest('.paragraph-text')) {
-                e.preventDefault();
-            }
-        });
-        
-        document.addEventListener('contextmenu', function(e) {
-            if (e.target.closest('.paragraph-text')) {
-                e.preventDefault();
-            }
-        });
     </script>
 </body>
 </html>
