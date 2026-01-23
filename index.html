@@ -25,6 +25,12 @@
             margin-bottom: 20px;
         }
         
+        .card.full-height {
+            min-height: calc(100vh - 80px);
+            display: flex;
+            flex-direction: column;
+        }
+        
         .header {
             display: flex;
             justify-content: space-between;
@@ -271,6 +277,70 @@
             font-weight: bold;
         }
         .option-btn:disabled { cursor: default; }
+        
+        /* Syndesmoi Grid - Multiple Choice Level 1 */
+        .syndesmoi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+        }
+        
+        .syndesmos-btn {
+            padding: 14px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            background: white;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+            font-weight: 500;
+            position: relative;
+        }
+        
+        .syndesmos-btn:hover:not(:disabled) {
+            border-color: #94a3b8;
+            background: #f8fafc;
+        }
+        
+        .syndesmos-btn.selected {
+            border-color: #4f46e5;
+            background: #eef2ff;
+        }
+        
+        .syndesmos-btn.correct-answer {
+            border-color: #047857;
+            background: #059669;
+            color: white;
+            font-weight: 600;
+            animation: glow 1.5s ease-in-out infinite;
+        }
+        
+        .syndesmos-btn.correct-answer.was-selected::after {
+            content: '✓';
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #047857;
+            color: white;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        @keyframes glow {
+            0%, 100% {
+                box-shadow: 0 0 5px #059669, 0 0 10px #059669;
+            }
+            50% {
+                box-shadow: 0 0 10px #10b981, 0 0 20px #10b981, 0 0 30px #10b981;
+            }
+        }
         
         /* Gap Input */
         .gap-input-container {
@@ -757,6 +827,23 @@
         // =====================================================
         const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSBmZdhLakrSUcbxWqSdNo5O07jxI7YRJ_J890qyb-u0qqoOqe1RMl18UQx0SFbLBo2Ihdm6gOOnelY/pub?output=csv';
 
+        const syndesmoi = [
+            "Χρόνος",
+            "Σειρά/αρίθμηση",
+            "Αιτία",
+            "Αποτέλεσμα/σκοπός",
+            "Συμπέρασμα",
+            "Παράδειγμα",
+            "Επεξήγηση",
+            "Αντίθεση",
+            "Βεβαιότητα",
+            "Έμφαση",
+            "Προσθήκη",
+            "Διάζευξη",
+            "Προϋπόθεση",
+            "Αναλογία"
+        ];
+
         let allData = [];
         let questions = [];
         let wrongQuestions = [];
@@ -984,7 +1071,7 @@
         
         function renderSelection() {
             return `
-                <div class="card selection-screen">
+                <div class="card selection-screen full-height">
                     <h2>📝 Quiz Συνοχής & Συνεκτικότητας</h2>
                     <p>Νεοελληνική Γλώσσα - Λύκειο</p>
                     
@@ -1087,13 +1174,30 @@
         
         function renderMultipleChoice(q) {
             return `
+                <div class="card" style="background: #fef3c7; border: 2px solid #f59e0b; padding: 16px;">
+                    <h3 style="color: #92400e; font-size: 1rem; text-align: center; margin: 0;">
+                        Τι δηλώνει η τονισμένη λέξη/φράση;
+                    </h3>
+                </div>
+                
                 <div class="options-container">
-                    <div class="options-list">
-                        ${[q.option1, q.option2, q.option3, q.option4].map((option, i) => `
-                            <button class="option-btn" data-value="${i + 1}" ${state.answered ? 'disabled' : ''}>
-                                ${option}
-                            </button>
-                        `).join('')}
+                    <div class="syndesmoi-grid">
+                        ${syndesmoi.map((syndesmos, i) => {
+                            const isCorrect = parseInt(q.answer) === (i + 1);
+                            const isSelected = state.answered && parseInt(q.answer) === (i + 1);
+                            
+                            let classes = 'syndesmos-btn';
+                            if (state.answered) {
+                                if (isCorrect) classes += ' correct-answer';
+                                if (isSelected) classes += ' was-selected';
+                            }
+                            
+                            return `
+                                <button class="${classes}" data-value="${i + 1}" ${state.answered ? 'disabled' : ''}>
+                                    ${syndesmos}
+                                </button>
+                            `;
+                        }).join('')}
                     </div>
                 </div>
             `;
@@ -1267,7 +1371,7 @@
                 });
             }
             
-            document.querySelectorAll('.option-btn[data-value]').forEach(btn => {
+            document.querySelectorAll('.syndesmos-btn[data-value]').forEach(btn => {
                 btn.addEventListener('click', () => {
                     if (!state.answered) {
                         // Ακύρωση του προηγούμενου timeout
@@ -1277,7 +1381,7 @@
                         }
                         
                         // Remove previous selection
-                        document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+                        document.querySelectorAll('.syndesmos-btn').forEach(b => b.classList.remove('selected'));
                         
                         // Mark this as selected
                         btn.classList.add('selected');
@@ -1629,18 +1733,38 @@
         function checkMultipleChoice(btn, value) {
             state.answered = true;
             const q = questions[state.currentQuestion];
-            const correct = Number(q.answer);
             
-            const buttons = document.querySelectorAll('.option-btn');
+            // Βρες τη σωστή επιλογή - έξυπνο matching
+            let correctIndex;
+            if (!isNaN(q.answer)) {
+                // Αν είναι αριθμός (1-14)
+                correctIndex = Number(q.answer) - 1;
+            } else {
+                // Αν είναι όνομα επιλογής - έξυπνο matching
+                const answerNormalized = q.answer.toLowerCase().trim();
+                correctIndex = syndesmoi.findIndex(syndesmos => {
+                    const syndesmosNormalized = syndesmos.toLowerCase();
+                    // Exact match ή partial match (για "Σειρά/αρίθμηση" κλπ)
+                    return syndesmosNormalized === answerNormalized || 
+                           syndesmosNormalized.includes(answerNormalized) ||
+                           answerNormalized.includes(syndesmosNormalized);
+                });
+            }
+            
+            const buttons = document.querySelectorAll('.syndesmos-btn');
             buttons.forEach(b => b.disabled = true);
             
-            if (value === correct) {
+            if (value === correctIndex + 1) {
                 btn.classList.add('correct-answer');
+                btn.classList.add('was-selected');
                 state.correctCount++;
                 playCorrectSound();
             } else {
-                btn.classList.add('wrong-answer');
-                buttons[correct - 1].classList.add('correct-answer');
+                // Δείξε τη σωστή απάντηση
+                if (correctIndex >= 0 && correctIndex < buttons.length) {
+                    buttons[correctIndex].classList.add('correct-answer');
+                    buttons[correctIndex].classList.add('was-selected');
+                }
                 wrongQuestions.push(q);
                 playWrongSound();
             }
