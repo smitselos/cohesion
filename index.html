@@ -1,4 +1,4 @@
-             <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="el">
 <head>
     <meta charset="UTF-8">
@@ -1318,28 +1318,46 @@
             const replacements = [];
             
             // Πρώτα βρες όλες τις φράσεις και κρατά τις θέσεις τους
-            state.requiredWords.forEach((phrase, phraseIndex) => {
-                const regex = new RegExp(`\\b${phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
-                let match;
-                while ((match = regex.exec(textHTML)) !== null) {
+            state.requiredWords.forEach((phrase) => {
+                let startIndex = 0;
+                while (true) {
+                    const index = textHTML.toLowerCase().indexOf(phrase.toLowerCase(), startIndex);
+                    if (index === -1) break;
+                    
                     replacements.push({
-                        start: match.index,
-                        end: match.index + match[0].length,
-                        original: match[0],
-                        phrase: phrase,
-                        phraseIndex: phraseIndex
+                        start: index,
+                        end: index + phrase.length,
+                        original: textHTML.substring(index, index + phrase.length),
+                        phrase: phrase
                     });
+                    
+                    startIndex = index + 1;
                 }
             });
             
             // Ταξινόμηση από το τέλος προς την αρχή για να μην χαλάσουν οι θέσεις
             replacements.sort((a, b) => b.start - a.start);
             
-            // Αντικατάσταση των φράσεων με clickable spans
+            // Αφαίρεση overlapping replacements (κρατά μόνο το πρώτο)
+            const filtered = [];
             replacements.forEach(r => {
-                const isSelected = state.selectedWords.has(r.phrase);
-                const span = `<span class="pickable-word ${isSelected ? 'selected' : ''}" data-word="${r.phrase}" data-is-correct="true">${r.original}</span>`;
-                textHTML = textHTML.substring(0, r.start) + span + textHTML.substring(r.end);
+                const hasOverlap = filtered.some(f => 
+                    (r.start >= f.start && r.start < f.end) ||
+                    (r.end > f.start && r.end <= f.end)
+                );
+                if (!hasOverlap) {
+                    filtered.push(r);
+                }
+            });
+            
+            // Αντικατάσταση των φράσεων με clickable spans
+            let finalHTML = textHTML;
+            filtered.forEach(r => {
+                const isSelected = Array.from(state.selectedWords).some(sw => 
+                    normalize(sw) === normalize(r.phrase)
+                );
+                const span = `<span class="pickable-word ${isSelected ? 'selected' : ''}" data-word="${r.phrase.trim()}" data-is-correct="true">${r.original}</span>`;
+                finalHTML = finalHTML.substring(0, r.start) + span + finalHTML.substring(r.end);
             });
             
             return `
@@ -1348,7 +1366,7 @@
                         💡 Κάντε κλικ στις λέξεις/φράσεις που πιστεύετε ότι είναι σωστές.
                     </div>
                     <div class="pick-words-text">
-                        ${textHTML}
+                        ${finalHTML}
                     </div>
                     <div class="pick-words-counter">
                         Έχετε επιλέξει: ${state.selectedWords.size} / ${state.requiredWords.length}
