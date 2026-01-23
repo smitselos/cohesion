@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+             <!DOCTYPE html>
 <html lang="el">
 <head>
     <meta charset="UTF-8">
@@ -1310,30 +1310,48 @@
         }
         
         function renderPickWords(q) {
-            // Parse required words from answer (διαχωρισμένες με κενό)
-            state.requiredWords = q.answer ? q.answer.split(' ').map(w => w.trim()).filter(Boolean) : [];
+            // Parse required words/phrases από answer (διαχωρισμένες με κόμμα)
+            state.requiredWords = q.answer ? q.answer.split(',').map(w => w.trim()).filter(Boolean) : [];
             
-            // Make ALL words clickable
-            const words = q.text.split(' ');
-            const textHTML = words.map((word, i) => {
-                const cleanWord = word.replace(/[.,;!?]/g, '');
-                const isSelected = state.selectedWords.has(cleanWord);
-                const isCorrect = state.requiredWords.some(rw => normalize(rw) === normalize(cleanWord));
-                
-                // Όλες οι λέξεις είναι clickable
-                return `<span class="pickable-word ${isSelected ? 'selected' : ''}" data-word="${cleanWord}" data-is-correct="${isCorrect}">${word}</span>`;
-            }).join(' ');
+            // Βρες τις φράσεις στο κείμενο και κάνε τες clickable μαζί
+            let textHTML = q.text;
+            const replacements = [];
+            
+            // Πρώτα βρες όλες τις φράσεις και κρατά τις θέσεις τους
+            state.requiredWords.forEach((phrase, phraseIndex) => {
+                const regex = new RegExp(`\\b${phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
+                let match;
+                while ((match = regex.exec(textHTML)) !== null) {
+                    replacements.push({
+                        start: match.index,
+                        end: match.index + match[0].length,
+                        original: match[0],
+                        phrase: phrase,
+                        phraseIndex: phraseIndex
+                    });
+                }
+            });
+            
+            // Ταξινόμηση από το τέλος προς την αρχή για να μην χαλάσουν οι θέσεις
+            replacements.sort((a, b) => b.start - a.start);
+            
+            // Αντικατάσταση των φράσεων με clickable spans
+            replacements.forEach(r => {
+                const isSelected = state.selectedWords.has(r.phrase);
+                const span = `<span class="pickable-word ${isSelected ? 'selected' : ''}" data-word="${r.phrase}" data-is-correct="true">${r.original}</span>`;
+                textHTML = textHTML.substring(0, r.start) + span + textHTML.substring(r.end);
+            });
             
             return `
                 <div class="options-container">
                     <div class="pick-words-hint">
-                        💡 Κάντε κλικ στις λέξεις που πιστεύετε ότι είναι σωστές. Οι σωστές λέξεις θα πρασινίσουν.
+                        💡 Κάντε κλικ στις λέξεις/φράσεις που πιστεύετε ότι είναι σωστές.
                     </div>
                     <div class="pick-words-text">
                         ${textHTML}
                     </div>
                     <div class="pick-words-counter">
-                        Έχετε επιλέξει σωστά: ${state.selectedWords.size} / ${state.requiredWords.length} λέξεις
+                        Έχετε επιλέξει: ${state.selectedWords.size} / ${state.requiredWords.length}
                     </div>
                     <button class="main-btn primary" id="checkPickWordsBtn" style="margin-top: 16px;" ${state.selectedWords.size !== state.requiredWords.length ? 'disabled' : ''}>
                         Έλεγχος Απαντήσεων
