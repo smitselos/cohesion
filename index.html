@@ -395,6 +395,7 @@
             font-size: 1.05rem;
             line-height: 2.5;
             color: #1e293b;
+            padding: 20px;
         }
         
         .gap-text-container span {
@@ -511,17 +512,18 @@
         
         .inline-drop-zone {
             display: inline-block;
-            min-width: 120px;
-            height: 32px;
+            min-width: 150px;
+            height: 36px;
             border: 2px dashed #cbd5e1;
             border-radius: 6px;
             background: white;
             vertical-align: middle;
             margin: 0 4px;
-            padding: 4px 8px;
+            padding: 6px 12px;
             transition: all 0.2s;
             text-align: center;
             line-height: 24px;
+            font-size: 1rem;
         }
         
         .inline-drop-zone.drag-over {
@@ -1983,20 +1985,27 @@
                     
                     // Μόνο αν είναι σωστή λέξη, πρασινίζει
                     if (isCorrect) {
+                        // Βρες ΟΛΑ τα instances της ίδιας λέξης
+                        const allInstances = document.querySelectorAll(`.pickable-word[data-word="${wordText}"]`);
+                        
                         if (state.selectedWords.has(wordText)) {
-                            // Deselect
+                            // Deselect ΟΛΑ
                             state.selectedWords.delete(wordText);
-                            word.classList.remove('selected');
+                            allInstances.forEach(instance => {
+                                instance.classList.remove('selected');
+                            });
                         } else {
-                            // Select
+                            // Select ΟΛΑ
                             state.selectedWords.add(wordText);
-                            word.classList.add('selected');
+                            allInstances.forEach(instance => {
+                                instance.classList.add('selected');
+                            });
                         }
                         
                         // Update counter
                         const counter = document.querySelector('.pick-words-counter');
                         if (counter) {
-                            counter.textContent = `Έχετε επιλέξει σωστά: ${state.selectedWords.size} / ${state.requiredWords.length} λέξεις`;
+                            counter.textContent = `Έχετε επιλέξει: ${state.selectedWords.size} / ${state.requiredWords.length}`;
                         }
                         
                         // Enable/disable button
