@@ -13,6 +13,9 @@
             min-height: 100vh;
             padding: 16px;
             line-height: 1.6;
+            /* Fix για iOS landscape text resizing */
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
         }
         
         .container { max-width: 900px; margin: 0 auto; }
@@ -600,6 +603,20 @@
             border-radius: 4px;
             transition: all 0.2s;
             display: inline-block;
+            /* Fix για iOS landscape */
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+            font-size: inherit;
+        }
+        
+        .non-pickable-word {
+            /* Ίδιο styling με pickable για να μην ξεχωρίζουν */
+            padding: 2px 4px;
+            display: inline-block;
+            /* Fix για iOS landscape */
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+            font-size: inherit;
         }
         
         .pickable-word:hover {
