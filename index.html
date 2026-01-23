@@ -1713,9 +1713,23 @@
                 // Remove previous match for this left item
                 Object.keys(state.matchingPairs).forEach(key => {
                     if (state.matchingPairs[key].leftId === leftId) {
+                        // Αν υπήρχε προηγούμενο match, επανεμφάνισε το παλιό στοιχείο
+                        const oldLeftItem = document.querySelector(`.matching-item[data-left-id="${leftId}"]`);
+                        if (oldLeftItem) {
+                            oldLeftItem.style.display = 'flex';
+                        }
                         delete state.matchingPairs[key];
                     }
                 });
+                
+                // Αν η νέα θέση είχε ήδη κάτι, επανεμφάνισε εκείνο το στοιχείο
+                if (state.matchingPairs[rightId]) {
+                    const oldLeftId = state.matchingPairs[rightId].leftId;
+                    const oldLeftItem = document.querySelector(`.matching-item[data-left-id="${oldLeftId}"]`);
+                    if (oldLeftItem) {
+                        oldLeftItem.style.display = 'flex';
+                    }
+                }
                 
                 // Add new match
                 state.matchingPairs[rightId] = {
@@ -1723,6 +1737,9 @@
                     label: label,
                     content: state.draggedItem.textContent.replace(label, '').trim()
                 };
+                
+                // Κρύψε το στοιχείο από την αριστερή στήλη
+                state.draggedItem.style.display = 'none';
                 
                 // Update UI - ΧΩΡΙΣ την κλάση matched (θα προστεθεί μόνο μετά τον έλεγχο)
                 const content = dropZone.querySelector('.drop-zone-content');
