@@ -391,6 +391,52 @@
         }
         
         /* Gap Input */
+        .gap-text-container {
+            font-size: 1.05rem;
+            line-height: 2.5;
+            color: #1e293b;
+        }
+        
+        .gap-text-container span {
+            display: inline;
+        }
+        
+        .gap-input {
+            display: inline-block;
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            width: 150px;
+            transition: all 0.2s;
+            margin: 0 4px;
+            vertical-align: middle;
+        }
+        
+        .gap-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            background: #f0f9ff;
+        }
+        
+        .gap-input.correct {
+            border-color: #059669;
+            background: #d1fae5;
+            color: #047857;
+            font-weight: 600;
+        }
+        
+        .gap-input.wrong {
+            border-color: #dc2626;
+            background: #fee2e2;
+            color: #b91c1c;
+            font-weight: 600;
+        }
+        
+        .gap-input:disabled {
+            background: #f1f5f9;
+            cursor: not-allowed;
+        }
         .gap-input-container {
             display: flex;
             gap: 12px;
@@ -450,6 +496,90 @@
             color: #1e40af;
             font-size: 0.875rem;
             text-align: center;
+        }
+        
+        /* Matching - Νέο Drag & Drop στο κείμενο */
+        .drag-drop-text {
+            font-size: 1.05rem;
+            line-height: 2.2;
+            color: #1e293b;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #7c3aed;
+        }
+        
+        .inline-drop-zone {
+            display: inline-block;
+            min-width: 120px;
+            height: 32px;
+            border: 2px dashed #cbd5e1;
+            border-radius: 6px;
+            background: white;
+            vertical-align: middle;
+            margin: 0 4px;
+            padding: 4px 8px;
+            transition: all 0.2s;
+            text-align: center;
+            line-height: 24px;
+        }
+        
+        .inline-drop-zone.drag-over {
+            border-color: #7c3aed;
+            background: #f5f3ff;
+        }
+        
+        .inline-drop-zone.filled {
+            border: 2px solid #7c3aed;
+            background: #f5f3ff;
+        }
+        
+        .inline-drop-zone.correct {
+            border-color: #059669;
+            background: #d1fae5;
+        }
+        
+        .inline-drop-zone.wrong {
+            border-color: #dc2626;
+            background: #fee2e2;
+        }
+        
+        .word-bank {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .draggable-word {
+            padding: 10px 16px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: grab;
+            transition: all 0.2s;
+            font-weight: 500;
+            color: #1e293b;
+            user-select: none;
+        }
+        
+        .draggable-word:hover {
+            border-color: #7c3aed;
+            background: #faf5ff;
+            transform: translateY(-2px);
+        }
+        
+        .draggable-word.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+        }
+        
+        .draggable-word.used {
+            display: none;
+        }
+        
+        .dropped-word {
+            font-weight: 600;
+            color: #7c3aed;
         }
         
         .matching-container {
@@ -1267,61 +1397,77 @@
         }
         
         function renderFillGap(q) {
+            // Βρες πόσα κενά υπάρχουν (______)
+            const gapCount = (q.text.match(/______/g) || []).length;
+            
+            // Parse τις σωστές απαντήσεις
+            const correctAnswers = q.answer ? q.answer.split(',').map(a => a.trim()) : [];
+            
+            // Χώρισε το κείμενο στα κενά
+            const textParts = q.text.split('______');
+            
+            // Δημιούργησε HTML με inputs στα κενά
+            let textHTML = '';
+            textParts.forEach((part, i) => {
+                textHTML += `<span>${part}</span>`;
+                if (i < textParts.length - 1) {
+                    textHTML += `<input type="text" class="gap-input" data-gap-index="${i}" placeholder="..." ${state.answered ? 'disabled' : ''}>`;
+                }
+            });
+            
             return `
-                <div class="options-container">
-                    <div class="gap-input-container">
-                        <input type="text" id="gapInput" placeholder="Γράψε την απάντησή σου..." ${state.answered ? 'disabled' : ''}>
-                        <button class="check-gap-btn" id="checkGapBtn" ${state.answered ? 'disabled' : ''}>
-                            Έλεγχος
-                        </button>
+                <div class="card" style="padding: 24px;">
+                    <div class="gap-text-container">
+                        ${textHTML}
                     </div>
+                    ${!state.answered ? `
+                        <button class="main-btn primary" id="checkGapBtn" style="margin-top: 16px;">
+                            Έλεγχος Απαντήσεων
+                        </button>
+                    ` : ''}
                 </div>
             `;
         }
         
         function renderMatching(q) {
-            // Parse columns
-            const leftItems = q.left_column ? q.left_column.split(',').map(s => s.trim()) : [];
-            const rightItems = q.right_column ? q.right_column.split(',').map(s => s.trim()) : [];
+            // Parse τις διαθέσιμες λέξεις
+            const availableWords = q.left_column ? q.left_column.split(',').map(s => s.trim()) : [];
             
-            // Αυτόματη ανάθεση ελληνικών labels (Α, Β, Γ, Δ, Ε, Ζ...)
-            const greekLabels = ['Α', 'Β', 'Γ', 'Δ', 'Ε', 'Ζ', 'Η', 'Θ'];
+            // Parse το κείμενο και βρες τα κενά [1], [2], κλπ
+            let textHTML = q.text;
+            const gapMatches = [...textHTML.matchAll(/\[(\d+)\]______/g)];
+            const gapCount = gapMatches.length;
+            
+            // Αντικατάστησε τα κενά με drop zones
+            gapMatches.reverse().forEach(match => {
+                const gapNumber = match[1];
+                const gapIndex = match.index;
+                const dropZone = `<span class="inline-drop-zone" data-gap-number="${gapNumber}"></span>`;
+                textHTML = textHTML.substring(0, gapIndex) + dropZone + textHTML.substring(gapIndex + match[0].length);
+            });
             
             return `
-                <div class="options-container">
-                    <div class="matching-hint">
-                        💡 Σύρετε τα στοιχεία από την αριστερή στήλη και αφήστε τα στην αντίστοιχη θέση της δεξιάς στήλης
+                <div class="card" style="padding: 24px;">
+                    <div class="drag-drop-text">
+                        ${textHTML}
                     </div>
-                    <div class="matching-container">
-                        <div class="matching-column">
-                            <h4>Αριστερή Στήλη</h4>
-                            <div id="leftColumn">
-                                ${leftItems.map((item, i) => {
-                                    const label = greekLabels[i] || String.fromCharCode(913 + i); // 913 = Α
-                                    return `
-                                        <div class="matching-item" draggable="true" data-left-id="${i}" data-label="${label}">
-                                            <span class="matching-label">${label}</span>
-                                            ${item}
-                                        </div>
-                                    `;
-                                }).join('')}
-                            </div>
-                        </div>
-                        <div class="matching-column">
-                            <h4>Δεξιά Στήλη</h4>
-                            <div id="rightColumn">
-                                ${rightItems.map((item, i) => `
-                                    <div class="drop-zone" data-right-id="${i}">
-                                        <div class="drop-zone-label">${i + 1}. ${item}</div>
-                                        <div class="drop-zone-content"></div>
-                                    </div>
-                                `).join('')}
-                            </div>
+                    
+                    <div style="margin-top: 24px; padding: 16px; background: #f8fafc; border-radius: 12px;">
+                        <h4 style="font-size: 0.9rem; color: #64748b; margin-bottom: 12px;">💡 Σύρετε τις λέξεις στα κενά</h4>
+                        <div class="word-bank">
+                            ${availableWords.map((word, i) => `
+                                <div class="draggable-word" draggable="true" data-word-id="${i}" data-word="${word}">
+                                    ${word}
+                                </div>
+                            `).join('')}
                         </div>
                     </div>
-                    <button class="main-btn primary" id="checkMatchingBtn" style="margin-top: 16px;" ${Object.keys(state.matchingPairs).length < leftItems.length ? 'disabled' : ''}>
-                        Έλεγχος Απαντήσεων
-                    </button>
+                    
+                    ${!state.answered ? `
+                        <button class="main-btn primary" id="checkMatchingBtn" style="margin-top: 16px;" ${Object.keys(state.matchingPairs).length < gapCount ? 'disabled' : ''}>
+                            Έλεγχος Απαντήσεων
+                        </button>
+                    ` : ''}
                 </div>
             `;
         }
@@ -1575,25 +1721,75 @@
         }
         
         function attachMatchingListeners() {
-            const matchingItems = document.querySelectorAll('.matching-item[draggable="true"]');
-            const dropZones = document.querySelectorAll('.drop-zone');
+            const draggableWords = document.querySelectorAll('.draggable-word');
+            const dropZones = document.querySelectorAll('.inline-drop-zone');
             
-            matchingItems.forEach(item => {
-                // Mouse events (Desktop)
-                item.addEventListener('dragstart', handleDragStart);
-                item.addEventListener('dragend', handleDragEnd);
+            draggableWords.forEach(word => {
+                word.addEventListener('dragstart', (e) => {
+                    state.draggedItem = e.target;
+                    e.target.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                });
                 
-                // Touch events (Mobile)
-                item.addEventListener('touchstart', handleTouchStart);
-                item.addEventListener('touchmove', handleTouchMove);
-                item.addEventListener('touchend', handleTouchEnd);
+                word.addEventListener('dragend', (e) => {
+                    e.target.classList.remove('dragging');
+                });
             });
             
             dropZones.forEach(zone => {
-                // Mouse events (Desktop)
-                zone.addEventListener('dragover', handleDragOver);
-                zone.addEventListener('drop', handleDrop);
-                zone.addEventListener('dragleave', handleDragLeave);
+                zone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    zone.classList.add('drag-over');
+                });
+                
+                zone.addEventListener('dragleave', () => {
+                    zone.classList.remove('drag-over');
+                });
+                
+                zone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    zone.classList.remove('drag-over');
+                    
+                    if (state.draggedItem) {
+                        const gapNumber = zone.dataset.gapNumber;
+                        const wordId = state.draggedItem.dataset.wordId;
+                        const word = state.draggedItem.dataset.word;
+                        
+                        // Αν η ζώνη είχε ήδη λέξη, επανεμφάνισέ την
+                        if (state.matchingPairs[gapNumber]) {
+                            const oldWordId = state.matchingPairs[gapNumber].wordId;
+                            const oldWord = document.querySelector(`.draggable-word[data-word-id="${oldWordId}"]`);
+                            if (oldWord) oldWord.classList.remove('used');
+                        }
+                        
+                        // Αν η λέξη ήταν ήδη σε άλλη ζώνη, αδειάζει την
+                        Object.keys(state.matchingPairs).forEach(key => {
+                            if (state.matchingPairs[key].wordId === wordId) {
+                                const oldZone = document.querySelector(`.inline-drop-zone[data-gap-number="${key}"]`);
+                                if (oldZone) oldZone.textContent = '';
+                                delete state.matchingPairs[key];
+                            }
+                        });
+                        
+                        // Τοποθέτηση της λέξης
+                        zone.textContent = word;
+                        zone.classList.add('filled');
+                        state.draggedItem.classList.add('used');
+                        
+                        // Αποθήκευση
+                        state.matchingPairs[gapNumber] = {
+                            wordId: wordId,
+                            word: word
+                        };
+                        
+                        // Ενεργοποίηση κουμπιού
+                        const gapCount = document.querySelectorAll('.inline-drop-zone').length;
+                        const checkBtn = document.getElementById('checkMatchingBtn');
+                        if (checkBtn && Object.keys(state.matchingPairs).length >= gapCount) {
+                            checkBtn.disabled = false;
+                        }
+                    }
+                });
             });
         }
         
@@ -2023,61 +2219,27 @@
             
             state.answered = true;
             const q = questions[state.currentQuestion];
-            const input = document.getElementById('gapInput');
             
-            // Υποστήριξη πολλαπλών σωστών απαντήσεων (χωρισμένες με κόμμα)
-            const correctAnswers = q.answer.split(',').map(a => normalize(a.trim()));
-            const userAnswer = normalize(input.value);
-            const isCorrect = correctAnswers.includes(userAnswer);
+            // Βρες όλα τα gap inputs
+            const inputs = document.querySelectorAll('.gap-input');
             
-            input.classList.add(isCorrect ? 'correct' : 'wrong');
-            input.disabled = true;
-            document.getElementById('checkGapBtn').disabled = true;
+            // Parse τις σωστές απαντήσεις
+            const correctAnswers = q.answer.split(',').map(a => a.trim());
             
-            if (isCorrect) {
-                state.correctCount++;
-                playCorrectSound();
-            } else {
-                wrongQuestions.push(q);
-                playWrongSound();
-            }
-            
-            showFeedback(q, !isCorrect);
-        }
-        
-        function checkMatching() {
-            state.answered = true;
-            const q = questions[state.currentQuestion];
-            
-            // Parse correct answers: "Α-2, Β-4, Γ-1, Δ-3"
-            const correctPairs = {};
-            const pairs = q.answer.split(',').map(p => p.trim());
-            
-            pairs.forEach(pair => {
-                // Match both Greek (Α-Ω) and Latin (A-Z) letters
-                const match = pair.match(/([Α-ΩA-Z])-(\d+)/);
-                if (match) {
-                    const label = match[1];
-                    const rightIndex = (parseInt(match[2]) - 1).toString();
-                    correctPairs[label] = rightIndex;
-                }
-            });
-            
-            // Check answers
             let allCorrect = true;
-            Object.keys(state.matchingPairs).forEach(rightId => {
-                const pair = state.matchingPairs[rightId];
-                const isCorrect = correctPairs[pair.label] === rightId;
+            
+            // Έλεγχος κάθε input
+            inputs.forEach((input, index) => {
+                const userAnswer = input.value.trim();
                 
-                const dropZone = document.querySelector(`[data-right-id="${rightId}"]`);
-                const matchedItem = dropZone.querySelector('.matching-item');
+                // Για κάθε κενό, έλεγξε αν η απάντηση ταιριάζει με κάποια από τις σωστές
+                const possibleAnswers = correctAnswers[index] ? correctAnswers[index].split('|').map(a => a.trim()) : [];
+                const isCorrect = possibleAnswers.some(ans => normalize(ans) === normalize(userAnswer));
                 
-                if (isCorrect) {
-                    matchedItem.classList.add('matched');
-                    matchedItem.classList.remove('wrong');
-                } else {
-                    matchedItem.classList.add('wrong');
-                    matchedItem.classList.remove('matched');
+                input.classList.add(isCorrect ? 'correct' : 'wrong');
+                input.disabled = true;
+                
+                if (!isCorrect) {
                     allCorrect = false;
                 }
             });
@@ -2088,6 +2250,64 @@
             } else {
                 wrongQuestions.push(q);
                 playWrongSound();
+            }
+            
+            showFeedback(q, !allCorrect);
+        }
+        
+        function checkMatching() {
+            state.answered = true;
+            const q = questions[state.currentQuestion];
+            
+            // Parse correct answers: "1-Επομένως, 2-Αντίθετα"
+            const correctPairs = {};
+            const pairs = q.answer.split(',').map(p => p.trim());
+            
+            pairs.forEach(pair => {
+                const match = pair.match(/(\d+)-(.+)/);
+                if (match) {
+                    const gapNumber = match[1];
+                    const correctWord = match[2].trim();
+                    correctPairs[gapNumber] = correctWord;
+                }
+            });
+            
+            // Check answers
+            let allCorrect = true;
+            const dropZones = document.querySelectorAll('.inline-drop-zone');
+            
+            dropZones.forEach(zone => {
+                const gapNumber = zone.dataset.gapNumber;
+                const userWord = state.matchingPairs[gapNumber]?.word;
+                const correctWord = correctPairs[gapNumber];
+                
+                if (userWord && correctWord) {
+                    const isCorrect = normalize(userWord) === normalize(correctWord);
+                    zone.classList.add(isCorrect ? 'correct' : 'wrong');
+                    
+                    if (!isCorrect) {
+                        allCorrect = false;
+                        // Δείξε τη σωστή απάντηση
+                        zone.textContent += ` ✗ (Σωστό: ${correctWord})`;
+                    } else {
+                        zone.textContent += ' ✓';
+                    }
+                } else {
+                    zone.classList.add('wrong');
+                    allCorrect = false;
+                }
+            });
+            
+            if (allCorrect) {
+                state.correctCount++;
+                playCorrectSound();
+            } else {
+                wrongQuestions.push(q);
+                playWrongSound();
+            }
+            
+            showFeedback(q, !allCorrect);
+        }
             }
             
             document.getElementById('checkMatchingBtn').disabled = true;
