@@ -1730,6 +1730,7 @@
             const dropZones = document.querySelectorAll('.inline-drop-zone');
             
             draggableWords.forEach(word => {
+                // Desktop events
                 word.addEventListener('dragstart', (e) => {
                     state.draggedItem = e.target;
                     e.target.classList.add('dragging');
@@ -1739,9 +1740,15 @@
                 word.addEventListener('dragend', (e) => {
                     e.target.classList.remove('dragging');
                 });
+                
+                // Mobile touch events
+                word.addEventListener('touchstart', handleTouchStartMatching, { passive: false });
+                word.addEventListener('touchmove', handleTouchMoveMatching, { passive: false });
+                word.addEventListener('touchend', handleTouchEndMatching, { passive: false });
             });
             
             dropZones.forEach(zone => {
+                // Desktop events
                 zone.addEventListener('dragover', (e) => {
                     e.preventDefault();
                     zone.classList.add('drag-over');
@@ -1754,48 +1761,120 @@
                 zone.addEventListener('drop', (e) => {
                     e.preventDefault();
                     zone.classList.remove('drag-over');
-                    
-                    if (state.draggedItem) {
-                        const gapNumber = zone.dataset.gapNumber;
-                        const wordId = state.draggedItem.dataset.wordId;
-                        const word = state.draggedItem.dataset.word;
-                        
-                        // Αν η ζώνη είχε ήδη λέξη, επανεμφάνισέ την
-                        if (state.matchingPairs[gapNumber]) {
-                            const oldWordId = state.matchingPairs[gapNumber].wordId;
-                            const oldWord = document.querySelector(`.draggable-word[data-word-id="${oldWordId}"]`);
-                            if (oldWord) oldWord.classList.remove('used');
-                        }
-                        
-                        // Αν η λέξη ήταν ήδη σε άλλη ζώνη, αδειάζει την
-                        Object.keys(state.matchingPairs).forEach(key => {
-                            if (state.matchingPairs[key].wordId === wordId) {
-                                const oldZone = document.querySelector(`.inline-drop-zone[data-gap-number="${key}"]`);
-                                if (oldZone) oldZone.textContent = '';
-                                delete state.matchingPairs[key];
-                            }
-                        });
-                        
-                        // Τοποθέτηση της λέξης
-                        zone.textContent = word;
-                        zone.classList.add('filled');
-                        state.draggedItem.classList.add('used');
-                        
-                        // Αποθήκευση
-                        state.matchingPairs[gapNumber] = {
-                            wordId: wordId,
-                            word: word
-                        };
-                        
-                        // Ενεργοποίηση κουμπιού
-                        const gapCount = document.querySelectorAll('.inline-drop-zone').length;
-                        const checkBtn = document.getElementById('checkMatchingBtn');
-                        if (checkBtn && Object.keys(state.matchingPairs).length >= gapCount) {
-                            checkBtn.disabled = false;
-                        }
-                    }
+                    performMatchingDrop(zone);
                 });
             });
+        }
+        
+        // Mobile touch handlers για matching
+        let touchClone = null;
+        let touchStartX = 0;
+        let touchStartY = 0;
+        
+        function handleTouchStartMatching(e) {
+            e.preventDefault();
+            state.draggedItem = e.target.closest('.draggable-word');
+            const touch = e.touches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+            
+            // Create visual clone
+            touchClone = state.draggedItem.cloneNode(true);
+            touchClone.style.position = 'fixed';
+            touchClone.style.opacity = '0.8';
+            touchClone.style.pointerEvents = 'none';
+            touchClone.style.zIndex = '10000';
+            touchClone.style.width = state.draggedItem.offsetWidth + 'px';
+            touchClone.style.left = touch.clientX - state.draggedItem.offsetWidth / 2 + 'px';
+            touchClone.style.top = touch.clientY - state.draggedItem.offsetHeight / 2 + 'px';
+            document.body.appendChild(touchClone);
+            
+            state.draggedItem.classList.add('dragging');
+        }
+        
+        function handleTouchMoveMatching(e) {
+            e.preventDefault();
+            if (!state.draggedItem || !touchClone) return;
+            
+            const touch = e.touches[0];
+            touchClone.style.left = touch.clientX - state.draggedItem.offsetWidth / 2 + 'px';
+            touchClone.style.top = touch.clientY - state.draggedItem.offsetHeight / 2 + 'px';
+            
+            // Highlight drop zone
+            const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+            const dropZone = elementBelow?.closest('.inline-drop-zone');
+            
+            document.querySelectorAll('.inline-drop-zone').forEach(z => z.classList.remove('drag-over'));
+            if (dropZone) {
+                dropZone.classList.add('drag-over');
+            }
+        }
+        
+        function handleTouchEndMatching(e) {
+            e.preventDefault();
+            if (!state.draggedItem) return;
+            
+            const touch = e.changedTouches[0];
+            const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+            const dropZone = elementBelow?.closest('.inline-drop-zone');
+            
+            if (dropZone) {
+                performMatchingDrop(dropZone);
+            }
+            
+            // Cleanup
+            if (touchClone) {
+                touchClone.remove();
+                touchClone = null;
+            }
+            state.draggedItem.classList.remove('dragging');
+            document.querySelectorAll('.inline-drop-zone').forEach(z => z.classList.remove('drag-over'));
+        }
+        
+        function performMatchingDrop(dropZone) {
+        function performMatchingDrop(dropZone) {
+            if (state.draggedItem) {
+                const gapNumber = dropZone.dataset.gapNumber;
+                const wordId = state.draggedItem.dataset.wordId;
+                const word = state.draggedItem.dataset.word;
+                
+                // Αν η ζώνη είχε ήδη λέξη, επανεμφάνισέ την
+                if (state.matchingPairs[gapNumber]) {
+                    const oldWordId = state.matchingPairs[gapNumber].wordId;
+                    const oldWord = document.querySelector(`.draggable-word[data-word-id="${oldWordId}"]`);
+                    if (oldWord) oldWord.classList.remove('used');
+                }
+                
+                // Αν η λέξη ήταν ήδη σε άλλη ζώνη, αδειάζει την
+                Object.keys(state.matchingPairs).forEach(key => {
+                    if (state.matchingPairs[key].wordId === wordId) {
+                        const oldZone = document.querySelector(`.inline-drop-zone[data-gap-number="${key}"]`);
+                        if (oldZone) {
+                            oldZone.textContent = '';
+                            oldZone.classList.remove('filled');
+                        }
+                        delete state.matchingPairs[key];
+                    }
+                });
+                
+                // Τοποθέτηση της λέξης
+                dropZone.textContent = word;
+                dropZone.classList.add('filled');
+                state.draggedItem.classList.add('used');
+                
+                // Αποθήκευση
+                state.matchingPairs[gapNumber] = {
+                    wordId: wordId,
+                    word: word
+                };
+                
+                // Ενεργοποίηση κουμπιού
+                const gapCount = document.querySelectorAll('.inline-drop-zone').length;
+                const checkBtn = document.getElementById('checkMatchingBtn');
+                if (checkBtn && Object.keys(state.matchingPairs).length >= gapCount) {
+                    checkBtn.disabled = false;
+                }
+            }
         }
         
         // Mouse Events (Desktop)
@@ -2026,8 +2105,8 @@
         function startQuiz() {
             const typeMap = { 
                 1: 'multiple_choice', 
-                2: 'fill_gap',
-                3: 'matching',
+                2: 'matching',        // ← ήταν fill_gap
+                3: 'fill_gap',        // ← ήταν matching
                 4: 'pick_words'
             };
             let pool = allData.filter(q => q.question_type === typeMap[state.selectedLevel]);
@@ -2062,8 +2141,8 @@
         function printWorksheet() {
             const typeMap = { 
                 1: 'multiple_choice', 
-                2: 'fill_gap',
-                3: 'matching',
+                2: 'matching',        // ← ήταν fill_gap
+                3: 'fill_gap',        // ← ήταν matching
                 4: 'pick_words'
             };
             let pool = allData.filter(q => q.question_type === typeMap[state.selectedLevel]);
@@ -2088,8 +2167,8 @@
             
             const levelNames = {
                 1: 'Πολλαπλή Επιλογή',
-                2: 'Συμπλήρωση Κενού',
-                3: 'Αντιστοίχιση',
+                2: 'Αντιστοίχιση',          // ← ήταν Συμπλήρωση Κενού
+                3: 'Συμπλήρωση Κενού',      // ← ήταν Αντιστοίχιση
                 4: 'Επιλογή Λέξεων'
             };
             
