@@ -1328,8 +1328,11 @@
 
                 <div class="card">
                     <span class="text-label">Κείμενο ${state.currentQuestion + 1}</span>
-                    ${q.question_type !== 'pick_words' ? `
+                    ${q.question_type === 'multiple_choice' ? `
                         <div class="question-text">${q.text}</div>
+                        <div class="question-prompt">${q.question}</div>
+                    ` : ''}
+                    ${q.question_type === 'matching' ? `
                         <div class="question-prompt">${q.question}</div>
                     ` : ''}
                     ${q.question_type === 'pick_words' ? `
