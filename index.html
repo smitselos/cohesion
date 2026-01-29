@@ -13,7 +13,6 @@
             min-height: 100vh;
             padding: 16px;
             line-height: 1.6;
-            /* Fix για iOS landscape text resizing */
             -webkit-text-size-adjust: 100%;
             text-size-adjust: 100%;
         }
@@ -66,14 +65,49 @@
             color: #4f46e5;
         }
         
+        .copyright-notice {
+            text-align: center;
+            margin-top: 24px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .copyright-notice a {
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 0.75rem;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .copyright-notice a:hover {
+            opacity: 0.9;
+        }
+        
+        .book-icon {
+            width: 24px;
+            height: 32px;
+            background: linear-gradient(135deg, #7c3aed 0%, #1e40af 50%, #f59e0b 100%);
+            border-radius: 3px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            flex-shrink: 0;
+        }
+        
         @media (max-width: 600px) {
             .header {
                 gap: 8px;
                 flex-wrap: nowrap;
-                justify-content: flex-end; /* Δεξιά στοίχιση */
+                justify-content: flex-end;
             }
             .header > div:first-child {
-                display: none; /* Κρύψε τον τίτλο τελείως */
+                display: none;
             }
             .question-counter {
                 flex-shrink: 0;
@@ -86,11 +120,11 @@
                 font-size: 1.2rem;
             }
             .card {
-                padding: 10px; /* Ελάχιστο padding */
+                padding: 10px;
             }
             .progress-bar {
                 margin-top: 6px;
-                height: 6px; /* Πιο λεπτό progress bar */
+                height: 6px;
             }
         }
         
@@ -108,7 +142,6 @@
             transition: width 0.3s ease;
         }
         
-        /* Οθόνη Επιλογών */
         .selection-screen { text-align: center; }
         .selection-screen h2 {
             color: #1e293b;
@@ -183,28 +216,6 @@
             cursor: not-allowed;
         }
         
-        .print-btn {
-            width: 100%;
-            padding: 16px;
-            border: none;
-            border-radius: 12px;
-            background: #059669;
-            color: white;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-top: 12px;
-        }
-        
-        .print-btn:hover { background: #047857; }
-        .print-btn:disabled {
-            background: #e2e8f0;
-            color: #94a3b8;
-            cursor: not-allowed;
-        }
-        
-        /* Loading */
         .loading { text-align: center; padding: 60px 20px; }
         .loading-spinner {
             width: 60px;
@@ -221,7 +232,6 @@
             to { transform: rotate(360deg); } 
         }
         
-        /* Quiz */
         .text-label {
             display: inline-block;
             background: #e0e7ff;
@@ -315,7 +325,6 @@
         }
         .option-btn:disabled { cursor: default; }
         
-        /* Syndesmoi Grid - Multiple Choice Level 1 */
         .syndesmoi-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -403,7 +412,6 @@
             }
         }
         
-        /* Gap Input */
         .gap-text-container {
             font-size: 1.05rem;
             line-height: 2.5;
@@ -500,7 +508,6 @@
             cursor: not-allowed; 
         }
         
-        /* Matching (Drag & Drop) */
         .matching-hint {
             background: #eff6ff;
             border: 1px solid #bfdbfe;
@@ -512,7 +519,6 @@
             text-align: center;
         }
         
-        /* Matching - Νέο Drag & Drop στο κείμενο */
         .drag-drop-text {
             font-size: 1.05rem;
             line-height: 2.2;
@@ -729,7 +735,6 @@
             margin-bottom: 8px;
         }
         
-        /* Pick Words */
         .pick-words-hint {
             background: #eff6ff;
             border: 1px solid #bfdbfe;
@@ -758,17 +763,14 @@
             border-radius: 4px;
             transition: all 0.2s;
             display: inline-block;
-            /* Fix για iOS landscape */
             -webkit-text-size-adjust: 100%;
             text-size-adjust: 100%;
             font-size: inherit;
         }
         
         .non-pickable-word {
-            /* Ίδιο styling με pickable για να μην ξεχωρίζουν */
             padding: 2px 4px;
             display: inline-block;
-            /* Fix για iOS landscape */
             -webkit-text-size-adjust: 100%;
             text-size-adjust: 100%;
             font-size: inherit;
@@ -816,7 +818,6 @@
             font-weight: 500;
         }
         
-        /* Feedback */
         .feedback-container {
             margin-top: 20px;
         }
@@ -984,7 +985,6 @@
             color: #dc2626;
         }
         
-        /* Results */
         .results-card { text-align: center; padding: 40px 24px; }
         .results-emoji { font-size: 4rem; margin-bottom: 16px; }
         .results-title { font-size: 1.75rem; color: #1e293b; margin-bottom: 24px; }
@@ -1045,9 +1045,6 @@
     </div>
 
     <script>
-        // =====================================================
-        // ΡΥΘΜΙΣΕΙΣ
-        // =====================================================
         const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSBmZdhLakrSUcbxWqSdNo5O07jxI7YRJ_J890qyb-u0qqoOqe1RMl18UQx0SFbLBo2Ihdm6gOOnelY/pub?output=csv';
 
         const syndesmoi = [
@@ -1073,24 +1070,18 @@
         
         let state = {
             screen: 'loading',
-            selectedLevel: 1, // Προεπιλεγμένο: Επίπεδο 1
-            selectedCount: 10, // Προεπιλεγμένο: 10 ερωτήσεις
+            selectedLevel: 1,
+            selectedCount: 10,
             currentQuestion: 0,
             answered: false,
             correctCount: 0,
-            soundEnabled: true, // Sound on by default
-            // Matching state
+            soundEnabled: true,
             matchingPairs: {},
             draggedItem: null,
-            // Pick words state
             selectedWords: new Set(),
             requiredWords: []
         };
 
-        // =====================================================
-        // ΗΧΟΙ
-        // =====================================================
-        
         function playCorrectSound() {
             if (!state.soundEnabled) return;
             
@@ -1161,10 +1152,6 @@
             }
         }
 
-        // =====================================================
-        // DATA LOADING
-        // =====================================================
-        
         function parseCSV(text) {
             const rows = [];
             let row = [], cell = '', inQuotes = false;
@@ -1210,7 +1197,6 @@
                 render();
             } catch (error) {
                 console.error('Σφάλμα φόρτωσης:', error);
-                // Προσπάθεια με direct Google Sheets URL
                 try {
                     const directUrl = CSV_URL.replace('/pub?', '/pub?gid=0&single=true&');
                     const response2 = await fetch(directUrl);
@@ -1219,12 +1205,10 @@
                     state.screen = 'selection';
                     render();
                 } catch (error2) {
-                    // Fallback - δείξε την οθόνη επιλογής ούτως ή άλλως
                     console.error('Δεύτερη προσπάθεια απέτυχε:', error2);
                     state.screen = 'selection';
                     render();
                     
-                    // Δείξε μήνυμα στον χρήστη
                     setTimeout(() => {
                         const app = document.getElementById('app');
                         if (allData.length === 0) {
@@ -1246,10 +1230,6 @@
             }
         }
 
-        // =====================================================
-        // RENDERING
-        // =====================================================
-        
         function render() {
             const app = document.getElementById('app');
             
@@ -1262,7 +1242,6 @@
                     break;
                 case 'quiz':
                     app.innerHTML = renderQuiz();
-                    // Add sound toggle button
                     if (!document.getElementById('soundToggle')) {
                         const soundBtn = document.createElement('button');
                         soundBtn.id = 'soundToggle';
@@ -1274,7 +1253,6 @@
                     break;
                 case 'results':
                     app.innerHTML = renderResults();
-                    // Remove sound button on results screen
                     const existingBtn = document.getElementById('soundToggle');
                     if (existingBtn) existingBtn.remove();
                     break;
@@ -1329,9 +1307,12 @@
                         Ξεκινήστε το Quiz
                     </button>
                     
-                    <button class="print-btn" id="printBtn" ${state.selectedLevel === null || state.selectedCount === null ? 'disabled' : ''}>
-                        🖨️ Εκτύπωση Άσκησης (Φύλλο Εργασίας)
-                    </button>
+                    <div class="copyright-notice">
+                        <a href="http://nea-ellinika.blog" target="_blank" rel="noopener">
+                            <div class="book-icon"></div>
+                            <span>Α & Σ Μητσέλος, Νέα Ελληνικά για το Λύκειο, 2026</span>
+                        </a>
+                    </div>
                 </div>
             `;
         }
@@ -1431,16 +1412,10 @@
         }
         
         function renderFillGap(q) {
-            // Βρες πόσα κενά υπάρχουν (______)
             const gapCount = (q.text.match(/______/g) || []).length;
-            
-            // Parse τις σωστές απαντήσεις
             const correctAnswers = q.answer ? q.answer.split(',').map(a => a.trim()) : [];
-            
-            // Χώρισε το κείμενο στα κενά
             const textParts = q.text.split('______');
             
-            // Δημιούργησε HTML με inputs στα κενά
             let textHTML = '';
             textParts.forEach((part, i) => {
                 textHTML += `<span>${part}</span>`;
@@ -1464,15 +1439,11 @@
         }
         
         function renderMatching(q) {
-            // Parse τις διαθέσιμες λέξεις
             const availableWords = q.left_column ? q.left_column.split(',').map(s => s.trim()) : [];
-            
-            // Parse το κείμενο και βρες τα κενά [1], [2], κλπ
             let textHTML = q.text;
             const gapMatches = [...textHTML.matchAll(/\[(\d+)\]______/g)];
             const gapCount = gapMatches.length;
             
-            // Αντικατάστησε τα κενά με drop zones
             gapMatches.reverse().forEach(match => {
                 const gapNumber = match[1];
                 const gapIndex = match.index;
@@ -1510,14 +1481,11 @@
         }
         
         function renderPickWords(q) {
-            // Parse required words/phrases από answer (διαχωρισμένες με κόμμα)
             state.requiredWords = q.answer ? q.answer.split(',').map(w => w.trim()).filter(Boolean) : [];
             
-            // Βρες τις φράσεις στο κείμενο και κάνε τες clickable μαζί
             let textHTML = q.text;
             const replacements = [];
             
-            // Πρώτα βρες όλες τις φράσεις και κρατά τις θέσεις τους
             state.requiredWords.forEach((phrase) => {
                 let startIndex = 0;
                 while (true) {
@@ -1535,10 +1503,8 @@
                 }
             });
             
-            // Ταξινόμηση από το τέλος προς την αρχή για να μην χαλάσουν οι θέσεις
             replacements.sort((a, b) => b.start - a.start);
             
-            // Αφαίρεση overlapping replacements (κρατά μόνο το πρώτο)
             const filtered = [];
             replacements.forEach(r => {
                 const hasOverlap = filtered.some(f => 
@@ -1550,7 +1516,6 @@
                 }
             });
             
-            // Αντικατάσταση των φράσεων με clickable spans
             let finalHTML = textHTML;
             filtered.forEach(r => {
                 const isSelected = Array.from(state.selectedWords).some(sw => 
@@ -1608,12 +1573,7 @@
             `;
         }
 
-        // =====================================================
-        // EVENT LISTENERS
-        // =====================================================
-        
         function attachEventListeners() {
-            // Selection screen
             document.querySelectorAll('[data-level]').forEach(btn => {
                 btn.addEventListener('click', () => {
                     state.selectedLevel = parseInt(btn.dataset.level);
@@ -1634,16 +1594,9 @@
                 startBtn.addEventListener('click', startQuiz);
             }
             
-            const printBtn = document.getElementById('printBtn');
-            if (printBtn) {
-                printBtn.addEventListener('click', printWorksheet);
-            }
-            
-            // Quiz screen - Multiple Choice
             let selectedOption = null;
-            let checkTimeout = null; // Για να ακυρώσουμε το timeout
+            let checkTimeout = null;
             
-            // Hint button
             const hintBtn = document.getElementById('hintBtn');
             const hintBox = document.getElementById('hintBox');
             if (hintBtn && hintBox) {
@@ -1661,20 +1614,15 @@
             document.querySelectorAll('.syndesmos-btn[data-value]').forEach(btn => {
                 btn.addEventListener('click', () => {
                     if (!state.answered) {
-                        // Ακύρωση του προηγούμενου timeout
                         if (checkTimeout) {
                             clearTimeout(checkTimeout);
                             checkTimeout = null;
                         }
                         
-                        // Remove previous selection
                         document.querySelectorAll('.syndesmos-btn').forEach(b => b.classList.remove('selected'));
-                        
-                        // Mark this as selected
                         btn.classList.add('selected');
                         selectedOption = parseInt(btn.dataset.value);
                         
-                        // Auto-check after 1 second
                         checkTimeout = setTimeout(() => {
                             if (selectedOption !== null && !state.answered) {
                                 checkMultipleChoice(btn, selectedOption);
@@ -1684,27 +1632,16 @@
                 });
             });
             
-            // Home button from quiz
             const homeFromQuizBtn = document.getElementById('homeFromQuizBtn');
             if (homeFromQuizBtn) {
                 homeFromQuizBtn.addEventListener('click', () => {
                     if (confirm('Θέλεις να επιστρέψεις στην αρχή; Η πρόοδός σου θα χαθεί.')) {
-                        state.screen = 'selection';
-                        state.selectedLevel = null;
-                        state.selectedCount = null;
-                        state.currentQuestion = 0;
-                        state.answered = false;
-                        state.correctCount = 0;
-                        state.matchingPairs = {};
-                        state.selectedWords = new Set();
-                        questions = [];
-                        wrongQuestions = [];
+                        resetState();
                         render();
                     }
                 });
             }
             
-            // Quiz screen - Fill Gap
             const checkGapBtn = document.getElementById('checkGapBtn');
             if (checkGapBtn) {
                 checkGapBtn.addEventListener('click', checkGap);
@@ -1719,7 +1656,6 @@
                 });
             }
             
-            // Quiz screen - Matching (Drag & Drop)
             attachMatchingListeners();
             
             const checkMatchingBtn = document.getElementById('checkMatchingBtn');
@@ -1727,7 +1663,6 @@
                 checkMatchingBtn.addEventListener('click', checkMatching);
             }
             
-            // Quiz screen - Pick Words
             attachPickWordsListeners();
             
             const checkPickWordsBtn = document.getElementById('checkPickWordsBtn');
@@ -1735,7 +1670,6 @@
                 checkPickWordsBtn.addEventListener('click', checkPickWords);
             }
             
-            // Results screen
             const repeatBtn = document.getElementById('repeatBtn');
             if (repeatBtn) {
                 repeatBtn.addEventListener('click', repeatWrong);
@@ -1744,17 +1678,23 @@
             const homeBtn = document.getElementById('homeBtn');
             if (homeBtn) {
                 homeBtn.addEventListener('click', () => {
-                    state.screen = 'selection';
-                    state.selectedLevel = null;
-                    state.selectedCount = null;
-                    state.currentQuestion = 0;
-                    state.answered = false;
-                    state.correctCount = 0;
-                    questions = [];
-                    wrongQuestions = [];
+                    resetState();
                     render();
                 });
             }
+        }
+        
+        function resetState() {
+            state.screen = 'selection';
+            state.selectedLevel = null;
+            state.selectedCount = null;
+            state.currentQuestion = 0;
+            state.answered = false;
+            state.correctCount = 0;
+            state.matchingPairs = {};
+            state.selectedWords = new Set();
+            questions = [];
+            wrongQuestions = [];
         }
         
         function attachMatchingListeners() {
@@ -1762,7 +1702,6 @@
             const dropZones = document.querySelectorAll('.inline-drop-zone');
             
             draggableWords.forEach(word => {
-                // Desktop events
                 word.addEventListener('dragstart', (e) => {
                     state.draggedItem = e.target;
                     e.target.classList.add('dragging');
@@ -1773,14 +1712,12 @@
                     e.target.classList.remove('dragging');
                 });
                 
-                // Mobile touch events
                 word.addEventListener('touchstart', handleTouchStartMatching, { passive: false });
                 word.addEventListener('touchmove', handleTouchMoveMatching, { passive: false });
                 word.addEventListener('touchend', handleTouchEndMatching, { passive: false });
             });
             
             dropZones.forEach(zone => {
-                // Desktop events
                 zone.addEventListener('dragover', (e) => {
                     e.preventDefault();
                     zone.classList.add('drag-over');
@@ -1798,7 +1735,6 @@
             });
         }
         
-        // Mobile touch handlers για matching
         let touchClone = null;
         let touchStartX = 0;
         let touchStartY = 0;
@@ -1810,7 +1746,6 @@
             touchStartX = touch.clientX;
             touchStartY = touch.clientY;
             
-            // Create visual clone
             touchClone = state.draggedItem.cloneNode(true);
             touchClone.style.position = 'fixed';
             touchClone.style.opacity = '0.8';
@@ -1832,7 +1767,6 @@
             touchClone.style.left = touch.clientX - state.draggedItem.offsetWidth / 2 + 'px';
             touchClone.style.top = touch.clientY - state.draggedItem.offsetHeight / 2 + 'px';
             
-            // Highlight drop zone
             const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
             const dropZone = elementBelow?.closest('.inline-drop-zone');
             
@@ -1854,7 +1788,6 @@
                 performMatchingDrop(dropZone);
             }
             
-            // Cleanup
             if (touchClone) {
                 touchClone.remove();
                 touchClone = null;
@@ -1869,14 +1802,12 @@
                 const wordId = state.draggedItem.dataset.wordId;
                 const word = state.draggedItem.dataset.word;
                 
-                // Αν η ζώνη είχε ήδη λέξη, επανεμφάνισέ την
                 if (state.matchingPairs[gapNumber]) {
                     const oldWordId = state.matchingPairs[gapNumber].wordId;
                     const oldWord = document.querySelector(`.draggable-word[data-word-id="${oldWordId}"]`);
                     if (oldWord) oldWord.classList.remove('used');
                 }
                 
-                // Αν η λέξη ήταν ήδη σε άλλη ζώνη, αδειάζει την
                 Object.keys(state.matchingPairs).forEach(key => {
                     if (state.matchingPairs[key].wordId === wordId) {
                         const oldZone = document.querySelector(`.inline-drop-zone[data-gap-number="${key}"]`);
@@ -1888,18 +1819,15 @@
                     }
                 });
                 
-                // Τοποθέτηση της λέξης
                 dropZone.textContent = word;
                 dropZone.classList.add('filled');
                 state.draggedItem.classList.add('used');
                 
-                // Αποθήκευση
                 state.matchingPairs[gapNumber] = {
                     wordId: wordId,
                     word: word
                 };
                 
-                // Ενεργοποίηση κουμπιού
                 const gapCount = document.querySelectorAll('.inline-drop-zone').length;
                 const checkBtn = document.getElementById('checkMatchingBtn');
                 if (checkBtn && Object.keys(state.matchingPairs).length >= gapCount) {
@@ -1908,63 +1836,49 @@
             }
         }
         
-        
         function attachPickWordsListeners() {
             document.querySelectorAll('.pickable-word').forEach(word => {
                 word.addEventListener('click', () => {
                     const wordText = word.dataset.word;
                     const isCorrect = word.dataset.isCorrect === 'true';
                     
-                    // Μόνο αν είναι σωστή λέξη, πρασινίζει
                     if (isCorrect) {
-                        // Βρες ΟΛΑ τα instances της ίδιας λέξης
                         const allInstances = document.querySelectorAll(`.pickable-word[data-word="${wordText}"]`);
                         
                         if (state.selectedWords.has(wordText)) {
-                            // Deselect ΟΛΑ
                             state.selectedWords.delete(wordText);
                             allInstances.forEach(instance => {
                                 instance.classList.remove('selected');
                             });
                         } else {
-                            // Select ΟΛΑ
                             state.selectedWords.add(wordText);
                             allInstances.forEach(instance => {
                                 instance.classList.add('selected');
                             });
                         }
                         
-                        // Update counter
                         const counter = document.querySelector('.pick-words-counter');
                         if (counter) {
                             counter.textContent = `Έχετε επιλέξει: ${state.selectedWords.size} / ${state.requiredWords.length}`;
                         }
                         
-                        // Enable/disable button
                         const checkBtn = document.getElementById('checkPickWordsBtn');
                         if (checkBtn) {
                             checkBtn.disabled = state.selectedWords.size !== state.requiredWords.length;
                         }
                     }
-                    // Αν δεν είναι σωστή → δεν κάνει τίποτα
                 });
             });
         }
 
-        // =====================================================
-        // QUIZ LOGIC
-        // =====================================================
-        
         function startQuiz() {
             const typeMap = { 
                 1: 'multiple_choice', 
-                2: 'matching',        // ← ήταν fill_gap
-                3: 'fill_gap',        // ← ήταν matching
+                2: 'matching',
+                3: 'fill_gap',
                 4: 'pick_words'
             };
             let pool = allData.filter(q => q.question_type === typeMap[state.selectedLevel]);
-            
-            // Shuffle για τυχαία σειρά
             pool = shuffleArray(pool);
             
             if (state.selectedCount !== 'all') {
@@ -1991,142 +1905,17 @@
             return newArray;
         }
         
-        function printWorksheet() {
-            const typeMap = { 
-                1: 'multiple_choice', 
-                2: 'matching',        // ← ήταν fill_gap
-                3: 'fill_gap',        // ← ήταν matching
-                4: 'pick_words'
-            };
-            let pool = allData.filter(q => q.question_type === typeMap[state.selectedLevel]);
-            pool = shuffleArray(pool);
-            
-            if (state.selectedCount !== 'all') {
-                pool = pool.slice(0, state.selectedCount);
-            }
-            
-            const printWindow = window.open('', '_blank');
-            
-            let questionsHTML = pool.map((item, index) => `
-                <div class="print-question">
-                    <div class="print-question-number"><b>Ερώτηση ${index + 1}</b></div>
-                    <div class="print-question-text">${item.text || item.question}</div>
-                    <div class="print-answer-section">
-                        <p><i>Απάντηση:</i></p>
-                        <div style="min-height: 60px; border-top: 1px solid #ccc; margin-top: 10px;"></div>
-                    </div>
-                </div>
-            `).join('');
-            
-            const levelNames = {
-                1: 'Πολλαπλή Επιλογή',
-                2: 'Αντιστοίχιση',          // ← ήταν Συμπλήρωση Κενού
-                3: 'Συμπλήρωση Κενού',      // ← ήταν Αντιστοίχιση
-                4: 'Επιλογή Λέξεων'
-            };
-            
-            printWindow.document.write(`
-                <!DOCTYPE html>
-                <html lang="el">
-                <head>
-                    <meta charset="UTF-8">
-                    <title>ΑΣΚΗΣΗ - Συνοχή & Συνεκτικότητα</title>
-                    <style>
-                        * { margin: 0; padding: 0; box-sizing: border-box; }
-                        body {
-                            font-family: 'Times New Roman', serif;
-                            padding: 40px;
-                            line-height: 1.6;
-                        }
-                        .print-title {
-                            text-align: center;
-                            font-size: 18pt;
-                            font-weight: bold;
-                            margin-bottom: 10px;
-                        }
-                        .print-subtitle {
-                            text-align: center;
-                            font-size: 12pt;
-                            color: #666;
-                            margin-bottom: 20px;
-                        }
-                        .print-instructions {
-                            font-size: 11pt;
-                            text-align: justify;
-                            margin-bottom: 30px;
-                            line-height: 1.8;
-                        }
-                        .print-question {
-                            margin-bottom: 30px;
-                            page-break-inside: avoid;
-                        }
-                        .print-question-number {
-                            font-size: 11pt;
-                            margin-bottom: 8px;
-                        }
-                        .print-question-text {
-                            font-size: 11pt;
-                            line-height: 1.8;
-                            text-align: justify;
-                            border: 1px solid #ccc;
-                            padding: 15px;
-                            background: #fafafa;
-                        }
-                        .print-answer-section {
-                            margin-top: 15px;
-                            padding: 10px;
-                            border: 1px dashed #ccc;
-                        }
-                        @media print {
-                            body { padding: 20px; }
-                            .no-print { display: none; }
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="print-title">ΑΣΚΗΣΗ</div>
-                    <div class="print-subtitle">Συνοχή & Συνεκτικότητα - Επίπεδο ${state.selectedLevel}: ${levelNames[state.selectedLevel]}</div>
-                    
-                    <div class="print-instructions">
-                        Απαντήστε στις παρακάτω ερωτήσεις.
-                    </div>
-                    
-                    ${questionsHTML}
-                    
-                    <button class="no-print" onclick="window.print()" style="
-                        position: fixed;
-                        top: 20px;
-                        right: 20px;
-                        padding: 15px 30px;
-                        font-size: 16px;
-                        background: #4f46e5;
-                        color: white;
-                        border: none;
-                        border-radius: 8px;
-                        cursor: pointer;
-                    ">🖨️ Εκτύπωση</button>
-                </body>
-                </html>
-            `);
-            
-            printWindow.document.close();
-        }
-        
         function checkMultipleChoice(btn, value) {
             state.answered = true;
             const q = questions[state.currentQuestion];
             
-            // Βρες τη σωστή επιλογή - έξυπνο matching
             let correctIndex;
             if (!isNaN(q.answer)) {
-                // Αν είναι αριθμός (1-14)
                 correctIndex = Number(q.answer) - 1;
             } else {
-                // Αν είναι όνομα επιλογής - έξυπνο matching
                 const answerNormalized = q.answer.toLowerCase().trim();
                 correctIndex = syndesmoi.findIndex(syndesmos => {
                     const syndesmosNormalized = syndesmos.toLowerCase();
-                    // Exact match ή partial match (για "Σειρά/αρίθμηση" κλπ)
                     return syndesmosNormalized === answerNormalized || 
                            syndesmosNormalized.includes(answerNormalized) ||
                            answerNormalized.includes(syndesmosNormalized);
@@ -2137,16 +1926,13 @@
             buttons.forEach(b => b.disabled = true);
             
             if (value === correctIndex + 1) {
-                // Σωστή επιλογή
                 btn.classList.add('correct-answer');
                 btn.classList.add('was-selected');
                 state.correctCount++;
                 playCorrectSound();
             } else {
-                // Λάθος επιλογή - κοκκινίζει με X
                 btn.classList.add('wrong-answer');
                 
-                // Η σωστή επιλογή - πρασινίζει με glow (χωρίς ✓)
                 if (correctIndex >= 0 && correctIndex < buttons.length) {
                     buttons[correctIndex].classList.add('correct-answer');
                 }
@@ -2163,20 +1949,13 @@
             
             state.answered = true;
             const q = questions[state.currentQuestion];
-            
-            // Βρες όλα τα gap inputs
             const inputs = document.querySelectorAll('.gap-input');
-            
-            // Parse τις σωστές απαντήσεις
             const correctAnswers = q.answer.split(',').map(a => a.trim());
             
             let allCorrect = true;
             
-            // Έλεγχος κάθε input
             inputs.forEach((input, index) => {
                 const userAnswer = input.value.trim();
-                
-                // Για κάθε κενό, έλεγξε αν η απάντηση ταιριάζει με κάποια από τις σωστές
                 const possibleAnswers = correctAnswers[index] ? correctAnswers[index].split('|').map(a => a.trim()) : [];
                 const isCorrect = possibleAnswers.some(ans => normalize(ans) === normalize(userAnswer));
                 
@@ -2203,7 +1982,6 @@
             state.answered = true;
             const q = questions[state.currentQuestion];
             
-            // Parse correct answers: "1-Επομένως, 2-Αντίθετα"
             const correctPairs = {};
             const pairs = q.answer.split(',').map(p => p.trim());
             
@@ -2216,7 +1994,6 @@
                 }
             });
             
-            // Check answers
             let allCorrect = true;
             const dropZones = document.querySelectorAll('.inline-drop-zone');
             
@@ -2231,7 +2008,6 @@
                     
                     if (!isCorrect) {
                         allCorrect = false;
-                        // Δείξε τη σωστή απάντηση
                         zone.textContent += ` ✗ (Σωστό: ${correctWord})`;
                     } else {
                         zone.textContent += ' ✓';
@@ -2257,13 +2033,11 @@
             state.answered = true;
             const q = questions[state.currentQuestion];
             
-            // Check if all selected words are correct
             const selectedArray = Array.from(state.selectedWords);
             const allCorrect = selectedArray.every(word => 
                 state.requiredWords.some(rw => normalize(rw) === normalize(word))
             ) && selectedArray.length === state.requiredWords.length;
             
-            // Update UI
             document.querySelectorAll('.pickable-word.selected').forEach(word => {
                 word.classList.add('correct');
             });
@@ -2300,7 +2074,6 @@
                 `;
             }
             
-            // Εμφάνιση παρατηρήσεων ΑΝ ΥΠΑΡΧΟΥΝ (για όλους τους τύπους ερωτήσεων)
             if (q['Παρατηρήσεις'] && q['Παρατηρήσεις'].trim() !== '') {
                 html += `
                     <div class="notes-box">
@@ -2323,24 +2096,13 @@
             
             document.getElementById('feedback').innerHTML = html;
             
-            // Home button
             document.getElementById('homeBtn').addEventListener('click', () => {
                 if (confirm('Θέλεις να επιστρέψεις στην αρχή; Η πρόοδός σου θα χαθεί.')) {
-                    state.screen = 'selection';
-                    state.selectedLevel = null;
-                    state.selectedCount = null;
-                    state.currentQuestion = 0;
-                    state.answered = false;
-                    state.correctCount = 0;
-                    state.matchingPairs = {};
-                    state.selectedWords = new Set();
-                    questions = [];
-                    wrongQuestions = [];
+                    resetState();
                     render();
                 }
             });
             
-            // Next button
             document.getElementById('nextBtn').addEventListener('click', () => {
                 if (state.currentQuestion < questions.length - 1) {
                     state.currentQuestion++;
@@ -2367,9 +2129,6 @@
             render();
         }
 
-        // =====================================================
-        // INIT
-        // =====================================================
         loadData();
     </script>
 </body>
