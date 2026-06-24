@@ -624,6 +624,12 @@ let sel = {
 // Print modal state
 let _pmListenersAttached = false;
 let _pendingPrintQ = null;
+// Σετ που χτίστηκε για εκτύπωση + υπογραφή φίλτρων (ώστε το «Ξεκίνα» να το ακολουθεί)
+let _printedQueue = null;
+let _printedSig = null;
+function selFilterSig() {
+  return [sel.filterType, sel.filterDiff, sel.filterCat, sel.filterCount].join('|');
+}
 
 let screen = 'loading';
 
@@ -1928,13 +1934,19 @@ function printSelSetup() {
   const pool = getSelPool();
   const count = sel.filterCount===0 ? pool.length : Math.min(sel.filterCount, pool.length);
   const queueToPrint = buildInterleavedQueue(pool, count);
+  _printedQueue = queueToPrint;
+  _printedSig = selFilterSig();
   showPrintModal(queueToPrint);
 }
 
 function startSelSession() {
   const pool = getSelPool();
   const count = sel.filterCount===0 ? pool.length : Math.min(sel.filterCount, pool.length);
-  sel.queue = buildInterleavedQueue(pool, count);
+  if (_printedQueue && _printedQueue.length && _printedSig === selFilterSig()) {
+    sel.queue = _printedQueue.slice();   // ίδιο ακριβώς σετ με την εκτύπωση
+  } else {
+    sel.queue = buildInterleavedQueue(pool, count);
+  }
   sel.qIdx=0; sel.answer=null; sel.answered=false;
   sel.ddPairs={}; sel.clkSelected=[];
   sel.correct=0; sel.total=0; sel.results=[];
@@ -2330,6 +2342,24 @@ function attachPrintModalListeners() {
     const s = collectPrintSettings();
     closePrintModal();
     printSelWorksheet(_pendingPrintQ, s);
+  });
+
+  const pmShare = document.getElementById('pmShareLink');
+  if (pmShare) pmShare.addEventListener('click', async () => {
+    const ids = (_pendingPrintQ || []).map(q => q.id).filter(v => v != null && v !== '');
+    if (!ids.length) return;
+    const url = buildSetLink(ids);
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: 'Σετ ερωτήσεων', text: 'Άνοιγμα σετ στην εφαρμογή:', url });
+      } else if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(url);
+        pmShare.textContent = '✓ Αντιγράφηκε';
+        setTimeout(() => { pmShare.innerHTML = '🔗 Σύνδεσμος'; }, 1800);
+      } else {
+        window.prompt('Αντιγράψτε τον σύνδεσμο:', url);
+      }
+    } catch (e) { /* ο χρήστης ακύρωσε την κοινή χρήση */ }
   });
 }
 
@@ -2781,6 +2811,7 @@ updateZoomUI();
 
     <div class="pm-footer">
       <button class="pm-btn pm-btn-secondary" id="pmCancel">Ακύρωση</button>
+      <button class="pm-btn pm-btn-secondary" id="pmShareLink">🔗 Σύνδεσμος</button>
       <button class="pm-btn pm-btn-primary" id="pmPrint">🖨️ Εκτύπωση</button>
     </div>
   </div>
