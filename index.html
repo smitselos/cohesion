@@ -610,9 +610,9 @@ let adp = {
 
 // Γρήγορη Εξάσκηση state
 let sel = {
-  filterType: 'all',
-  filterDiff: 'all',
-  filterCat: 'all',
+  filterTypes: [],
+  filterDiffs: [],
+  filterCats: [],
   filterCount: 10,
   queue: [], qIdx: 0,
   answer: null, answered: false,
@@ -628,7 +628,18 @@ let _pendingPrintQ = null;
 let _printedQueue = null;
 let _printedSig = null;
 function selFilterSig() {
-  return [sel.filterType, sel.filterDiff, sel.filterCat, sel.filterCount].join('|');
+  return [
+    sel.filterTypes.slice().sort().join(','),
+    sel.filterDiffs.slice().sort().join(','),
+    sel.filterCats.slice().sort().join(','),
+    sel.filterCount
+  ].join('|');
+}
+function toggleSelFilter(key, val) {
+  if (val === 'all') { sel[key] = []; return; }
+  const arr = sel[key];
+  const i = arr.indexOf(val);
+  if (i >= 0) arr.splice(i, 1); else arr.push(val);
 }
 
 let screen = 'loading';
@@ -1199,15 +1210,16 @@ function renderAdpResults() {
 // ══════════════════════════════════════════════
 function getSelPool() {
   return allQ.filter(q => {
-    if (sel.filterType !== 'all' && q.type !== sel.filterType) return false;
-    if (sel.filterDiff !== 'all' && q.diff !== sel.filterDiff) return false;
-    if (sel.filterCat !== 'all') {
+    if (sel.filterTypes.length && !sel.filterTypes.includes(q.type)) return false;
+    if (sel.filterDiffs.length && !sel.filterDiffs.includes(q.diff)) return false;
+    if (sel.filterCats.length) {
       if (!q.catKey) return false;
-      // Αν το filterCat είναι ακέραιος (βήμα), ταιριάζει ό,τι αρχίζει με n.
-      // Αν είναι πλήρες catKey (π.χ. 1.1), ταιριάζει ακριβώς
-      const isStep = /^\d+$/.test(sel.filterCat);
-      if (isStep) { if (!q.catKey.startsWith(sel.filterCat+'.')) return false; }
-      else { if (q.catKey !== sel.filterCat) return false; }
+      // Κάθε επιλεγμένη κατηγορία: ακέραιος = βήμα (n.*) · πλήρες catKey = ακριβής
+      const ok = sel.filterCats.some(fc => {
+        const isStep = /^\d+$/.test(fc);
+        return isStep ? q.catKey.startsWith(fc + '.') : q.catKey === fc;
+      });
+      if (!ok) return false;
     }
     return true;
   });
@@ -1218,7 +1230,7 @@ function renderSelSetup() {
   const typeMap = [{v:'all',lbl:'Όλοι'},{v:'YN',lbl:'Ναι/Όχι'},{v:'MC',lbl:'Πολλ. Επιλογής'},{v:'DD',lbl:'Αντιστοίχιση'},{v:'GAP',lbl:'Συμπλήρωση'},{v:'CLK',lbl:'Εντοπισμός'}];
   const typeChips = typeMap.map(({v, lbl}) => {
     const cnt = v==='all' ? allQ.length : allQ.filter(q=>q.type===v).length;
-    return `<button class="fchip ${sel.filterType===v?'active':''}" data-sel-type="${v}">${lbl} <span class="fchip-count">(${cnt})</span></button>`;
+    return `<button class="fchip ${(v==='all'?sel.filterTypes.length===0:sel.filterTypes.includes(v))?'active':''}" data-sel-type="${v}">${lbl} <span class="fchip-count">(${cnt})</span></button>`;
   }).join('');
 
   // Βήματα: ομαδοποίηση ανά πρώτο ψηφίο του catKey
@@ -1232,13 +1244,13 @@ function renderSelSetup() {
   const catChips = catMap.map(({v, lbl, sub}) => {
     const cnt = v==='all' ? allQ.length : allQ.filter(q=>q.catKey && (q.catKey===v || q.catKey.startsWith(v+'.'))).length;
     const style = sub ? 'font-size:.8rem;padding:6px 12px;' : '';
-    return `<button class="fchip ${sel.filterCat===v?'active':''}" data-sel-cat="${v}" style="${style}">${lbl.trim()} <span class="fchip-count">(${cnt})</span></button>`;
+    return `<button class="fchip ${(v==='all'?sel.filterCats.length===0:sel.filterCats.includes(v))?'active':''}" data-sel-cat="${v}" style="${style}">${lbl.trim()} <span class="fchip-count">(${cnt})</span></button>`;
   }).join('');
 
   const diffMap = [{v:'all',lbl:'Όλοι'},{v:1,lbl:'1 — Εύκολος'},{v:2,lbl:'2 — Μέτριος'},{v:3,lbl:'3 — Δύσκολος'}];
   const diffChips = diffMap.map(({v, lbl}) => {
     const cnt = v==='all' ? allQ.length : allQ.filter(q=>q.diff===v).length;
-    return `<button class="fchip ${sel.filterDiff===v?'active':''}" data-sel-diff="${v}">${lbl} <span class="fchip-count">(${cnt})</span></button>`;
+    return `<button class="fchip ${(v==='all'?sel.filterDiffs.length===0:sel.filterDiffs.includes(v))?'active':''}" data-sel-diff="${v}">${lbl} <span class="fchip-count">(${cnt})</span></button>`;
   }).join('');
 
   const countMap = [{n:10,lbl:'10'},{n:20,lbl:'20'},{n:0,lbl:'Όλες'}];
@@ -1559,9 +1571,9 @@ function attachEvents() {
   if (btnSel) btnSel.addEventListener('click', ()=>{ screen='sel_setup'; render(); });
 
   // Sel setup filters
-  document.querySelectorAll('[data-sel-type]').forEach(b=>b.addEventListener('click',()=>{sel.filterType=b.dataset.selType;render();}));
-  document.querySelectorAll('[data-sel-cat]').forEach(b=>b.addEventListener('click',()=>{sel.filterCat=b.dataset.selCat;render();}));
-  document.querySelectorAll('[data-sel-diff]').forEach(b=>b.addEventListener('click',()=>{const v=b.dataset.selDiff;sel.filterDiff=v==='all'?'all':parseInt(v);render();}));
+  document.querySelectorAll('[data-sel-type]').forEach(b=>b.addEventListener('click',()=>{toggleSelFilter('filterTypes', b.dataset.selType);render();}));
+  document.querySelectorAll('[data-sel-cat]').forEach(b=>b.addEventListener('click',()=>{toggleSelFilter('filterCats', b.dataset.selCat);render();}));
+  document.querySelectorAll('[data-sel-diff]').forEach(b=>b.addEventListener('click',()=>{const v=b.dataset.selDiff;toggleSelFilter('filterDiffs', v==='all'?'all':parseInt(v));render();}));
   document.querySelectorAll('[data-sel-count]').forEach(b=>b.addEventListener('click',()=>{sel.filterCount=parseInt(b.dataset.selCount);render();}));
   const btnSelStart = document.getElementById('btnSelStart');
   if (btnSelStart) btnSelStart.addEventListener('click', startSelSession);
