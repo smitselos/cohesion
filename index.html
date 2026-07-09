@@ -495,11 +495,11 @@
       ⚠️ Η αναγνώριση φωνής δεν είναι διαθέσιμη σε αυτό το πρόγραμμα περιήγησης. Μπορείς να γράψεις τη λέξη παρακάτω!
     </div>
 
-    <button class="mic-btn" id="micBtn" onclick="toggleListening()">🎤</button>
+    <button class="mic-btn" id="micBtn" onclick="micAction()">🎤</button>
     <div class="mic-label" id="micLabel">Πάτα για να μιλήσεις</div>
 
     <div class="type-input-area" id="typeInputArea">
-      <input type="text" id="typeInput" placeholder="Γράψε τη λέξη..." autocomplete="off" autocorrect="off" autocapitalize="off">
+      <input type="text" id="typeInput" placeholder="Γράψε ή πες τη λέξη με το 🎤 του πληκτρολογίου" autocomplete="off" autocorrect="off" autocapitalize="off">
       <button onclick="submitTypedAnswer()">OK</button>
     </div>
 
@@ -574,7 +574,8 @@ let synthSupported = false;
 function initSpeech() {
   synthSupported = 'speechSynthesis' in window;
 
-  if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+  const isIOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && (navigator.maxTouchPoints||0) > 1);
+  if (('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) && window.isSecureContext && !isIOS) {
     speechSupported = true;
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     recognition = new SpeechRecognition();
@@ -645,11 +646,17 @@ function startGame() {
   document.getElementById('endScreen').style.display = 'none';
   document.getElementById('gameScreen').style.display = 'flex';
 
-  if (!speechSupported) {
-    document.getElementById('noSpeechWarning').style.display = 'block';
+  // Το πεδίο πληκτρολόγησης είναι ΠΑΝΤΑ διαθέσιμο:
+  // γράψε τη λέξη Ή πάτα το 🎤 του πληκτρολογίου (υπαγόρευση) για να την πεις.
+  document.getElementById('typeInputArea').style.display = 'flex';
+  if (speechSupported) {
+    document.getElementById('micBtn').style.display = '';
+    document.getElementById('micLabel').style.display = '';
+    document.getElementById('noSpeechWarning').style.display = 'none';
+  } else {
     document.getElementById('micBtn').style.display = 'none';
     document.getElementById('micLabel').style.display = 'none';
-    document.getElementById('typeInputArea').style.display = 'flex';
+    document.getElementById('noSpeechWarning').style.display = 'none';
   }
 
   updateUI();
@@ -663,7 +670,7 @@ function updateUI() {
   document.getElementById('scoreBadge').textContent = '⭐ ' + score;
   document.getElementById('progressBadge').textContent = (currentIndex + 1) + ' / ' + shuffledList.length;
   document.getElementById('progressBar').style.width = ((currentIndex) / shuffledList.length * 100) + '%';
-  document.getElementById('sophiaMessage').textContent = 'Πάτα το μικρόφωνο και πες μου τι βλέπεις!';
+  document.getElementById('sophiaMessage').textContent = speechSupported ? 'Πάτα το μικρόφωνο και πες μου τι βλέπεις!' : 'Γράψε τη λέξη ή πάτα το 🎤 στο πληκτρολόγιο για να την πεις!';
   document.getElementById('sophiaMessage').className = 'message';
   document.getElementById('recognizedText').classList.remove('visible');
   document.getElementById('recognizedText').innerHTML = '&nbsp;';
@@ -787,6 +794,17 @@ function giveHint() {
 // ============================================
 // SPEECH RECOGNITION
 // ============================================
+function micAction() {
+  if (speechSupported && recognition) {
+    toggleListening();
+  } else {
+    // Χρήση του μικροφώνου (υπαγόρευσης) του πληκτρολογίου
+    const inp = document.getElementById('typeInput');
+    if (inp) inp.focus();
+    document.getElementById('sophiaMessage').textContent = 'Πάτα το 🎤 στο πληκτρολόγιο και πες τη λέξη — ή γράψ\' την!';
+  }
+}
+
 function toggleListening() {
   if (!speechSupported || !recognition) return;
 
